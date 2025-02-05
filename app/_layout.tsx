@@ -4,6 +4,10 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
+export const unstable_settings = {
+  initialRouteName: "index",
+};
+
 export default function RootLayout() {
   const { fontsLoaded, error } = useDefaultFonts();
 
@@ -18,7 +22,9 @@ export default function RootLayout() {
   }
   return (
     <ThemeProvider>
-      <Stack />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+      </Stack>
     </ThemeProvider>
   );
 }
