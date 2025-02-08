@@ -1,7 +1,7 @@
 import { useTheme } from "@/context/ThemeContext";
 import FormTextInput from "@/components/form/FormTextInput";
 import { useState } from "react";
-import { FlatList, TouchableOpacity, View, Text } from "react-native";
+import { FlatList, TouchableOpacity, View, Text, Platform } from "react-native";
 import { EMAIL_MAX_LENGTH, NAME_MAX_LENGTH } from "@/constants/validation";
 import {
   validateBirthday,
@@ -13,6 +13,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import BirthdayPicker from "./BirthdayPicker";
 import FormButton from "./FormButton";
 import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
+import { EventGateway } from "@/infrastructure/EventGateway";
+import { HttpEventGateway } from "@/infrastructure/HttpEventGateway";
+import { useEventGateway } from "@/context/EventGatewayContext";
 
 interface FormInputConfig {
   name: string;
@@ -38,6 +41,7 @@ interface UserInfoFormProps {
 export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
   const { colors } = useTheme();
   const [birthday, setBirthday] = useState<string>("01/01/2000");
+  const eventGateway = useEventGateway();
 
   const blurredTextInputStyle: TextInputStyleType = {
     backgroundColor: colors.surfaceVariant,
@@ -89,10 +93,11 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       type: "submit-button",
       name: "buy",
       title: "Comprar",
-      submit: () => {
+      submit: async () => {
         console.log(formState["email"].value);
         console.log(formState["name"].value);
         console.log(ticketType);
+        console.log(await eventGateway.getEvent("1"));
       },
       validator: validateBirthday,
     },
