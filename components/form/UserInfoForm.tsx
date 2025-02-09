@@ -13,9 +13,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import BirthdayPicker from "./BirthdayPicker";
 import FormButton from "./FormButton";
 import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
-import { EventGateway } from "@/infrastructure/EventGateway";
-import { HttpEventGateway } from "@/infrastructure/HttpEventGateway";
-import { useEventGateway } from "@/context/EventGatewayContext";
+import { useRouter } from "expo-router";
 
 interface FormInputConfig {
   name: string;
@@ -40,8 +38,8 @@ interface UserInfoFormProps {
 
 export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
   const { colors } = useTheme();
+  const router = useRouter();
   const [birthday, setBirthday] = useState<string>("01/01/2000");
-  const eventGateway = useEventGateway();
 
   const blurredTextInputStyle: TextInputStyleType = {
     backgroundColor: colors.surfaceVariant,
@@ -94,10 +92,9 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       name: "buy",
       title: "Comprar",
       submit: async () => {
-        console.log(formState["email"].value);
-        console.log(formState["name"].value);
-        console.log(ticketType);
-        console.log(await eventGateway.getEvent("1"));
+        router.push(
+          `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&ticketType=${ticketType}&birthday=${birthday}`
+        );
       },
       validator: validateBirthday,
     },

@@ -44,6 +44,22 @@ export default function RootLayout() {
       <ThemeProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
+          <Stack.Screen
+            name="error"
+            options={{
+              presentation: "transparentModal",
+              animation: "fade",
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="confirm"
+            options={{
+              presentation: "transparentModal",
+              animation: "fade",
+              headerShown: false,
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </EventGatewayProvider>
