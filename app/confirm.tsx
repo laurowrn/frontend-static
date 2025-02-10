@@ -16,12 +16,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, {
-  BounceIn,
-  FadeIn,
-  FadeInDown,
-  SlideInDown,
-} from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import * as WebBrowser from "expo-web-browser";
 
 export default function Confirm() {
   const { colors } = useTheme();
@@ -117,13 +113,26 @@ export default function Confirm() {
               flex: 1,
             }}
             onPress={async () => {
-              console.log(email);
-              console.log(name);
-              console.log(ticketType);
-              console.log(birthday);
-              let eventData;
+              let registerAndJoinData;
               try {
-                eventData = await eventGateway.getEvent("1");
+                registerAndJoinData = await eventGateway.registerAndJoin(
+                  {
+                    email: `${Math.floor(
+                      Math.random() * 999999999999
+                    )}@email.com`,
+                    username: "NovoUsuário2",
+                    gender: "male",
+                    birthday: "1995-06-15T00:00:00Z",
+                    location: "São Paulo",
+                    bio: "Amo eventos!",
+                  },
+                  4
+                );
+                router.back();
+                let result = await WebBrowser.openBrowserAsync(
+                  registerAndJoinData.paymentURL
+                );
+                console.log(result);
               } catch (error) {
                 router.back();
                 router.push("/error");

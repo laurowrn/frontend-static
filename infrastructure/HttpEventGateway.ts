@@ -1,4 +1,9 @@
-import { EventGateway, Event } from "./EventGateway";
+import {
+  EventGateway,
+  Event,
+  RegisterAndJoinResponse,
+  User,
+} from "./EventGateway";
 import { useMemo } from "react";
 import React, { createContext, useContext } from "react";
 
@@ -16,5 +21,32 @@ export class HttpEventGateway implements EventGateway {
     }
     const event: Event = await response.json();
     return event;
+  }
+
+  async registerAndJoin(
+    user: User,
+    eventId: number
+  ): Promise<RegisterAndJoinResponse> {
+    const response = await fetch(
+      `${this.baseUrl}/public/user/register-and-join-event`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user: user, event_id: eventId }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to register and join event");
+    }
+
+    const result: any = await response.json();
+    return {
+      eventId: result["event_id"],
+      userId: result["user_id"],
+      paymentURL: result["payment_url"],
+    };
   }
 }

@@ -37,8 +37,6 @@ export default function RootLayout() {
     baseUrl = process.env.EXPO_PUBLIC_BACKEND_BASE_URL || "";
   }
 
-  console.log(baseUrl);
-
   return (
     <EventGatewayProvider baseUrl={baseUrl}>
       <ThemeProvider>
@@ -57,6 +55,12 @@ export default function RootLayout() {
             options={{
               presentation: "transparentModal",
               animation: "fade",
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="success"
+            options={{
               headerShown: false,
             }}
           />
