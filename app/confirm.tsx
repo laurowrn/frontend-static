@@ -18,17 +18,36 @@ import {
 } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import * as WebBrowser from "expo-web-browser";
+import { useEffect, useState } from "react";
 
 export default function Confirm() {
+  const [isChecked, setIsChecked] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const { colors } = useTheme();
   const router = useRouter();
   const eventGateway = useEventGateway();
-  const { email, name, ticketType, birthday } = useLocalSearchParams<{
+  const params = useLocalSearchParams<{
     email?: string;
     name?: string;
     ticketType?: string;
     birthday?: string;
   }>();
+  const { email, name, ticketType, birthday } = params;
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted && (!email || !name || !ticketType || !birthday)) {
+      router.replace("/");
+    }
+  }, [isMounted, router, email, name, ticketType, birthday]);
+
+  if (!isMounted || !email || !name || !ticketType || !birthday) {
+    return null;
+  }
+
   return (
     <Animated.View
       entering={FadeIn}
@@ -46,7 +65,7 @@ export default function Confirm() {
       <Animated.View
         entering={FadeInDown}
         style={{
-          width: "80%",
+          width: "85%",
           maxWidth: horizontalScale(1000),
           paddingVertical: verticalScale(20),
           paddingHorizontal: horizontalScale(20),
@@ -71,6 +90,77 @@ export default function Confirm() {
           organizador do evento. Após a confirmação, o seu ingresso chegará por
           WhatsApp.
         </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            columnGap: horizontalScale(10),
+            paddingVertical: verticalScale(6),
+            width: "100%",
+          }}
+        >
+          <TouchableOpacity onPress={() => setIsChecked(!isChecked)}>
+            <Ionicons
+              name={isChecked ? "checkmark-circle" : "ellipse-outline"}
+              size={fontSize(20)}
+              style={{ textAlign: "center", color: colors.onSurface }}
+            />
+          </TouchableOpacity>
+          <View style={{ flex: 1 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                alignItems: "center",
+                rowGap: verticalScale(5),
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "left",
+                  color: colors.onSurface,
+                  fontFamily: Fonts.semiBold,
+                  fontSize: fontSize(13),
+                }}
+              >
+                Concordo com a{" "}
+              </Text>
+              <Text
+                style={{
+                  textAlign: "left",
+                  color: colors.primary,
+                  fontFamily: Fonts.black,
+                  fontSize: fontSize(13),
+                }}
+                onPress={() => router.push("/politica-privacidade")}
+              >
+                Política de Privacidade{" "}
+              </Text>
+              <Text
+                style={{
+                  textAlign: "left",
+                  color: colors.onSurface,
+                  fontFamily: Fonts.semiBold,
+                  fontSize: fontSize(13),
+                }}
+              >
+                e os{" "}
+              </Text>
+              <Text
+                style={{
+                  textAlign: "left",
+                  color: colors.primary,
+                  fontFamily: Fonts.black,
+                  fontSize: fontSize(13),
+                }}
+                onPress={() => router.push("/termos-e-condicoes")}
+              >
+                Termos e Condições.
+              </Text>
+            </View>
+          </View>
+        </View>
+
         <Animated.View
           style={{
             flexDirection: "row",
@@ -86,7 +176,7 @@ export default function Confirm() {
               borderWidth: moderateScale(0.5),
               borderColor: colors.onError,
               borderRadius: moderateScale(10),
-              flex: 1,
+              flex: 2,
             }}
             onPress={() => router.back()}
           >
@@ -104,46 +194,61 @@ export default function Confirm() {
           <View style={{ flex: 1 }} />
           <TouchableOpacity
             style={{
-              backgroundColor: colors.primary,
+              backgroundColor: isChecked
+                ? colors.primary
+                : colors.surfaceDisabled,
               paddingVertical: verticalScale(12),
               paddingHorizontal: horizontalScale(15),
-              borderWidth: moderateScale(0.5),
-              borderColor: colors.onPrimary,
               borderRadius: moderateScale(10),
-              flex: 1,
+              flex: 2,
             }}
             onPress={async () => {
               let registerAndJoinData;
+              function convertDate(dateString: string): string {
+                const [day, month, year] = dateString.split("/");
+                return `${year}-${month}-${day}T00:00:00Z`;
+              }
+
+              const formattedBirthday = convertDate(birthday);
               try {
+                // registerAndJoinData = await eventGateway.registerAndJoin(
+                //   {
+                //     email: `${Math.floor(
+                //       Math.random() * 999999999999
+                //     )}@email.com`,
+                //     username: "NovoUsuário2",
+                //     gender: "male",
+                //     birthday: "1995-06-15T00:00:00Z",
+                //     location: "São Paulo",
+                //     bio: "Amo eventos!",
+                //   },
+                //   4
+                // );
                 registerAndJoinData = await eventGateway.registerAndJoin(
                   {
-                    email: `${Math.floor(
-                      Math.random() * 999999999999
-                    )}@email.com`,
-                    username: "NovoUsuário2",
-                    gender: "male",
-                    birthday: "1995-06-15T00:00:00Z",
-                    location: "São Paulo",
-                    bio: "Amo eventos!",
+                    email: email,
+                    username: name,
+                    gender: ticketType,
+                    birthday: formattedBirthday,
                   },
                   4
                 );
                 router.back();
-                let result = await WebBrowser.openBrowserAsync(
+                await WebBrowser.openBrowserAsync(
                   registerAndJoinData.paymentURL
                 );
-                console.log(result);
               } catch (error) {
                 router.back();
                 router.push("/error");
               }
             }}
+            disabled={!isChecked}
           >
             <Text
               style={{
                 fontFamily: Fonts.bold,
                 fontSize: fontSize(16),
-                color: colors.onPrimary,
+                color: isChecked ? colors.onPrimary : colors.onSurfaceDisabled,
                 textAlign: "center",
               }}
             >

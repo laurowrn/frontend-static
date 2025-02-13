@@ -21,8 +21,8 @@ export interface User {
   username: string;
   gender: string;
   birthday: string;
-  location: string;
-  bio: string;
+  location?: string;
+  bio?: string;
 }
 
 export interface RegisterAndJoinResponse {

@@ -64,6 +64,24 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="cancel"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="politica-privacidade"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="termos-e-condicoes"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </EventGatewayProvider>

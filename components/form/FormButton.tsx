@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    height: verticalScale(45),
+    paddingVertical: verticalScale(12),
     borderRadius: moderateScale(25),
   },
   buttonText: {

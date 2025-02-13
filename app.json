@@ -4,7 +4,7 @@
     "slug": "tikko-frontend-web",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logoLight.png",
+    "icon": "./assets/mark.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -18,14 +18,14 @@
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/logoLight.png"
+      "favicon": "./assets/mark.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/logoLight.png",
+          "image": "./assets/mark.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

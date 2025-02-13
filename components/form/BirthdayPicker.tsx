@@ -99,95 +99,120 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
       <View
         style={[
           {
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: "column",
             borderWidth: moderateScale(1),
-            columnGap: horizontalScale(5),
-            padding: moderateScale(10),
+            paddingHorizontal: moderateScale(10),
+            paddingVertical: moderateScale(10),
             borderRadius: moderateScale(14),
             width: "100%",
+            rowGap: moderateScale(8),
           },
           styles.container,
         ]}
       >
-        {leftIcon?.onPress ? (
-          <TouchableOpacity onPress={leftIcon.onPress}>
+        <View
+          style={{
+            flexDirection: "row",
+            columnGap: horizontalScale(5),
+            alignItems: "center",
+          }}
+        >
+          {leftIcon?.onPress ? (
+            <TouchableOpacity onPress={leftIcon.onPress}>
+              <Ionicons
+                name={leftIcon.iconName}
+                size={moderateScale(20)}
+                style={[styles.icons]}
+              />
+            </TouchableOpacity>
+          ) : (
             <Ionicons
-              name={leftIcon.iconName}
+              name={leftIcon?.iconName}
               size={moderateScale(20)}
               style={[styles.icons]}
             />
+          )}
+          <Text
+            style={{
+              fontFamily: Fonts.medium,
+              color: dynamicPickerStyle.color,
+              fontSize: fontSize(16),
+            }}
+          >
+            Data de nascimento
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            width: "100%",
+            columnGap: horizontalScale(10),
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity style={{ flex: 1 }}>
+            <Picker
+              selectedValue={selectedDay}
+              numberOfLines={1}
+              style={[constantStyles.picker, dynamicPickerStyle]}
+              onValueChange={(itemValue) =>
+                handleChange(itemValue, selectedMonth, selectedYear)
+              }
+              onBlur={onBlur}
+              onFocus={onFocus}
+            >
+              {days.map((day) => (
+                <Picker.Item key={day} label={day} value={day} />
+              ))}
+            </Picker>
           </TouchableOpacity>
-        ) : (
-          <Ionicons
-            name={leftIcon?.iconName}
-            size={moderateScale(20)}
-            style={[styles.icons]}
-          />
-        )}
 
-        <TouchableOpacity style={{ flex: 1 }}>
-          <Picker
-            selectedValue={selectedDay}
-            numberOfLines={1}
-            style={[constantStyles.picker, dynamicPickerStyle]}
-            onValueChange={(itemValue) =>
-              handleChange(itemValue, selectedMonth, selectedYear)
-            }
-            onBlur={onBlur}
-            onFocus={onFocus}
-          >
-            {days.map((day) => (
-              <Picker.Item key={day} label={day} value={day} />
-            ))}
-          </Picker>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={{ flex: 1 }}>
-          <Picker
-            selectedValue={selectedMonth}
-            style={[constantStyles.picker, dynamicPickerStyle]}
-            onValueChange={(itemValue) =>
-              handleChange(selectedDay, itemValue, selectedYear)
-            }
-            onBlur={onBlur}
-            onFocus={onFocus}
-          >
-            {months.map((month) => (
-              <Picker.Item key={month} label={month} value={month} />
-            ))}
-          </Picker>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ flex: 1 }}>
-          <Picker
-            selectedValue={selectedYear}
-            style={[constantStyles.picker, dynamicPickerStyle]}
-            onValueChange={(itemValue) =>
-              handleChange(selectedDay, selectedMonth, itemValue)
-            }
-            onBlur={onBlur}
-            onFocus={onFocus}
-          >
-            {years.map((year) => (
-              <Picker.Item key={year} label={year} value={year} />
-            ))}
-          </Picker>
-        </TouchableOpacity>
-        {rightIcon?.onPress ? (
-          <TouchableOpacity onPress={rightIcon.onPress}>
+          <TouchableOpacity style={{ flex: 1 }}>
+            <Picker
+              selectedValue={selectedMonth}
+              style={[constantStyles.picker, dynamicPickerStyle]}
+              onValueChange={(itemValue) =>
+                handleChange(selectedDay, itemValue, selectedYear)
+              }
+              onBlur={onBlur}
+              onFocus={onFocus}
+            >
+              {months.map((month) => (
+                <Picker.Item key={month} label={month} value={month} />
+              ))}
+            </Picker>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ flex: 1 }}>
+            <Picker
+              selectedValue={selectedYear}
+              style={[constantStyles.picker, dynamicPickerStyle]}
+              onValueChange={(itemValue) =>
+                handleChange(selectedDay, selectedMonth, itemValue)
+              }
+              onBlur={onBlur}
+              onFocus={onFocus}
+            >
+              {years.map((year) => (
+                <Picker.Item key={year} label={year} value={year} />
+              ))}
+            </Picker>
+          </TouchableOpacity>
+          {rightIcon?.onPress ? (
+            <TouchableOpacity onPress={rightIcon.onPress}>
+              <Ionicons
+                name={rightIcon.iconName}
+                size={moderateScale(20)}
+                style={[styles.icons]}
+              />
+            </TouchableOpacity>
+          ) : (
             <Ionicons
-              name={rightIcon.iconName}
+              name={rightIcon?.iconName}
               size={moderateScale(20)}
               style={[styles.icons]}
             />
-          </TouchableOpacity>
-        ) : (
-          <Ionicons
-            name={rightIcon?.iconName}
-            size={moderateScale(20)}
-            style={[styles.icons]}
-          />
-        )}
+          )}
+        </View>
       </View>
       {label && (
         <Text style={[styles.label]} testID={`${testId}-label`}>
@@ -203,6 +228,5 @@ export default BirthdayPicker;
 const constantStyles = StyleSheet.create({
   picker: {
     flex: 1,
-    paddingVertical: moderateScale(3),
   },
 });

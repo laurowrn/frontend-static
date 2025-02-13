@@ -1,11 +1,21 @@
 import { useTheme } from "@/context/ThemeContext";
 import FormTextInput from "@/components/form/FormTextInput";
-import { useState } from "react";
-import { FlatList, TouchableOpacity, View, Text, Platform } from "react-native";
-import { EMAIL_MAX_LENGTH, NAME_MAX_LENGTH } from "@/constants/validation";
+import { useEffect, useState } from "react";
+import { FlatList, TouchableOpacity, View, Text } from "react-native";
 import {
+  AGE_MAX_LENGTH,
+  CUPOM_MAX_LENGTH,
+  EMAIL_MAX_LENGTH,
+  INSTAGRA_MAX_LENGTH,
+  MOBILE_NUMBER_MAX_LENGTH,
+  NAME_MAX_LENGTH,
+} from "@/constants/validation";
+import {
+  validateAge,
   validateBirthday,
   validateEmail,
+  validateInstagram,
+  validateMobileNumber,
   validateName,
 } from "@/helpers/validators";
 import { Fonts } from "@/constants/fonts";
@@ -14,16 +24,21 @@ import BirthdayPicker from "./BirthdayPicker";
 import FormButton from "./FormButton";
 import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
 import { useRouter } from "expo-router";
+import FormPickerTextInput from "./FormPickerTextInput";
+import FormCheckbox from "./FormCheckbox";
 
 interface FormInputConfig {
   name: string;
+  initialValue?: string;
   title?: string;
   submit?: () => void;
   placeholder?: string;
   validator?: (value: string) => { isValid: boolean; errorMessage: string };
   iconName?: keyof typeof Ionicons.glyphMap | undefined;
-  type: "text-input" | "birthday-picker" | "submit-button";
+  type: "text-input" | "birthday-picker" | "submit-button" | "checkbox";
   maxLength?: number;
+  disabled?: boolean;
+  matches?: string;
 }
 
 interface TextInputStyleType {
@@ -33,13 +48,15 @@ interface TextInputStyleType {
 }
 
 interface UserInfoFormProps {
-  ticketType?: "masculino" | "feminino" | null | undefined;
+  ticketType?: "male" | "female" | null | undefined;
 }
 
 export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
   const { colors } = useTheme();
   const router = useRouter();
   const [birthday, setBirthday] = useState<string>("01/01/2000");
+  const [countryCode, setCountryCode] = useState<string>("+55");
+  const [isSubmitButtonDisabled, setIsSubmitButtondisabled] = useState(true);
 
   const blurredTextInputStyle: TextInputStyleType = {
     backgroundColor: colors.surfaceVariant,
@@ -66,19 +83,53 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
   const formInputs: FormInputConfig[] = [
     {
       type: "text-input",
-      name: "email",
-      placeholder: "Email",
-      validator: validateEmail,
-      iconName: "at",
-      maxLength: EMAIL_MAX_LENGTH,
-    },
-    {
-      type: "text-input",
       name: "name",
       placeholder: "Nome",
       validator: validateName,
       maxLength: NAME_MAX_LENGTH,
       iconName: "person",
+    },
+    {
+      type: "text-input",
+      name: "email",
+      placeholder: "Email",
+      validator: validateEmail,
+      iconName: "mail",
+      maxLength: EMAIL_MAX_LENGTH,
+    },
+    {
+      type: "text-input",
+      name: "confirm-email",
+      placeholder: "Confirme seu Email",
+      matches: "email",
+      iconName: "mail",
+      maxLength: EMAIL_MAX_LENGTH,
+    },
+    {
+      type: "text-input",
+      name: "mobile-number",
+      placeholder: "Telefone",
+      initialValue: "+55",
+      validator: validateMobileNumber,
+      maxLength: MOBILE_NUMBER_MAX_LENGTH,
+      iconName: "call",
+    },
+    {
+      type: "text-input",
+      name: "confirm-mobile-number",
+      placeholder: "Confirme seu telefone",
+      matches: "mobile-number",
+      initialValue: "+55",
+      maxLength: MOBILE_NUMBER_MAX_LENGTH,
+      iconName: "call",
+    },
+    {
+      type: "text-input",
+      name: "instagram",
+      placeholder: "Instagram",
+      validator: validateInstagram,
+      maxLength: INSTAGRA_MAX_LENGTH,
+      iconName: "logo-instagram",
     },
     {
       type: "birthday-picker",
@@ -88,15 +139,22 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       iconName: "calendar",
     },
     {
+      type: "checkbox",
+      name: "cupom",
+      placeholder: "Cupom",
+      iconName: "wallet",
+      maxLength: CUPOM_MAX_LENGTH,
+    },
+    {
       type: "submit-button",
       name: "buy",
       title: "Comprar",
+      disabled: isSubmitButtonDisabled,
       submit: async () => {
         router.push(
           `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&ticketType=${ticketType}&birthday=${birthday}`
         );
       },
-      validator: validateBirthday,
     },
   ];
 
@@ -112,6 +170,29 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
     }, {} as Record<string, { value: string; isValid: boolean; errorMessage: string; isFocused: boolean }>)
   );
 
+  useEffect(() => {
+    const allFieldsValid = formInputs
+      .filter((input) => input.type === "text-input")
+      .every(
+        (input) =>
+          formState[input.name].isValid && formState[input.name].value !== ""
+      );
+
+    const emailsMatch =
+      formState["email"].value === formState["confirm-email"].value;
+    const mobileNumbersMatch =
+      formState["mobile-number"].value ===
+      formState["confirm-mobile-number"].value;
+
+    const allFieldsValidAndMatching =
+      allFieldsValid &&
+      emailsMatch &&
+      mobileNumbersMatch &&
+      validateBirthday(birthday).isValid;
+
+    setIsSubmitButtondisabled(!allFieldsValidAndMatching);
+  }, [formState]);
+
   const handleTextChange = (
     name: string,
     text: string,
@@ -120,6 +201,43 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
     const { isValid, errorMessage } = validator
       ? validator(text)
       : { isValid: true, errorMessage: "" };
+
+    const matchName = formInputs.find((input) => input.name === name)?.matches;
+    if (matchName) {
+      const matchValue = formState[matchName].value;
+      const isMatchValid = matchValue === text;
+
+      setFormState((prevState) => ({
+        ...prevState,
+        [name]: {
+          ...prevState[name],
+          value: text,
+          isValid: isMatchValid || text.length === 0,
+          errorMessage:
+            isMatchValid || text.length === 0 ? "" : "Valores não correspondem",
+        },
+      }));
+      return;
+    }
+
+    const matchingInput = formInputs.find((input) => input.matches === name);
+    if (matchingInput) {
+      const matchingInputName = matchingInput.name;
+      const isMatchValid = text === formState[matchingInputName].value;
+
+      setFormState((prevState) => ({
+        ...prevState,
+        [matchingInputName]: {
+          ...prevState[matchingInputName],
+          isValid:
+            isMatchValid || formState[matchingInputName].value.length === 0,
+          errorMessage:
+            isMatchValid || formState[matchingInputName].value.length === 0
+              ? ""
+              : "Valores não correspondem",
+        },
+      }));
+    }
 
     setFormState((prevState) => ({
       ...prevState,
@@ -138,6 +256,11 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       [name]: {
         ...prevState[name],
         isFocused: true,
+        value:
+          prevState[name].value === ""
+            ? formInputs.find((input) => input.name === name)?.initialValue ||
+              ""
+            : prevState[name].value,
       },
     }));
   };
@@ -172,6 +295,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       maxLength,
       title,
       submit,
+      disabled,
     } = item;
     const { value, isValid, errorMessage, isFocused } = formState[name];
 
@@ -201,8 +325,34 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
         <FormButton
           title={title}
           onPress={submit}
-          backgroundColor={colors.primary}
-          textColor={colors.onPrimary}
+          backgroundColor={disabled ? colors.surfaceDisabled : colors.primary}
+          textColor={disabled ? colors.onSurfaceDisabled : colors.onPrimary}
+          disabled={disabled}
+        />
+      );
+    } else if (type === "checkbox") {
+      return (
+        <FormCheckbox
+          key={name}
+          placeholder={placeholder}
+          value={value}
+          width="100%"
+          maxLength={maxLength}
+          onChangeText={(text) => handleTextChange(name, text, validator)}
+          onFocus={() => handleFocus(name)}
+          onBlur={() => handleBlur(name)}
+          label={errorMessage}
+          leftIcon={{ iconName }}
+          styles={{
+            textInputContainer: getTextInputStyle(isFocused, isValid),
+            label: {
+              textAlign: "left",
+              fontFamily: Fonts.regular,
+              color: colors.error,
+            },
+            icons: getIconStyle(isFocused, isValid),
+          }}
+          testId={`${name}-input`}
         />
       );
     } else {

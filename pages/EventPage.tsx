@@ -7,7 +7,6 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import {
   fontSize,
@@ -19,9 +18,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import { Fonts } from "@/constants/fonts";
 import { useState } from "react";
-import { useRouter } from "expo-router";
 import UserInfoForm from "@/components/form/UserInfoForm";
 import FormButton from "@/components/form/FormButton";
+import DefaultContainer from "@/components/containers/DefaultContainer";
 
 export default function EventPage() {
   const { colors } = useTheme();
@@ -53,35 +52,23 @@ export default function EventPage() {
     blurredTicketSelectorStyle
   );
   const [isTicketTypeSelected, setIsTicketTypeSelected] = useState(false);
-  const [ticketType, setTicketType] = useState<
-    "masculino" | "feminino" | null
-  >();
+  const [ticketType, setTicketType] = useState<"male" | "female" | null>();
   const [isFormVisible, setIsFormVisible] = useState(false);
-  function handleTicketTypeChange(type: "feminino" | "masculino") {
-    if (type === "feminino") {
+  function handleTicketTypeChange(type: "female" | "male") {
+    if (type === "female") {
       setIsTicketTypeSelected(true);
       setFemaleTicketSelectorStyle(focusedTicketSelectorStyle);
       setMaleTicketSelectorStyle(blurredTicketSelectorStyle);
-      setTicketType("feminino");
+      setTicketType("female");
     } else {
       setIsTicketTypeSelected(true);
       setMaleTicketSelectorStyle(focusedTicketSelectorStyle);
       setFemaleTicketSelectorStyle(blurredTicketSelectorStyle);
-      setTicketType("masculino");
+      setTicketType("male");
     }
   }
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        alignItems: "center",
-        paddingHorizontal:
-          Dimensions.get("window").width < 768
-            ? horizontalScale(20)
-            : horizontalScale(300),
-      }}
-    >
+    <DefaultContainer>
       <ScrollView
         contentContainerStyle={{
           width: "100%",
@@ -114,7 +101,7 @@ export default function EventPage() {
             width: "100%",
           }}
         >
-          Colmeia - Secret Garden 18'01'25
+          Colmeia - Reflections Experience 22’03’25
         </Text>
         <View
           style={{
@@ -138,7 +125,7 @@ export default function EventPage() {
                 fontSize: fontSize(16),
               }}
             >
-              sábado, 18 de janeiro
+              sábado, 22 de março
             </Text>
             <Text
               style={{
@@ -177,7 +164,7 @@ export default function EventPage() {
               columnGap: horizontalScale(5),
             }}
           >
-            <View>
+            <View style={{ width: "100%" }}>
               <Text
                 style={{
                   color: colors.onBackground,
@@ -185,16 +172,19 @@ export default function EventPage() {
                   fontSize: fontSize(16),
                 }}
               >
-                Belvedere Beach Club
+                Lounge GV
               </Text>
               <Text
                 style={{
                   color: colors.onBackground,
                   fontFamily: Fonts.regular,
                   fontSize: fontSize(16),
+                  flexWrap: "wrap",
+                  flexDirection: "row",
                 }}
               >
-                Itajaí, Santa Catarina
+                R. Antônio Lopes Gonçalves Bastos, 1083 - Bairro Rio Pequeno,
+                Camboriú - SC
               </Text>
             </View>
             <Feather
@@ -259,22 +249,23 @@ export default function EventPage() {
               style={{
                 flexDirection: "row",
                 width: "100%",
-                height: verticalScale(40),
                 backgroundColor: maleTicketSelectorStyle.backgroundColor,
                 borderRadius: moderateScale(10),
                 borderColor: maleTicketSelectorStyle.borderColor,
                 borderWidth: moderateScale(1),
+                paddingVertical: verticalScale(8),
                 paddingHorizontal: moderateScale(5),
                 alignItems: "center",
+                justifyContent: "space-between",
               }}
               onPress={() => {
-                handleTicketTypeChange("masculino");
+                handleTicketTypeChange("male");
               }}
             >
-              <View style={{ flex: 2 }}>
+              <View>
                 <Ionicons
                   name={maleTicketSelectorStyle.iconName}
-                  size={26}
+                  size={fontSize(20)}
                   color={maleTicketSelectorStyle.iconColor}
                   style={{
                     textAlign: "center",
@@ -283,7 +274,7 @@ export default function EventPage() {
                   }}
                 />
               </View>
-              <View style={{ flex: 12 }}>
+              <View>
                 <Text
                   style={{
                     color: maleTicketSelectorStyle.textColor,
@@ -291,10 +282,10 @@ export default function EventPage() {
                     fontSize: fontSize(16),
                   }}
                 >
-                  MASCULINO - HORA
+                  MASCULINO - PRÉ-VENDA
                 </Text>
               </View>
-              <View style={{ flex: 4, alignItems: "flex-end" }}>
+              <View style={{ alignItems: "flex-end" }}>
                 <Text
                   style={{
                     color: maleTicketSelectorStyle.textColor,
@@ -302,7 +293,7 @@ export default function EventPage() {
                     fontSize: fontSize(15),
                   }}
                 >
-                  R$ 600,00
+                  R$ 120,00
                 </Text>
               </View>
             </TouchableOpacity>
@@ -310,22 +301,23 @@ export default function EventPage() {
               style={{
                 flexDirection: "row",
                 width: "100%",
-                height: verticalScale(40),
                 backgroundColor: femaleTicketSelectorStyle.backgroundColor,
                 borderColor: femaleTicketSelectorStyle.borderColor,
                 borderRadius: moderateScale(10),
                 borderWidth: moderateScale(1),
+                paddingVertical: verticalScale(8),
                 paddingHorizontal: moderateScale(5),
                 alignItems: "center",
+                justifyContent: "space-between",
               }}
               onPress={() => {
-                handleTicketTypeChange("feminino");
+                handleTicketTypeChange("female");
               }}
             >
-              <View style={{ flex: 2 }}>
+              <View>
                 <Ionicons
                   name={femaleTicketSelectorStyle.iconName}
-                  size={26}
+                  size={fontSize(20)}
                   color={femaleTicketSelectorStyle.iconColor}
                   style={{
                     textAlign: "center",
@@ -334,7 +326,7 @@ export default function EventPage() {
                   }}
                 />
               </View>
-              <View style={{ flex: 12 }}>
+              <View>
                 <Text
                   style={{
                     color: femaleTicketSelectorStyle.textColor,
@@ -342,10 +334,10 @@ export default function EventPage() {
                     fontSize: fontSize(16),
                   }}
                 >
-                  FEMININO - HORA
+                  FEMININO - PRÉ-VENDA
                 </Text>
               </View>
-              <View style={{ flex: 4, alignItems: "flex-end" }}>
+              <View style={{ alignItems: "flex-end" }}>
                 <Text
                   style={{
                     color: femaleTicketSelectorStyle.textColor,
@@ -353,7 +345,7 @@ export default function EventPage() {
                     fontSize: fontSize(15),
                   }}
                 >
-                  R$ 300,00
+                  R$ 80,00
                 </Text>
               </View>
             </TouchableOpacity>
@@ -404,14 +396,33 @@ export default function EventPage() {
               lineHeight: verticalScale(20),
             }}
           >
-            Mesas e reservas: +55 98406-4466 <br />
+            Mesas e reservas: +55 98406-4466
+            <br />
+            <br />
+            Você precisa ser aceito para fazer parte. Não existe venda direta de
+            ingressos, e o valor só é debitado após a aprovação.
+            <br />
             <br />A Colmeia é um evento de música eletrônica inovador que
-            oferece uma experência única para o público e artistas. Com um
-            rigoroso processo de seleção, garante a participação d eum público
+            oferece uma experiência única para o público e artistas. Com um
+            rigoroso processo de seleção, garante a participação de um público
             exclusivo e altamente engajado. O evento promove colaboração e
             criatividade, proporcionando novas sensações e momentos memoráveis,
             enquanto revitaliza a cena musical eletrônica e destaca sua casa
             como um centro de inovação e inclusão.
+            <br />
+            <br />
+            Política de Cancelamento:
+            <br />
+            <br />O Código de Defesa do Consumidor (Artigo 49) prevê que, em até
+            7 (sete) dias, o consumidor pode desistir da compra, desde que esse
+            prazo não ultrapasse 48 (quarenta e oito) horas antes do evento. O
+            reembolso é realizado via um processador de pagamentos online, pela
+            mesma forma de pagamento utilizada na compra, descontada a taxa de
+            conveniência (se houver), no prazo de até 45 (quarenta e cinco) dias
+            após o cancelamento. No caso de compras com cartões de crédito, o
+            valor será devolvido como crédito nas faturas seguintes.
+            <br />
+            Bem-vindo à experiência Colmeia!
           </Text>
         </View>
         <View
@@ -420,7 +431,7 @@ export default function EventPage() {
           }}
         />
       </ScrollView>
-    </SafeAreaView>
+    </DefaultContainer>
   );
 }
 
