@@ -155,6 +155,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       matches: "mobile-number",
       maxLength: MOBILE_NUMBER_MAX_LENGTH,
       iconName: "call",
+      inputMode: "text",
       autoCapitalize: "none",
       autoComplete: "off",
       autoCorrect: false,

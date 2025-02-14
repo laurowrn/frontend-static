@@ -22,6 +22,7 @@ import UserInfoForm from "@/components/form/UserInfoForm";
 import FormButton from "@/components/form/FormButton";
 import DefaultContainer from "@/components/containers/DefaultContainer";
 import * as WebBrowser from "expo-web-browser";
+import { TikkoIcons } from "@/hooks/useDefaultFonts";
 
 export default function EventPage() {
   const { colors, theme } = useTheme();
@@ -87,7 +88,7 @@ export default function EventPage() {
         showsVerticalScrollIndicator={false}
       >
         <View style={{ height: verticalScale(5) }} />
-        <View
+        {/* <View
           style={{
             height: moderateScale(25),
             width: moderateScale(70),
@@ -105,7 +106,13 @@ export default function EventPage() {
             contentFit="cover"
             transition={1000}
           />
-        </View>
+        </View> */}
+
+        <TikkoIcons
+          name="logo1"
+          size={fontSize(40)}
+          color={theme === "dark" ? colors.onBackground : colors.primary}
+        />
         <View style={styles.container}>
           <Image
             style={styles.image}
@@ -569,25 +576,23 @@ export default function EventPage() {
           <View
             style={{
               alignItems: "center",
+              justifyContent: "center",
+              width: moderateScale(100),
+              height: moderateScale(80),
             }}
           >
             <View
               style={{
-                height: moderateScale(40),
-                width: moderateScale(40),
-                alignItems: "center",
+                width: moderateScale(45),
+                height: moderateScale(45),
                 justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <Image
-                style={styles.image}
-                source={
-                  theme === "dark"
-                    ? require("../assets/markDark.png")
-                    : require("../assets/markLight.png")
-                }
-                contentFit="cover"
-                transition={1000}
+              <TikkoIcons
+                name="mark1"
+                size={fontSize(40)}
+                color={colors.primary}
               />
             </View>
             <Text
@@ -602,12 +607,10 @@ export default function EventPage() {
           </View>
           <TouchableOpacity
             style={{
-              padding: moderateScale(6),
-              flexDirection: "column",
-              justifyContent: "center",
               alignItems: "center",
-              rowGap: horizontalScale(3),
-              alignSelf: "flex-end",
+              justifyContent: "center",
+              width: moderateScale(100),
+              height: moderateScale(80),
             }}
             onPress={() => {
               WebBrowser.openBrowserAsync(
@@ -615,12 +618,22 @@ export default function EventPage() {
               );
             }}
           >
-            <Ionicons
-              name="logo-whatsapp"
-              size={fontSize(25)}
-              color={colors.primary}
-              style={{ flex: 1, textAlign: "center" }}
-            />
+            <View
+              style={{
+                width: moderateScale(45),
+                height: moderateScale(45),
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons
+                name="logo-whatsapp"
+                size={fontSize(25)}
+                color={colors.primary}
+                style={{ alignSelf: "center" }}
+              />
+            </View>
+
             <Text
               style={{
                 color: colors.primary,
@@ -632,7 +645,6 @@ export default function EventPage() {
             </Text>
           </TouchableOpacity>
         </View>
-
         <View
           style={{
             height: verticalScale(60),
