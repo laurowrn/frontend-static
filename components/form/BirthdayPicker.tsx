@@ -135,7 +135,7 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
             style={{
               fontFamily: Fonts.medium,
               color: dynamicPickerStyle.color,
-              fontSize: fontSize(16),
+              fontSize: fontSize(15),
             }}
           >
             Data de nascimento

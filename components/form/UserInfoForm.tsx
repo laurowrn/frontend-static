@@ -51,6 +51,10 @@ interface FormInputConfig {
   disabled?: boolean;
   matches?: string;
   inputMode?: InputModeOptions;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  autoComplete?: "off" | "email";
+  autoCorrect?: boolean;
+  autoFocus?: boolean;
 }
 
 interface TextInputStyleType {
@@ -66,13 +70,12 @@ interface UserInfoFormProps {
 export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
   const { colors } = useTheme();
   const router = useRouter();
-  const [birthday, setBirthday] = useState<string>("01/01/2000");
-  const [countryCode, setCountryCode] = useState<string>("+55");
+  const [birthday, setBirthday] = useState<string>("01/01/2025");
   const [isSubmitButtonDisabled, setIsSubmitButtondisabled] = useState(true);
 
   const blurredTextInputStyle: TextInputStyleType = {
     backgroundColor: colors.surfaceVariant,
-    borderColor: colors.surfaceVariant,
+    borderColor: "transparent",
     color: colors.onSurfaceVariant,
   };
 
@@ -101,6 +104,10 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       maxLength: NAME_MAX_LENGTH,
       iconName: "person",
       inputMode: "text",
+      autoCapitalize: "words",
+      autoComplete: "off",
+      autoCorrect: false,
+      autoFocus: true,
     },
     {
       type: "text-input",
@@ -110,6 +117,10 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       iconName: "mail",
       maxLength: EMAIL_MAX_LENGTH,
       inputMode: "email",
+      autoCapitalize: "none",
+      autoComplete: "off",
+      autoCorrect: false,
+      autoFocus: false,
     },
     {
       type: "text-input",
@@ -118,6 +129,11 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       matches: "email",
       iconName: "mail",
       maxLength: EMAIL_MAX_LENGTH,
+      inputMode: "email",
+      autoCapitalize: "none",
+      autoComplete: "off",
+      autoCorrect: false,
+      autoFocus: false,
     },
     {
       type: "form-picker-input-text",
@@ -127,6 +143,10 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       maxLength: MOBILE_NUMBER_MAX_LENGTH,
       iconName: "call",
       inputMode: "text",
+      autoCapitalize: "none",
+      autoComplete: "off",
+      autoCorrect: false,
+      autoFocus: false,
     },
     {
       type: "form-picker-input-text",
@@ -135,6 +155,10 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       matches: "mobile-number",
       maxLength: MOBILE_NUMBER_MAX_LENGTH,
       iconName: "call",
+      autoCapitalize: "none",
+      autoComplete: "off",
+      autoCorrect: false,
+      autoFocus: false,
     },
     {
       type: "text-input",
@@ -143,6 +167,10 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       validator: validateInstagram,
       maxLength: INSTAGRA_MAX_LENGTH,
       iconName: "logo-instagram",
+      autoCapitalize: "none",
+      autoComplete: "off",
+      autoCorrect: false,
+      autoFocus: false,
     },
     {
       type: "birthday-picker",
@@ -157,6 +185,11 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       placeholder: "Cupom",
       iconName: "wallet",
       maxLength: CUPOM_MAX_LENGTH,
+      inputMode: "email",
+      autoCapitalize: "none",
+      autoComplete: "off",
+      autoCorrect: false,
+      autoFocus: false,
     },
     {
       type: "submit-button",
@@ -165,7 +198,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       disabled: isSubmitButtonDisabled,
       submit: async () => {
         router.push(
-          `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&ticketType=${ticketType}&birthday=${birthday}`
+          `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&mobileNumber=${formState["mobile-number"].value}&ticketType=${ticketType}&birthday=${birthday}&instagram=${formState["instagram"].value}&cupom=${formState["cupom"].value}`
         );
       },
     },
@@ -310,6 +343,10 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       submit,
       disabled,
       inputMode,
+      autoCapitalize,
+      autoComplete,
+      autoCorrect,
+      autoFocus,
     } = item;
     const { value, isValid, errorMessage, isFocused } = formState[name];
     if (type === "birthday-picker") {
@@ -366,6 +403,11 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
             icons: getIconStyle(isFocused, isValid),
           }}
           testId={`${name}-input`}
+          inputMode={inputMode}
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          autoCorrect={autoCorrect}
+          autoFocus={autoFocus}
         />
       );
     } else if (type === "form-picker-input-text") {
@@ -392,6 +434,10 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
           }}
           testId={`${name}-picker-input`}
           inputMode={inputMode}
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          autoCorrect={autoCorrect}
+          autoFocus={autoFocus}
         />
       );
     }
@@ -418,6 +464,10 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
         }}
         testId={`${name}-input`}
         inputMode={inputMode}
+        autoCapitalize={autoCapitalize}
+        autoComplete={autoComplete}
+        autoCorrect={autoCorrect}
+        autoFocus={autoFocus}
       />
     );
   };
@@ -426,7 +476,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
     <View style={{ width: "100%", rowGap: verticalScale(8) }}>
       <Text
         style={{
-          color: colors.onBackground,
+          color: colors.onSurface,
           fontFamily: Fonts.regular,
           fontSize: fontSize(16),
           flex: 1,

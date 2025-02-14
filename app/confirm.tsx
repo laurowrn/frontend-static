@@ -31,20 +31,49 @@ export default function Confirm() {
     name?: string;
     ticketType?: string;
     birthday?: string;
+    mobileNumber?: string;
+    instagram?: string;
+    cupom?: string;
   }>();
-  const { email, name, ticketType, birthday } = params;
+  const { email, name, ticketType, birthday, mobileNumber, instagram, cupom } =
+    params;
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    if (isMounted && (!email || !name || !ticketType || !birthday)) {
+    if (
+      isMounted &&
+      (!email ||
+        !name ||
+        !ticketType ||
+        !birthday ||
+        !mobileNumber ||
+        !instagram)
+    ) {
       router.replace("/");
     }
-  }, [isMounted, router, email, name, ticketType, birthday]);
+  }, [
+    isMounted,
+    router,
+    email,
+    name,
+    ticketType,
+    birthday,
+    mobileNumber,
+    instagram,
+  ]);
 
-  if (!isMounted || !email || !name || !ticketType || !birthday) {
+  if (
+    !isMounted ||
+    !email ||
+    !name ||
+    !ticketType ||
+    !birthday ||
+    !mobileNumber ||
+    !instagram
+  ) {
     return null;
   }
 
@@ -78,18 +107,42 @@ export default function Confirm() {
           rowGap: verticalScale(30),
         }}
       >
-        <Text
+        <View
           style={{
-            fontFamily: Fonts.regular,
-            fontSize: fontSize(16),
-            textAlign: "justify",
-            color: colors.onBackground,
+            rowGap: verticalScale(5),
           }}
         >
-          Ao completar a compra, você deverá esperar a confirmação do
-          organizador do evento. Após a confirmação, o seu ingresso chegará por
-          WhatsApp.
-        </Text>
+          <Text
+            style={{
+              fontFamily: Fonts.regular,
+              fontSize: fontSize(16),
+              textAlign: "justify",
+              color: colors.onBackground,
+            }}
+          >
+            Ao completar a compra, você deverá esperar a confirmação do
+            organizador do evento. Após a confirmação, o seu ingresso chegará
+            por WhatsApp.
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              WebBrowser.openBrowserAsync(
+                "https://api.whatsapp.com/send?phone=5547997689918&text=Ol%C3%A1%2C%20eu%20gostaria%20de%20tirar%20uma%20d%C3%BAvida."
+              );
+            }}
+          >
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: Fonts.semiBold,
+                fontSize: fontSize(16),
+              }}
+            >
+              Qualquer dúvida fale conosco.
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View
           style={{
             flexDirection: "row",
@@ -104,7 +157,10 @@ export default function Confirm() {
               key={isChecked ? "checked" : "unchecked"}
               name={isChecked ? "checkmark-circle" : "ellipse-outline"}
               size={fontSize(20)}
-              style={{ textAlign: "center", color: colors.onSurface }}
+              style={{
+                textAlign: "center",
+                color: isChecked ? colors.primary : colors.onSurface,
+              }}
             />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
@@ -231,6 +287,9 @@ export default function Confirm() {
                     username: name,
                     gender: ticketType,
                     birthday: formattedBirthday,
+                    mobileNumber: mobileNumber,
+                    instagram: instagram,
+                    cupom: cupom,
                   },
                   4
                 );

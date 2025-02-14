@@ -22,7 +22,7 @@ import {
 
 const errorMessages = {
   mandatoryField: "Este campo é obrigatório",
-  invalidEmail: "Por favor, insira um email válido (máximo 254 caracteres)",
+  invalidEmail: "Por favor, insira um email válido",
   invalidPassword:
     "A senha deve conter pelo menos um número, um caractere especial, uma letra minúscula e uma letra maiúscula (máximo 64 caracteres)",
   invalidName: "Por favor, insira um nome completo válido",
@@ -134,30 +134,38 @@ const validateMobileNumber = (mobileNumber: string) => {
       errorMessage: errorMessages.mandatoryField,
     };
   }
-  if (
-    !acceptedCountryCodes.some((code) => mobileNumber.startsWith(mobileNumber))
-  ) {
+  if (!acceptedCountryCodes.some((code) => mobileNumber.startsWith(code))) {
     return {
       isValid: false,
       errorMessage: errorMessages.invalidCountryCode,
     };
   }
 
-  if (mobileNumber.startsWith("+55")) {
-    const ddd = mobileNumber.slice(3, 5);
+  const countryCode = mobileNumber.slice(0, 3);
+  const numberWithoutCountryCode = mobileNumber.slice(3);
+
+  if (!/^\d+$/.test(numberWithoutCountryCode)) {
+    return {
+      isValid: false,
+      errorMessage: errorMessages.invalidMobileNumber,
+    };
+  }
+
+  if (countryCode === "+55") {
+    const ddd = numberWithoutCountryCode.slice(0, 2);
     if (!validBrazilianDDDs.has(ddd)) {
       return {
         isValid: false,
         errorMessage: errorMessages.invalidDDD,
       };
     }
-    if (mobileNumber.length == 13) {
+    if (numberWithoutCountryCode.length == 10) {
       return {
         isValid: false,
         errorMessage: errorMessages.invalidMobileNumber9,
       };
     }
-    if (mobileNumber.length != 14) {
+    if (numberWithoutCountryCode.length != 11) {
       return {
         isValid: false,
         errorMessage: errorMessages.invalidMobileNumber,

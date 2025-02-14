@@ -21,6 +21,9 @@ export interface User {
   username: string;
   gender: string;
   birthday: string;
+  mobileNumber: string;
+  instagram: string;
+  cupom?: string;
   location?: string;
   bio?: string;
 }

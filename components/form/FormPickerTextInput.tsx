@@ -54,6 +54,10 @@ type FormPickerTextInputProps = {
   };
   testId?: string;
   inputMode?: InputModeOptions;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  autoComplete?: "off" | "email";
+  autoCorrect?: boolean;
+  autoFocus?: boolean;
 };
 
 const FormPickerTextInput: React.FC<FormPickerTextInputProps> = ({
@@ -73,7 +77,11 @@ const FormPickerTextInput: React.FC<FormPickerTextInputProps> = ({
   label,
   styles,
   testId,
-  inputMode,
+  inputMode = "none",
+  autoCapitalize,
+  autoComplete,
+  autoCorrect,
+  autoFocus,
 }) => {
   // Extract country code from value or default to "+55"
   const getInitialCountryCode = (val: string) => {
@@ -124,9 +132,10 @@ const FormPickerTextInput: React.FC<FormPickerTextInputProps> = ({
           {
             flexDirection: "row",
             alignItems: "center",
+            justifyContent: "center",
             borderWidth: moderateScale(1),
             columnGap: horizontalScale(5),
-            padding: moderateScale(10),
+            padding: moderateScale(8),
             borderRadius: moderateScale(14),
             width: "100%",
           },
@@ -155,12 +164,12 @@ const FormPickerTextInput: React.FC<FormPickerTextInputProps> = ({
             style={[
               {
                 flex: 1,
-                paddingVertical: verticalScale(2),
+                paddingVertical: verticalScale(5),
                 paddingHorizontal: horizontalScale(5),
                 textAlign: "center",
                 justifyContent: "center",
                 alignItems: "center",
-                fontSize: fontSize(16),
+                fontSize: fontSize(15),
                 fontFamily: Fonts.bold,
               },
               dynamicPickerStyle,
@@ -190,7 +199,7 @@ const FormPickerTextInput: React.FC<FormPickerTextInputProps> = ({
             {
               flex: 1,
               fontFamily: Fonts.regular,
-              fontSize: fontSize(16),
+              fontSize: fontSize(15),
               width: "100%",
               height: "100%",
               paddingVertical: moderateScale(3),
@@ -204,6 +213,10 @@ const FormPickerTextInput: React.FC<FormPickerTextInputProps> = ({
           secureTextEntry={secureTextEntry}
           testID={testId}
           inputMode={inputMode}
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          autoCorrect={autoCorrect}
+          autoFocus={autoFocus}
         />
         {rightIcon?.onPress ? (
           <TouchableOpacity onPress={rightIcon.onPress}>

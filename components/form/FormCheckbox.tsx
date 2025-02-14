@@ -14,6 +14,7 @@ import {
   View,
   DimensionValue,
   TextStyle,
+  InputModeOptions,
 } from "react-native";
 import FormTextInput from "./FormTextInput";
 
@@ -50,6 +51,11 @@ type FormTextInputProps = {
     icons: TextStyle;
   };
   testId?: string;
+  inputMode?: InputModeOptions;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  autoComplete?: "off" | "email";
+  autoCorrect?: boolean;
+  autoFocus?: boolean;
 };
 
 export default function FormCheckbox({
@@ -69,6 +75,11 @@ export default function FormCheckbox({
   label,
   styles,
   testId,
+  inputMode = "none",
+  autoCapitalize,
+  autoComplete,
+  autoCorrect,
+  autoFocus,
 }: FormTextInputProps) {
   const [isChecked, setIsChecked] = useState(false);
   const { colors } = useTheme();
@@ -88,13 +99,16 @@ export default function FormCheckbox({
           key={isChecked ? "checked" : "unchecked"}
           name={isChecked ? "checkmark-circle" : "ellipse-outline"}
           size={fontSize(20)}
-          style={{ textAlign: "center", color: colors.onSurface }}
+          style={{
+            textAlign: "center",
+            color: isChecked ? colors.primary : colors.onSurface,
+          }}
         />
         <Text
           style={{
             textAlign: "center",
             color: colors.onSurface,
-            fontFamily: Fonts.bold,
+            fontFamily: Fonts.semiBold,
             fontSize: fontSize(16),
           }}
         >
@@ -117,6 +131,11 @@ export default function FormCheckbox({
             label: styles.label,
             icons: styles.icons,
           }}
+          inputMode={inputMode}
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          autoCorrect={autoCorrect}
+          autoFocus={autoFocus}
         />
       )}
     </View>

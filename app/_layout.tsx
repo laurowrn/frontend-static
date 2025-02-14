@@ -42,6 +42,7 @@ export default function RootLayout() {
       <ThemeProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="colmeia-reflections" />
           <Stack.Screen
             name="error"
             options={{

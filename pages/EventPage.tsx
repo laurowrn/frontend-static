@@ -21,15 +21,18 @@ import { useState } from "react";
 import UserInfoForm from "@/components/form/UserInfoForm";
 import FormButton from "@/components/form/FormButton";
 import DefaultContainer from "@/components/containers/DefaultContainer";
+import * as WebBrowser from "expo-web-browser";
 
 export default function EventPage() {
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
   type TicketSelectorStyle = {
     backgroundColor: string;
     iconColor: string;
     textColor: string;
     borderColor: string;
     iconName: keyof typeof Ionicons.glyphMap | undefined;
+    approvalBackgroundColor: string;
+    approvalTextColor: string;
   };
   const blurredTicketSelectorStyle: TicketSelectorStyle = {
     backgroundColor: colors.surfaceVariant,
@@ -37,13 +40,17 @@ export default function EventPage() {
     textColor: colors.onSurfaceVariant,
     borderColor: "transparent",
     iconName: "ellipse-outline",
+    approvalBackgroundColor: colors.elevation.level5,
+    approvalTextColor: colors.onSurfaceVariant,
   };
   const focusedTicketSelectorStyle: TicketSelectorStyle = {
-    backgroundColor: colors.tertiaryContainer,
-    iconColor: colors.onTertiaryContainer,
-    textColor: colors.onTertiaryContainer,
-    borderColor: colors.onTertiaryContainer,
+    backgroundColor: colors.primaryContainer,
+    iconColor: colors.onPrimaryContainer,
+    textColor: colors.onPrimaryContainer,
+    borderColor: colors.onPrimaryContainer,
     iconName: "checkmark-circle",
+    approvalBackgroundColor: colors.primary,
+    approvalTextColor: colors.onPrimary,
   };
   const [maleTicketSelectorStyle, setMaleTicketSelectorStyle] = useState(
     blurredTicketSelectorStyle
@@ -79,11 +86,26 @@ export default function EventPage() {
         }}
         showsVerticalScrollIndicator={false}
       >
+        <View style={{ height: verticalScale(5) }} />
         <View
           style={{
-            height: verticalScale(60),
+            height: moderateScale(25),
+            width: moderateScale(70),
+            alignItems: "center",
+            justifyContent: "center",
           }}
-        />
+        >
+          <Image
+            style={styles.image}
+            source={
+              theme === "dark"
+                ? require("../assets/logoDark.png")
+                : require("../assets/logoLight.png")
+            }
+            contentFit="cover"
+            transition={1000}
+          />
+        </View>
         <View style={styles.container}>
           <Image
             style={styles.image}
@@ -165,18 +187,24 @@ export default function EventPage() {
               columnGap: horizontalScale(5),
             }}
           >
-            <View style={{ width: "100%" }}>
-              <Text
-                style={{
-                  color: colors.onBackground,
-                  fontFamily: Fonts.semiBold,
-                  fontSize: fontSize(16),
-                  paddingBottom: verticalScale(5),
-                }}
-              >
-                Lounge GV
-              </Text>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                columnGap: horizontalScale(10),
+              }}
+            >
               <View style={{ rowGap: verticalScale(4) }}>
+                <Text
+                  style={{
+                    color: colors.onBackground,
+                    fontFamily: Fonts.semiBold,
+                    fontSize: fontSize(16),
+                    paddingBottom: verticalScale(5),
+                  }}
+                >
+                  Lounge GV
+                </Text>
                 <Text
                   style={{
                     color: colors.onBackground,
@@ -211,17 +239,29 @@ export default function EventPage() {
                   Camboriú - SC
                 </Text>
               </View>
+              <TouchableOpacity
+                style={{
+                  justifyContent: "center",
+                  alignContent: "center",
+                }}
+                onPress={() => {
+                  WebBrowser.openBrowserAsync(
+                    "https://maps.app.goo.gl/gX3NzN7wEgR5Q1M18"
+                  );
+                }}
+              >
+                <Feather
+                  name="arrow-up-right"
+                  size={fontSize(32)}
+                  style={{
+                    textAlign: "center",
+                    justifyContent: "center",
+                    alignContent: "center",
+                  }}
+                  color={colors.primary}
+                />
+              </TouchableOpacity>
             </View>
-            <Feather
-              name="arrow-up-right"
-              size={26}
-              style={{
-                textAlign: "center",
-                justifyContent: "center",
-                alignContent: "center",
-              }}
-              color={colors.primary}
-            />
           </View>
         </View>
         <View style={{ width: "100%" }}>
@@ -236,6 +276,10 @@ export default function EventPage() {
               padding: horizontalScale(10),
               borderWidth: moderateScale(1),
               borderColor: colors.surfaceVariant,
+              shadowColor: "#000",
+              shadowOpacity: 0.4,
+              shadowRadius: 2,
+              elevation: 1,
             }}
           >
             <Text
@@ -250,7 +294,7 @@ export default function EventPage() {
           </View>
           <View
             style={{
-              backgroundColor: colors.backdrop,
+              backgroundColor: colors.surface,
               width: "100%",
               borderBottomEndRadius: moderateScale(10),
               borderBottomStartRadius: moderateScale(10),
@@ -258,11 +302,15 @@ export default function EventPage() {
               borderColor: colors.surfaceVariant,
               padding: horizontalScale(10),
               rowGap: verticalScale(8),
+              shadowColor: "#000",
+              shadowOpacity: 0.4,
+              shadowRadius: 2,
+              elevation: 1,
             }}
           >
             <Text
               style={{
-                color: colors.onBackground,
+                color: colors.onSurface,
                 fontFamily: Fonts.regular,
                 fontSize: fontSize(16),
                 flex: 1,
@@ -292,15 +340,38 @@ export default function EventPage() {
                 size={fontSize(20)}
                 color={maleTicketSelectorStyle.iconColor}
               />
-              <View style={{ flex: 1 }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: moderateScale(5),
+                }}
+              >
                 <Text
                   style={{
                     color: maleTicketSelectorStyle.textColor,
                     fontFamily: Fonts.bold,
                     fontSize: fontSize(14),
+                    flexShrink: 1,
                   }}
                 >
-                  MASCULINO - PRÉ-VENDA
+                  MASCULINO - PRÉ-VENDA{" "}
+                </Text>
+                <Text
+                  style={{
+                    color: maleTicketSelectorStyle.approvalTextColor,
+                    fontFamily: Fonts.black,
+                    fontSize: fontSize(12),
+                    backgroundColor:
+                      maleTicketSelectorStyle.approvalBackgroundColor,
+                    paddingVertical: verticalScale(3),
+                    paddingHorizontal: horizontalScale(6),
+                    borderRadius: moderateScale(7),
+                  }}
+                >
+                  Aprovação necessária
                 </Text>
               </View>
               <View style={{ alignItems: "flex-end" }}>
@@ -342,15 +413,38 @@ export default function EventPage() {
                   alignContent: "center",
                 }}
               />
-              <View style={{ flex: 1 }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: moderateScale(5),
+                }}
+              >
                 <Text
                   style={{
                     color: femaleTicketSelectorStyle.textColor,
                     fontFamily: Fonts.bold,
                     fontSize: fontSize(14),
+                    flexShrink: 1,
                   }}
                 >
                   FEMININO - PRÉ-VENDA
+                </Text>
+                <Text
+                  style={{
+                    color: femaleTicketSelectorStyle.approvalTextColor,
+                    fontFamily: Fonts.black,
+                    fontSize: fontSize(12),
+                    backgroundColor:
+                      femaleTicketSelectorStyle.approvalBackgroundColor,
+                    paddingVertical: verticalScale(3),
+                    paddingHorizontal: horizontalScale(6),
+                    borderRadius: moderateScale(7),
+                  }}
+                >
+                  Aprovação necessária
                 </Text>
               </View>
               <View style={{ alignItems: "flex-end" }}>
@@ -386,6 +480,27 @@ export default function EventPage() {
             )}
             {isFormVisible && <UserInfoForm ticketType={ticketType} />}
           </View>
+          <TouchableOpacity
+            style={{
+              alignSelf: "flex-end",
+              padding: moderateScale(6),
+            }}
+            onPress={() => {
+              WebBrowser.openBrowserAsync(
+                "https://api.whatsapp.com/send?phone=5547997689918&text=Ol%C3%A1%2C%20eu%20gostaria%20de%20tirar%20uma%20d%C3%BAvida."
+              );
+            }}
+          >
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: Fonts.bold,
+                fontSize: fontSize(16),
+              }}
+            >
+              Precisa de ajuda?
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={{ width: "100%", rowGap: verticalScale(10) }}>
           <Text
@@ -445,6 +560,81 @@ export default function EventPage() {
         </View>
         <View
           style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-evenly",
+            width: "100%",
+          }}
+        >
+          <View
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                height: moderateScale(40),
+                width: moderateScale(40),
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Image
+                style={styles.image}
+                source={
+                  theme === "dark"
+                    ? require("../assets/markDark.png")
+                    : require("../assets/markLight.png")
+                }
+                contentFit="cover"
+                transition={1000}
+              />
+            </View>
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: Fonts.bold,
+                fontSize: fontSize(14),
+              }}
+            >
+              © 2025 Tikko
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={{
+              padding: moderateScale(6),
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              rowGap: horizontalScale(3),
+              alignSelf: "flex-end",
+            }}
+            onPress={() => {
+              WebBrowser.openBrowserAsync(
+                "https://api.whatsapp.com/send?phone=5547997689918&text=Ol%C3%A1%2C%20eu%20gostaria%20de%20tirar%20uma%20d%C3%BAvida."
+              );
+            }}
+          >
+            <Ionicons
+              name="logo-whatsapp"
+              size={fontSize(25)}
+              color={colors.primary}
+              style={{ flex: 1, textAlign: "center" }}
+            />
+            <Text
+              style={{
+                color: colors.primary,
+                fontFamily: Fonts.bold,
+                fontSize: fontSize(14),
+              }}
+            >
+              Fale conosco.
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View
+          style={{
             height: verticalScale(60),
           }}
         />
@@ -459,6 +649,10 @@ const styles = StyleSheet.create({
     height: moderateScale(300),
     overflow: "hidden",
     borderRadius: moderateScale(10),
+    shadowColor: "#000",
+    shadowOpacity: 0.4,
+    shadowRadius: 2,
+    elevation: 1,
   },
   image: {
     flex: 1,

@@ -21,9 +21,13 @@ const emailRegex = new RegExp(
 const passwordRegex = new RegExp(
   `^(?=.*\\d)(?=.*\\W)(?=.*[a-z])(?=.*[A-Z]).{10,${PASSWORD_MAX_LENGTH - 1}}$`
 );
+
 const nameRegex = new RegExp(
-  `^(?=.{1,${NAME_MAX_LENGTH - 1}}$)[A-Za-z]+(?: [A-Za-z]+)*\\s*$`
+  `^(?=.{1,${
+    NAME_MAX_LENGTH - 1
+  }}$)[A-Za-zÁáÀàÂâÃãÄäÉéÈèÊêËëÍíÌìÎîÏïÓóÒòÔôÕõÖöÚúÙùÛûÜü]+(?: [A-Za-zÁáÀàÂâÃãÄäÉéÈèÊêËëÍíÌìÎîÏïÓóÒòÔôÕõÖöÚúÙùÛûÜü]+)*\\s*$`
 );
+
 const usernameRegex = new RegExp(
   `^[a-zA-Z0-9_]{3,${USERNAME_MAX_LENGTH - 1}}$`
 );

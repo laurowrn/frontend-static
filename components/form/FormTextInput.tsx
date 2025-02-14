@@ -51,6 +51,10 @@ type FormTextInputProps = {
   };
   testId?: string;
   inputMode?: InputModeOptions;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  autoComplete?: "off" | "email";
+  autoCorrect?: boolean;
+  autoFocus?: boolean;
 };
 
 const FormTextInput: React.FC<FormTextInputProps> = ({
@@ -71,6 +75,10 @@ const FormTextInput: React.FC<FormTextInputProps> = ({
   styles,
   testId,
   inputMode,
+  autoCapitalize,
+  autoComplete,
+  autoCorrect,
+  autoFocus,
 }) => {
   const { colors } = useTheme();
   return (
@@ -82,7 +90,7 @@ const FormTextInput: React.FC<FormTextInputProps> = ({
             alignItems: "center",
             borderWidth: moderateScale(1),
             columnGap: horizontalScale(5),
-            padding: moderateScale(10),
+            padding: moderateScale(11),
             borderRadius: moderateScale(14),
             width: "100%",
           },
@@ -116,7 +124,7 @@ const FormTextInput: React.FC<FormTextInputProps> = ({
             {
               flex: 1,
               fontFamily: Fonts.regular,
-              fontSize: fontSize(16),
+              fontSize: fontSize(15),
               width: "100%",
               height: "100%",
               paddingVertical: moderateScale(3),
@@ -130,6 +138,10 @@ const FormTextInput: React.FC<FormTextInputProps> = ({
           secureTextEntry={secureTextEntry}
           testID={testId}
           inputMode={inputMode}
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          autoCorrect={autoCorrect}
+          autoFocus={autoFocus}
         />
         {rightIcon?.onPress ? (
           <TouchableOpacity onPress={rightIcon.onPress}>
@@ -148,7 +160,10 @@ const FormTextInput: React.FC<FormTextInputProps> = ({
         )}
       </View>
       {label && (
-        <Text style={[styles.label]} testID={`${testId}-label`}>
+        <Text
+          style={[{ padding: moderateScale(5) }, styles.label]}
+          testID={`${testId}-label`}
+        >
           {label}
         </Text>
       )}
