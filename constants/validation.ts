@@ -22,7 +22,7 @@ const passwordRegex = new RegExp(
   `^(?=.*\\d)(?=.*\\W)(?=.*[a-z])(?=.*[A-Z]).{10,${PASSWORD_MAX_LENGTH - 1}}$`
 );
 const nameRegex = new RegExp(
-  `^(?=.{1,${NAME_MAX_LENGTH - 1}}$)[A-Z][a-z]*(?: [A-Z][a-z]*)*$`
+  `^(?=.{1,${NAME_MAX_LENGTH - 1}}$)[A-Za-z]+(?: [A-Za-z]+)*\\s*$`
 );
 const usernameRegex = new RegExp(
   `^[a-zA-Z0-9_]{3,${USERNAME_MAX_LENGTH - 1}}$`
@@ -113,50 +113,37 @@ const validBrazilianDDDs = new Set([
   "98",
   "99",
 ]);
-
-const validArgentinianDDDs = new Set([
-  "11",
-  "220",
-  "221",
-  "223",
-  "230",
-  "236",
-  "249",
-  "260",
-  "261",
-  "263",
-  "264",
-  "266",
-  "280",
-  "291",
-  "297",
-  "298",
-  "299",
-  "336",
-  "341",
-  "342",
-  "343",
-  "345",
-  "348",
-  "351",
-  "376",
-  "379",
-  "380",
-  "381",
-  "383",
-  "385",
-  "387",
-  "388",
-  "2901",
-  "2902",
-  "2903",
-  "2905",
-  "2966",
-]);
-
+const acceptedCountryCodes = [
+  "+54",
+  "+591",
+  "+55",
+  "+56",
+  "+57",
+  "+506",
+  "+53",
+  "+593",
+  "+503",
+  "+502",
+  "+504",
+  "+52",
+  "+505",
+  "+507",
+  "+595",
+  "+51",
+  "+598",
+  "+58",
+  "+1",
+  "+44",
+  "+61",
+  "+64",
+  "+353",
+  "+27",
+  "+91",
+  "+65",
+];
 export {
   validBrazilianDDDs,
-  validArgentinianDDDs,
+  acceptedCountryCodes,
   emailRegex,
   passwordRegex,
   nameRegex,

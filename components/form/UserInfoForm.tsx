@@ -1,7 +1,13 @@
 import { useTheme } from "@/context/ThemeContext";
 import FormTextInput from "@/components/form/FormTextInput";
 import { useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View, Text } from "react-native";
+import {
+  FlatList,
+  TouchableOpacity,
+  View,
+  Text,
+  InputModeOptions,
+} from "react-native";
 import {
   AGE_MAX_LENGTH,
   CUPOM_MAX_LENGTH,
@@ -24,8 +30,8 @@ import BirthdayPicker from "./BirthdayPicker";
 import FormButton from "./FormButton";
 import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
 import { useRouter } from "expo-router";
-import FormPickerTextInput from "./FormPickerTextInput";
 import FormCheckbox from "./FormCheckbox";
+import FormPickerTextInput from "./FormPickerTextInput";
 
 interface FormInputConfig {
   name: string;
@@ -35,10 +41,16 @@ interface FormInputConfig {
   placeholder?: string;
   validator?: (value: string) => { isValid: boolean; errorMessage: string };
   iconName?: keyof typeof Ionicons.glyphMap | undefined;
-  type: "text-input" | "birthday-picker" | "submit-button" | "checkbox";
+  type:
+    | "text-input"
+    | "birthday-picker"
+    | "submit-button"
+    | "checkbox"
+    | "form-picker-input-text";
   maxLength?: number;
   disabled?: boolean;
   matches?: string;
+  inputMode?: InputModeOptions;
 }
 
 interface TextInputStyleType {
@@ -88,6 +100,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       validator: validateName,
       maxLength: NAME_MAX_LENGTH,
       iconName: "person",
+      inputMode: "text",
     },
     {
       type: "text-input",
@@ -96,6 +109,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       validator: validateEmail,
       iconName: "mail",
       maxLength: EMAIL_MAX_LENGTH,
+      inputMode: "email",
     },
     {
       type: "text-input",
@@ -106,20 +120,19 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       maxLength: EMAIL_MAX_LENGTH,
     },
     {
-      type: "text-input",
+      type: "form-picker-input-text",
       name: "mobile-number",
       placeholder: "Telefone",
-      initialValue: "+55",
       validator: validateMobileNumber,
       maxLength: MOBILE_NUMBER_MAX_LENGTH,
       iconName: "call",
+      inputMode: "text",
     },
     {
-      type: "text-input",
+      type: "form-picker-input-text",
       name: "confirm-mobile-number",
       placeholder: "Confirme seu telefone",
       matches: "mobile-number",
-      initialValue: "+55",
       maxLength: MOBILE_NUMBER_MAX_LENGTH,
       iconName: "call",
     },
@@ -296,9 +309,9 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       title,
       submit,
       disabled,
+      inputMode,
     } = item;
     const { value, isValid, errorMessage, isFocused } = formState[name];
-
     if (type === "birthday-picker") {
       return (
         <BirthdayPicker
@@ -355,9 +368,9 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
           testId={`${name}-input`}
         />
       );
-    } else {
+    } else if (type === "form-picker-input-text") {
       return (
-        <FormTextInput
+        <FormPickerTextInput
           key={name}
           placeholder={placeholder}
           value={value}
@@ -377,10 +390,36 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
             },
             icons: getIconStyle(isFocused, isValid),
           }}
-          testId={`${name}-input`}
+          testId={`${name}-picker-input`}
+          inputMode={inputMode}
         />
       );
     }
+    return (
+      <FormTextInput
+        key={name}
+        placeholder={placeholder}
+        value={value}
+        width="100%"
+        maxLength={maxLength}
+        onChangeText={(text) => handleTextChange(name, text, validator)}
+        onFocus={() => handleFocus(name)}
+        onBlur={() => handleBlur(name)}
+        label={errorMessage}
+        leftIcon={{ iconName }}
+        styles={{
+          textInputContainer: getTextInputStyle(isFocused, isValid),
+          label: {
+            textAlign: "left",
+            fontFamily: Fonts.regular,
+            color: colors.error,
+          },
+          icons: getIconStyle(isFocused, isValid),
+        }}
+        testId={`${name}-input`}
+        inputMode={inputMode}
+      />
+    );
   };
 
   return (

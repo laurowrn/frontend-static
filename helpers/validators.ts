@@ -17,7 +17,7 @@ import {
   birthdayRegex,
   ageRegex,
   validBrazilianDDDs,
-  validArgentinianDDDs,
+  acceptedCountryCodes,
 } from "@/constants/validation";
 
 const errorMessages = {
@@ -30,6 +30,7 @@ const errorMessages = {
     "O nome de usuário deve ter entre 3 e 20 caracteres e pode conter apenas letras, números e underscores",
   invalidBio: "A biografia deve ter entre 0 e 160 caracteres",
   invalidMobileNumber: "Por favor, insira um número de celular válido",
+  invalidMobileNumber9: "Por favor, adicione o 9º dígito do seu número",
   invalidCountryCode: "Por favor, insira o código do país",
   invalidDDD: "Por favor, adicione um DDD válido ao seu número",
   invalidEventName: "Por favor, insira um nome de evento válido",
@@ -134,9 +135,7 @@ const validateMobileNumber = (mobileNumber: string) => {
     };
   }
   if (
-    !/^\+55|^\+54|^\+1|^\+44|^\+598|^\+595|^\+56|^\+51|^\+591|^\+57/.test(
-      mobileNumber
-    )
+    !acceptedCountryCodes.some((code) => mobileNumber.startsWith(mobileNumber))
   ) {
     return {
       isValid: false,
@@ -150,6 +149,12 @@ const validateMobileNumber = (mobileNumber: string) => {
       return {
         isValid: false,
         errorMessage: errorMessages.invalidDDD,
+      };
+    }
+    if (mobileNumber.length == 13) {
+      return {
+        isValid: false,
+        errorMessage: errorMessages.invalidMobileNumber9,
       };
     }
     if (mobileNumber.length != 14) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -6,17 +6,19 @@ import {
   TouchableOpacity,
   TextStyle,
   DimensionValue,
-  StyleSheet,
+  InputModeOptions,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   fontSize,
   horizontalScale,
   moderateScale,
+  verticalScale,
 } from "@/helpers/responsiveScaling";
 import { useTheme } from "@/context/ThemeContext";
 import { Fonts } from "@/constants/fonts";
 import { Picker } from "@react-native-picker/picker";
+import { acceptedCountryCodes } from "@/constants/validation";
 
 interface TextInputStyleType {
   backgroundColor?: string;
@@ -24,17 +26,15 @@ interface TextInputStyleType {
   color: string;
 }
 
-type FormTextInputProps = {
+type FormPickerTextInputProps = {
   placeholder?: string;
   value: string;
-  currentPickerValue: string;
   width?: DimensionValue;
   maxLength?: number;
   multiline?: boolean;
   numberOfLines?: number;
   editable?: boolean;
   onChangeText?: (text: string) => void;
-  onChangePickerValue?: (item: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
   secureTextEntry?: boolean;
@@ -48,25 +48,23 @@ type FormTextInputProps = {
   };
   label?: string;
   styles: {
-    container: TextInputStyleType;
+    textInputContainer: TextInputStyleType;
     label?: TextStyle;
     icons: TextStyle;
   };
   testId?: string;
-  pickerValues: string[];
+  inputMode?: InputModeOptions;
 };
 
-const FormPickerTextInput: React.FC<FormTextInputProps> = ({
+const FormPickerTextInput: React.FC<FormPickerTextInputProps> = ({
   placeholder,
-  value,
-  currentPickerValue,
+  value = "+55",
   width,
   maxLength,
   multiline,
   numberOfLines,
   editable,
   onChangeText,
-  onChangePickerValue,
   onFocus,
   onBlur,
   secureTextEntry = false,
@@ -75,20 +73,50 @@ const FormPickerTextInput: React.FC<FormTextInputProps> = ({
   label,
   styles,
   testId,
-  pickerValues,
+  inputMode,
 }) => {
-  const { colors } = useTheme();
+  // Extract country code from value or default to "+55"
+  const getInitialCountryCode = (val: string) => {
+    const foundCode = acceptedCountryCodes.find((code) => val.startsWith(code));
+    return foundCode || "+55";
+  };
+
+  const initialCountryCode = getInitialCountryCode(value);
+  const initialNumber = value.replace(initialCountryCode, ""); // Extract the rest of the number
+
+  const [countryCode, setCountryCode] = useState(initialCountryCode);
+  const [number, setNumber] = useState(initialNumber);
+
+  // Ensure value updates properly when the country code is changed
+  const handlePickerChange = (selectedCountryCode: string) => {
+    setCountryCode(selectedCountryCode);
+    onChangeText && onChangeText(selectedCountryCode + number);
+  };
+
+  // Ensure number updates properly when text is changed
+  const handleTextChange = (text: string) => {
+    setNumber(text);
+    onChangeText && onChangeText(countryCode + text);
+  };
+
+  // Fix: Update state when `value` changes externally
+  useEffect(() => {
+    const newCountryCode = getInitialCountryCode(value);
+    const newNumber = value.replace(newCountryCode, "");
+    setCountryCode(newCountryCode);
+    setNumber(newNumber);
+  }, [value]); // Update when `value` changes
+
   const dynamicPickerStyle: TextStyle = {
-    backgroundColor: styles.container.backgroundColor,
-    color: styles.container.color,
+    backgroundColor: styles.textInputContainer.backgroundColor,
+    color: styles.textInputContainer.color,
     textAlign: "center",
-    fontSize: fontSize(16),
-    fontFamily: Fonts.semiBold,
-    borderColor: styles.container.color,
+    borderColor: styles.textInputContainer.color,
     borderRadius: moderateScale(10),
     outlineColor: "transparent",
     outline: "none",
   };
+  const { colors } = useTheme();
   return (
     <View style={{ width: width || "100%" }}>
       <View
@@ -102,7 +130,7 @@ const FormPickerTextInput: React.FC<FormTextInputProps> = ({
             borderRadius: moderateScale(14),
             width: "100%",
           },
-          styles.container,
+          styles.textInputContainer,
         ]}
       >
         {leftIcon?.onPress ? (
@@ -120,32 +148,44 @@ const FormPickerTextInput: React.FC<FormTextInputProps> = ({
             style={[styles.icons]}
           />
         )}
-        <TouchableOpacity style={{ flex: 1 }}>
+        <TouchableOpacity>
           <Picker
-            selectedValue={currentPickerValue}
+            selectedValue={countryCode}
             numberOfLines={1}
-            style={[constantStyles.picker, dynamicPickerStyle]}
-            onValueChange={onChangePickerValue}
+            style={[
+              {
+                flex: 1,
+                paddingVertical: verticalScale(2),
+                paddingHorizontal: horizontalScale(5),
+                textAlign: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: fontSize(16),
+                fontFamily: Fonts.bold,
+              },
+              dynamicPickerStyle,
+            ]}
             onBlur={onBlur}
             onFocus={onFocus}
+            onValueChange={handlePickerChange}
           >
-            {pickerValues.map((pickerValue: string) => (
+            {acceptedCountryCodes.map((countryCode) => (
               <Picker.Item
-                key={pickerValue}
-                label={pickerValue}
-                value={pickerValue}
+                key={countryCode}
+                label={countryCode}
+                value={countryCode}
               />
             ))}
           </Picker>
         </TouchableOpacity>
         <TextInput
           placeholder={placeholder}
-          value={value}
+          value={number}
           maxLength={maxLength}
           multiline={multiline}
           numberOfLines={numberOfLines}
           editable={editable}
-          placeholderTextColor={styles.container.color}
+          placeholderTextColor={styles.textInputContainer.color}
           style={[
             {
               flex: 1,
@@ -155,14 +195,15 @@ const FormPickerTextInput: React.FC<FormTextInputProps> = ({
               height: "100%",
               paddingVertical: moderateScale(3),
               outline: "none",
-              color: styles.container.color,
+              color: styles.textInputContainer.color,
             },
           ]}
-          onChangeText={onChangeText}
+          onChangeText={handleTextChange}
           onFocus={onFocus}
           onBlur={onBlur}
           secureTextEntry={secureTextEntry}
           testID={testId}
+          inputMode={inputMode}
         />
         {rightIcon?.onPress ? (
           <TouchableOpacity onPress={rightIcon.onPress}>
@@ -190,9 +231,3 @@ const FormPickerTextInput: React.FC<FormTextInputProps> = ({
 };
 
 export default FormPickerTextInput;
-
-const constantStyles = StyleSheet.create({
-  picker: {
-    flex: 1,
-  },
-});

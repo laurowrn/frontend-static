@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextStyle,
   DimensionValue,
+  InputModeOptions,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
@@ -49,6 +50,7 @@ type FormTextInputProps = {
     icons: TextStyle;
   };
   testId?: string;
+  inputMode?: InputModeOptions;
 };
 
 const FormTextInput: React.FC<FormTextInputProps> = ({
@@ -68,6 +70,7 @@ const FormTextInput: React.FC<FormTextInputProps> = ({
   label,
   styles,
   testId,
+  inputMode,
 }) => {
   const { colors } = useTheme();
   return (
@@ -126,6 +129,7 @@ const FormTextInput: React.FC<FormTextInputProps> = ({
           onBlur={onBlur}
           secureTextEntry={secureTextEntry}
           testID={testId}
+          inputMode={inputMode}
         />
         {rightIcon?.onPress ? (
           <TouchableOpacity onPress={rightIcon.onPress}>

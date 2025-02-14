@@ -123,6 +123,7 @@ export default function EventPage() {
                 color: colors.onBackground,
                 fontFamily: Fonts.semiBold,
                 fontSize: fontSize(16),
+                paddingBottom: verticalScale(5),
               }}
             >
               sábado, 22 de março
@@ -131,7 +132,7 @@ export default function EventPage() {
               style={{
                 color: colors.onBackground,
                 fontFamily: Fonts.regular,
-                fontSize: fontSize(16),
+                fontSize: fontSize(14),
               }}
             >
               22:00 - 6:00
@@ -170,22 +171,46 @@ export default function EventPage() {
                   color: colors.onBackground,
                   fontFamily: Fonts.semiBold,
                   fontSize: fontSize(16),
+                  paddingBottom: verticalScale(5),
                 }}
               >
                 Lounge GV
               </Text>
-              <Text
-                style={{
-                  color: colors.onBackground,
-                  fontFamily: Fonts.regular,
-                  fontSize: fontSize(16),
-                  flexWrap: "wrap",
-                  flexDirection: "row",
-                }}
-              >
-                R. Antônio Lopes Gonçalves Bastos, 1083 - Bairro Rio Pequeno,
-                Camboriú - SC
-              </Text>
+              <View style={{ rowGap: verticalScale(4) }}>
+                <Text
+                  style={{
+                    color: colors.onBackground,
+                    fontFamily: Fonts.regular,
+                    fontSize: fontSize(14),
+                    flexWrap: "wrap",
+                    flexDirection: "row",
+                  }}
+                >
+                  R. Antônio Lopes Gonçalves Bastos, 1083
+                </Text>
+                <Text
+                  style={{
+                    color: colors.onBackground,
+                    fontFamily: Fonts.regular,
+                    fontSize: fontSize(14),
+                    flexWrap: "wrap",
+                    flexDirection: "row",
+                  }}
+                >
+                  Bairro Rio Pequeno
+                </Text>
+                <Text
+                  style={{
+                    color: colors.onBackground,
+                    fontFamily: Fonts.regular,
+                    fontSize: fontSize(14),
+                    flexWrap: "wrap",
+                    flexDirection: "row",
+                  }}
+                >
+                  Camboriú - SC
+                </Text>
+              </View>
             </View>
             <Feather
               name="arrow-up-right"
@@ -254,32 +279,25 @@ export default function EventPage() {
                 borderColor: maleTicketSelectorStyle.borderColor,
                 borderWidth: moderateScale(1),
                 paddingVertical: verticalScale(8),
-                paddingHorizontal: moderateScale(5),
+                paddingHorizontal: moderateScale(10),
                 alignItems: "center",
-                justifyContent: "space-between",
+                gap: moderateScale(10),
               }}
               onPress={() => {
                 handleTicketTypeChange("male");
               }}
             >
-              <View>
-                <Ionicons
-                  name={maleTicketSelectorStyle.iconName}
-                  size={fontSize(20)}
-                  color={maleTicketSelectorStyle.iconColor}
-                  style={{
-                    textAlign: "center",
-                    justifyContent: "center",
-                    alignContent: "center",
-                  }}
-                />
-              </View>
-              <View>
+              <Ionicons
+                name={maleTicketSelectorStyle.iconName}
+                size={fontSize(20)}
+                color={maleTicketSelectorStyle.iconColor}
+              />
+              <View style={{ flex: 1 }}>
                 <Text
                   style={{
                     color: maleTicketSelectorStyle.textColor,
                     fontFamily: Fonts.bold,
-                    fontSize: fontSize(16),
+                    fontSize: fontSize(14),
                   }}
                 >
                   MASCULINO - PRÉ-VENDA
@@ -302,36 +320,34 @@ export default function EventPage() {
                 flexDirection: "row",
                 width: "100%",
                 backgroundColor: femaleTicketSelectorStyle.backgroundColor,
-                borderColor: femaleTicketSelectorStyle.borderColor,
                 borderRadius: moderateScale(10),
+                borderColor: femaleTicketSelectorStyle.borderColor,
                 borderWidth: moderateScale(1),
                 paddingVertical: verticalScale(8),
-                paddingHorizontal: moderateScale(5),
+                paddingHorizontal: moderateScale(10),
                 alignItems: "center",
-                justifyContent: "space-between",
+                gap: moderateScale(10),
               }}
               onPress={() => {
                 handleTicketTypeChange("female");
               }}
             >
-              <View>
-                <Ionicons
-                  name={femaleTicketSelectorStyle.iconName}
-                  size={fontSize(20)}
-                  color={femaleTicketSelectorStyle.iconColor}
-                  style={{
-                    textAlign: "center",
-                    justifyContent: "center",
-                    alignContent: "center",
-                  }}
-                />
-              </View>
-              <View>
+              <Ionicons
+                name={femaleTicketSelectorStyle.iconName}
+                size={fontSize(20)}
+                color={femaleTicketSelectorStyle.iconColor}
+                style={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignContent: "center",
+                }}
+              />
+              <View style={{ flex: 1 }}>
                 <Text
                   style={{
                     color: femaleTicketSelectorStyle.textColor,
                     fontFamily: Fonts.bold,
-                    fontSize: fontSize(16),
+                    fontSize: fontSize(14),
                   }}
                 >
                   FEMININO - PRÉ-VENDA
@@ -391,9 +407,10 @@ export default function EventPage() {
           <Text
             style={{
               color: colors.onBackground,
-              fontFamily: Fonts.semiBold,
+              fontFamily: Fonts.regular,
               fontSize: fontSize(15),
-              lineHeight: verticalScale(20),
+              lineHeight: fontSize(20),
+              textAlign: "justify",
             }}
           >
             Mesas e reservas: +55 98406-4466
@@ -421,6 +438,7 @@ export default function EventPage() {
             conveniência (se houver), no prazo de até 45 (quarenta e cinco) dias
             após o cancelamento. No caso de compras com cartões de crédito, o
             valor será devolvido como crédito nas faturas seguintes.
+            <br />
             <br />
             Bem-vindo à experiência Colmeia!
           </Text>

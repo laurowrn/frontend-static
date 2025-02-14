@@ -85,6 +85,7 @@ export default function FormCheckbox({
         }}
       >
         <Ionicons
+          key={isChecked ? "checked" : "unchecked"}
           name={isChecked ? "checkmark-circle" : "ellipse-outline"}
           size={fontSize(20)}
           style={{ textAlign: "center", color: colors.onSurface }}

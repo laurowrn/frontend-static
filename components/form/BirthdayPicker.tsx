@@ -12,6 +12,7 @@ import {
   fontSize,
   horizontalScale,
   moderateScale,
+  verticalScale,
 } from "@/helpers/responsiveScaling";
 import { useTheme } from "@/context/ThemeContext";
 import { Fonts } from "@/constants/fonts";
@@ -86,8 +87,6 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
     backgroundColor: styles.container.backgroundColor,
     color: styles.container.color,
     textAlign: "center",
-    fontSize: fontSize(16),
-    fontFamily: Fonts.semiBold,
     borderColor: styles.container.color,
     borderRadius: moderateScale(10),
     outlineColor: "transparent",
@@ -146,8 +145,8 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
           style={{
             flexDirection: "row",
             width: "100%",
-            columnGap: horizontalScale(10),
             alignItems: "center",
+            justifyContent: "space-around",
           }}
         >
           <TouchableOpacity style={{ flex: 1 }}>
@@ -166,7 +165,7 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
               ))}
             </Picker>
           </TouchableOpacity>
-
+          <View style={{ flex: 0.1 }} />
           <TouchableOpacity style={{ flex: 1 }}>
             <Picker
               selectedValue={selectedMonth}
@@ -182,6 +181,7 @@ const BirthdayPicker: React.FC<BirthdayPickerProps> = ({
               ))}
             </Picker>
           </TouchableOpacity>
+          <View style={{ flex: 0.1 }} />
           <TouchableOpacity style={{ flex: 1 }}>
             <Picker
               selectedValue={selectedYear}
@@ -228,5 +228,9 @@ export default BirthdayPicker;
 const constantStyles = StyleSheet.create({
   picker: {
     flex: 1,
+    paddingVertical: verticalScale(5),
+    paddingHorizontal: horizontalScale(5),
+    fontSize: fontSize(16),
+    fontFamily: Fonts.bold,
   },
 });

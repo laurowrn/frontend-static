@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "tikko-frontend-web",
-    "slug": "tikko-frontend-web",
+    "name": "Tikko",
+    "slug": "Tikko",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/mark.png",
-    "scheme": "myapp",
+    "scheme": "tikko",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
