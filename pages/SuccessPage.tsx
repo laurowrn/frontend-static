@@ -9,6 +9,7 @@ import {
 } from "@/helpers/responsiveScaling";
 import { Fonts } from "@/constants/fonts";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Link } from "expo-router";
 
 export default function SuccessPage() {
   const { colors } = useTheme();
@@ -54,16 +55,18 @@ export default function SuccessPage() {
         Assim que o organizador aceitar a sua solicitação, o seu ingresso será
         enviado por WhatsApp.
       </Text>
-      <Text
-        style={{
-          color: colors.onBackground,
-          fontFamily: Fonts.regular,
-          fontSize: fontSize(18),
-          textAlign: "center",
-        }}
-      >
-        Você já pode fechar a aba.
-      </Text>
+      <Link href={"/"} style={{ textAlign: "center" }}>
+        <Text
+          style={{
+            color: colors.primary,
+            fontFamily: Fonts.regular,
+            fontSize: fontSize(18),
+            textAlign: "center",
+          }}
+        >
+          Clique aqui para voltar a página inicial.
+        </Text>
+      </Link>
     </SafeAreaView>
   );
 }

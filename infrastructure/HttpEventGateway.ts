@@ -14,6 +14,10 @@ export class HttpEventGateway implements EventGateway {
     this.baseUrl = baseUrl;
   }
 
+  getEventWithTicketPricing(eventId: number): Promise<RegisterAndJoinResponse> {
+    throw new Error("Method not implemented.");
+  }
+
   async getEvent(eventId: string): Promise<Event> {
     const response = await fetch(`${this.baseUrl}/public/event/${eventId}`);
     if (!response.ok) {
@@ -25,7 +29,9 @@ export class HttpEventGateway implements EventGateway {
 
   async registerAndJoin(
     user: User,
-    eventId: number
+    eventId: number,
+    ticketPricingId: number,
+    coupon: string
   ): Promise<RegisterAndJoinResponse> {
     const response = await fetch(
       `${this.baseUrl}/public/user/register-and-join-event`,
@@ -34,7 +40,21 @@ export class HttpEventGateway implements EventGateway {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user: user, event_id: eventId }),
+        body: JSON.stringify({
+          user: {
+            email: user.email,
+            username: user.username,
+            gender: user.gender,
+            birthday: user.birthday,
+            location: user.location,
+            bio: user.bio,
+            instagram_profile: user.instagram,
+            phone_number: user.mobileNumber,
+          },
+          event_id: eventId,
+          ticket_pricing_id: ticketPricingId,
+          coupon: coupon,
+        }),
       }
     );
 

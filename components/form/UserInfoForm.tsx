@@ -182,7 +182,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
     },
     {
       type: "checkbox",
-      name: "cupom",
+      name: "coupon",
       placeholder: "Cupom",
       iconName: "wallet",
       maxLength: CUPOM_MAX_LENGTH,
@@ -199,7 +199,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       disabled: isSubmitButtonDisabled,
       submit: async () => {
         router.push(
-          `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&mobileNumber=${formState["mobile-number"].value}&ticketType=${ticketType}&birthday=${birthday}&instagram=${formState["instagram"].value}&cupom=${formState["cupom"].value}`
+          `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&mobileNumber=${formState["mobile-number"].value}&ticketType=${ticketType}&birthday=${birthday}&instagram=${formState["instagram"].value}&coupon=${formState["coupon"].value}`
         );
       },
     },

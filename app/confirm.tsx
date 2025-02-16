@@ -8,7 +8,12 @@ import {
   verticalScale,
 } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  ExternalPathString,
+  Link,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
 import {
   Pressable,
   StyleSheet,
@@ -33,9 +38,9 @@ export default function Confirm() {
     birthday?: string;
     mobileNumber?: string;
     instagram?: string;
-    cupom?: string;
+    coupon?: string;
   }>();
-  const { email, name, ticketType, birthday, mobileNumber, instagram, cupom } =
+  const { email, name, ticketType, birthday, mobileNumber, instagram, coupon } =
     params;
 
   useEffect(() => {
@@ -278,8 +283,11 @@ export default function Confirm() {
                 //     birthday: "1995-06-15T00:00:00Z",
                 //     location: "São Paulo",
                 //     bio: "Amo eventos!",
+                //     mobileNumber: "+554799232323",
+                //     instagram: "dsfljfsk",
                 //   },
-                //   4
+                //   1,
+                //   1
                 // );
                 registerAndJoinData = await eventGateway.registerAndJoin(
                   {
@@ -289,14 +297,20 @@ export default function Confirm() {
                     birthday: formattedBirthday,
                     mobileNumber: mobileNumber,
                     instagram: instagram,
-                    cupom: cupom,
                   },
-                  4
+                  1,
+                  ticketType === "male" ? 1 : 2,
+                  coupon!
                 );
+                console.log(registerAndJoinData);
                 router.back();
-                await WebBrowser.openBrowserAsync(
-                  registerAndJoinData.paymentURL
-                );
+                if (registerAndJoinData.paymentURL) {
+                  router.push(
+                    registerAndJoinData.paymentURL as ExternalPathString
+                  );
+                } else {
+                  router.replace("/success");
+                }
               } catch (error) {
                 router.back();
                 router.push("/error");

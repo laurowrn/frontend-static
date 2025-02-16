@@ -2,8 +2,11 @@ export interface EventGateway {
   getEvent(eventId: string): Promise<Event>;
   registerAndJoin(
     user: User,
-    eventId: number
+    eventId: number,
+    ticketPricingId: number,
+    coupon?: string
   ): Promise<RegisterAndJoinResponse>;
+  getEventWithTicketPricing(eventId: number): Promise<RegisterAndJoinResponse>;
 }
 
 export interface Event {
@@ -29,6 +32,12 @@ export interface User {
 }
 
 export interface RegisterAndJoinResponse {
+  eventId: string;
+  userId: string;
+  paymentURL?: string;
+}
+
+export interface GetEventWithTicketPricingResponse {
   eventId: string;
   userId: string;
   paymentURL: string;
