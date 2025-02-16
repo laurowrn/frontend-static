@@ -15,6 +15,7 @@ import {
   useRouter,
 } from "expo-router";
 import {
+  ActivityIndicator,
   Pressable,
   StyleSheet,
   Text,
@@ -28,6 +29,7 @@ import { useEffect, useState } from "react";
 export default function Confirm() {
   const [isChecked, setIsChecked] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
   const router = useRouter();
   const eventGateway = useEventGateway();
@@ -263,8 +265,12 @@ export default function Confirm() {
               paddingHorizontal: horizontalScale(15),
               borderRadius: moderateScale(10),
               flex: 2,
+              opacity: isLoading ? 0.7 : 1,
             }}
             onPress={async () => {
+              if (isLoading) return;
+              setIsLoading(true);
+
               let registerAndJoinData;
               function convertDate(dateString: string): string {
                 const [day, month, year] = dateString.split("/");
@@ -273,22 +279,6 @@ export default function Confirm() {
 
               const formattedBirthday = convertDate(birthday);
               try {
-                // registerAndJoinData = await eventGateway.registerAndJoin(
-                //   {
-                //     email: `${Math.floor(
-                //       Math.random() * 999999999999
-                //     )}@email.com`,
-                //     username: "NovoUsuário2",
-                //     gender: "male",
-                //     birthday: "1995-06-15T00:00:00Z",
-                //     location: "São Paulo",
-                //     bio: "Amo eventos!",
-                //     mobileNumber: "+554799232323",
-                //     instagram: "dsfljfsk",
-                //   },
-                //   1,
-                //   1
-                // );
                 registerAndJoinData = await eventGateway.registerAndJoin(
                   {
                     email: email,
@@ -302,8 +292,6 @@ export default function Confirm() {
                   ticketType === "male" ? 1 : 2,
                   coupon!
                 );
-                console.log(registerAndJoinData);
-                router.back();
                 if (registerAndJoinData.paymentURL) {
                   router.push(
                     registerAndJoinData.paymentURL as ExternalPathString
@@ -312,22 +300,29 @@ export default function Confirm() {
                   router.replace("/success");
                 }
               } catch (error) {
-                router.back();
                 router.push("/error");
+              } finally {
+                setIsLoading(false);
               }
             }}
-            disabled={!isChecked}
+            disabled={!isChecked || isLoading}
           >
-            <Text
-              style={{
-                fontFamily: Fonts.bold,
-                fontSize: fontSize(16),
-                color: isChecked ? colors.onPrimary : colors.onSurfaceDisabled,
-                textAlign: "center",
-              }}
-            >
-              Continuar
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color={colors.onPrimary} />
+            ) : (
+              <Text
+                style={{
+                  fontFamily: Fonts.bold,
+                  fontSize: fontSize(16),
+                  color: isChecked
+                    ? colors.onPrimary
+                    : colors.onSurfaceDisabled,
+                  textAlign: "center",
+                }}
+              >
+                Continuar
+              </Text>
+            )}
           </TouchableOpacity>
         </Animated.View>
       </Animated.View>
