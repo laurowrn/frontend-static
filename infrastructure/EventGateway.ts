@@ -6,12 +6,16 @@ export interface EventGateway {
     ticketPricingId: number,
     coupon?: string
   ): Promise<RegisterAndJoinResponse>;
-  getEventWithTicketPricing(eventId: number): Promise<RegisterAndJoinResponse>;
+  getEventWithTicketPricing(
+    eventId: number
+  ): Promise<GetEventWithTicketPricingResponse>;
 }
 
 export interface Event {
   id: string;
   name: string;
+  description: string;
+  isPaid: boolean;
   startDate: Date;
   endDate: Date;
   location: string;
@@ -31,6 +35,14 @@ export interface User {
   bio?: string;
 }
 
+export interface TicketPricing {
+  id: number;
+  eventId: number;
+  ticketType: string;
+  lot: number;
+  price: number;
+}
+
 export interface RegisterAndJoinResponse {
   eventId: string;
   userId: string;
@@ -38,7 +50,6 @@ export interface RegisterAndJoinResponse {
 }
 
 export interface GetEventWithTicketPricingResponse {
-  eventId: string;
-  userId: string;
-  paymentURL: string;
+  event: Event;
+  ticketPricings: TicketPricing[];
 }

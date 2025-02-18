@@ -3,6 +3,7 @@ import {
   Event,
   RegisterAndJoinResponse,
   User,
+  GetEventWithTicketPricingResponse,
 } from "./EventGateway";
 import { useMemo } from "react";
 import React, { createContext, useContext } from "react";
@@ -14,8 +15,37 @@ export class HttpEventGateway implements EventGateway {
     this.baseUrl = baseUrl;
   }
 
-  getEventWithTicketPricing(eventId: number): Promise<RegisterAndJoinResponse> {
-    throw new Error("Method not implemented.");
+  async getEventWithTicketPricing(
+    eventId: number
+  ): Promise<GetEventWithTicketPricingResponse> {
+    const response = await fetch(
+      `${this.baseUrl}/public/event/${eventId}/with-ticket-pricing`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch event");
+    }
+    const jsonReponse = await response.json();
+    const eventWithTicketPricing: GetEventWithTicketPricingResponse = {
+      event: {
+        id: jsonReponse["event"]["id"],
+        name: jsonReponse["event"]["name"],
+        description: jsonReponse["event"]["description"],
+        isPaid: jsonReponse["event"]["is_paid"],
+        startDate: new Date(jsonReponse["event"]["start_date"]),
+        endDate: new Date(jsonReponse["event"]["end_date"]),
+        location: jsonReponse["event"]["location"],
+        isPrivate: jsonReponse["event"]["is_private"],
+        autoAccept: jsonReponse["event"]["auto_accept"],
+      },
+      ticketPricings: jsonReponse["ticket_pricing"].map((pricing: any) => ({
+        id: pricing["id"],
+        lot: pricing["lot"],
+        price: pricing["price"],
+        ticketType: pricing["ticket_type"],
+        event: pricing["event_id"],
+      })),
+    };
+    return eventWithTicketPricing;
   }
 
   async getEvent(eventId: string): Promise<Event> {

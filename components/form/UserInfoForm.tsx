@@ -64,7 +64,7 @@ interface TextInputStyleType {
 }
 
 interface UserInfoFormProps {
-  ticketType?: "male" | "female" | null | undefined;
+  ticketType?: string;
 }
 
 export default function UserInfoForm({ ticketType }: UserInfoFormProps) {

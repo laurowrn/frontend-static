@@ -224,7 +224,6 @@ export default function Confirm() {
             </View>
           </View>
         </View>
-
         <Animated.View
           style={{
             flexDirection: "row",
@@ -289,7 +288,7 @@ export default function Confirm() {
                     instagram: instagram,
                   },
                   1,
-                  ticketType === "male" ? 1 : 2,
+                  Number(ticketType),
                   coupon!
                 );
                 if (registerAndJoinData.paymentURL) {

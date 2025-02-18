@@ -15,6 +15,7 @@ export default function DefaultContainer({
         flex: 1,
         backgroundColor: colors.background,
         alignItems: "center",
+        justifyContent: "center",
         paddingHorizontal:
           Dimensions.get("window").width < 768
             ? horizontalScale(20)
