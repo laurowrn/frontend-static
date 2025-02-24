@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import {
   AGE_MAX_LENGTH,
+  CPF_MAX_LENGTH,
   CUPOM_MAX_LENGTH,
   EMAIL_MAX_LENGTH,
   INSTAGRA_MAX_LENGTH,
@@ -19,6 +20,7 @@ import {
 import {
   validateAge,
   validateBirthday,
+  validateCpf,
   validateEmail,
   validateInstagram,
   validateMobileNumber,
@@ -112,7 +114,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
     {
       type: "text-input",
       name: "email",
-      placeholder: "Email",
+      placeholder: "E-mail",
       validator: validateEmail,
       iconName: "mail",
       maxLength: EMAIL_MAX_LENGTH,
@@ -125,7 +127,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
     {
       type: "text-input",
       name: "confirm-email",
-      placeholder: "Confirme seu Email",
+      placeholder: "Confirme seu e-mail",
       matches: "email",
       iconName: "mail",
       maxLength: EMAIL_MAX_LENGTH,
@@ -155,6 +157,19 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       matches: "mobile-number",
       maxLength: MOBILE_NUMBER_MAX_LENGTH,
       iconName: "call",
+      inputMode: "text",
+      autoCapitalize: "none",
+      autoComplete: "off",
+      autoCorrect: false,
+      autoFocus: false,
+    },
+    {
+      type: "text-input",
+      name: "identification-number",
+      placeholder: "CPF",
+      validator: validateCpf,
+      maxLength: CPF_MAX_LENGTH,
+      iconName: "person",
       inputMode: "text",
       autoCapitalize: "none",
       autoComplete: "off",
@@ -199,7 +214,7 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
       disabled: isSubmitButtonDisabled,
       submit: async () => {
         router.push(
-          `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&mobileNumber=${formState["mobile-number"].value}&ticketType=${ticketType}&birthday=${birthday}&instagram=${formState["instagram"].value}&coupon=${formState["coupon"].value}`
+          `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&mobileNumber=${formState["mobile-number"].value}&identificationNumber=${formState["identification-number"].value}&ticketType=${ticketType}&birthday=${birthday}&instagram=${formState["instagram"].value}&coupon=${formState["coupon"].value}`
         );
       },
     },

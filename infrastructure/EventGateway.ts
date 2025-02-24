@@ -30,6 +30,7 @@ export interface User {
   birthday: string;
   mobileNumber: string;
   instagram: string;
+  identificationNumber: string;
   cupom?: string;
   location?: string;
   bio?: string;

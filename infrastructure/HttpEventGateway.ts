@@ -80,6 +80,7 @@ export class HttpEventGateway implements EventGateway {
             bio: user.bio,
             instagram_profile: user.instagram,
             phone_number: user.mobileNumber,
+            identification_number: user.identificationNumber,
           },
           event_id: eventId,
           ticket_pricing_id: ticketPricingId,

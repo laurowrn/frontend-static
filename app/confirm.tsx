@@ -39,11 +39,20 @@ export default function Confirm() {
     ticketType?: string;
     birthday?: string;
     mobileNumber?: string;
+    identificationNumber?: string;
     instagram?: string;
     coupon?: string;
   }>();
-  const { email, name, ticketType, birthday, mobileNumber, instagram, coupon } =
-    params;
+  const {
+    email,
+    name,
+    ticketType,
+    birthday,
+    mobileNumber,
+    identificationNumber,
+    instagram,
+    coupon,
+  } = params;
 
   useEffect(() => {
     setIsMounted(true);
@@ -57,6 +66,7 @@ export default function Confirm() {
         !ticketType ||
         !birthday ||
         !mobileNumber ||
+        !identificationNumber ||
         !instagram)
     ) {
       router.replace("/");
@@ -69,6 +79,7 @@ export default function Confirm() {
     ticketType,
     birthday,
     mobileNumber,
+    identificationNumber,
     instagram,
   ]);
 
@@ -79,6 +90,7 @@ export default function Confirm() {
     !ticketType ||
     !birthday ||
     !mobileNumber ||
+    !identificationNumber ||
     !instagram
   ) {
     return null;
@@ -286,6 +298,7 @@ export default function Confirm() {
                     birthday: formattedBirthday,
                     mobileNumber: mobileNumber,
                     instagram: instagram,
+                    identificationNumber: identificationNumber,
                   },
                   1,
                   Number(ticketType),

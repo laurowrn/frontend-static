@@ -18,6 +18,7 @@ import {
   ageRegex,
   validBrazilianDDDs,
   acceptedCountryCodes,
+  CPF_MAX_LENGTH,
 } from "@/constants/validation";
 
 const errorMessages = {
@@ -42,6 +43,9 @@ const errorMessages = {
   invalidDay: "Por favor, insira uma data válida",
   invalidAge: "Por favor, insira uma idade válida",
   invalidMinimumAge: "Você precisa ter pelo menos 18 anos",
+  invalidCpf: "Por favor, insira um CPF válido",
+  invalidCpfLength: "Por favor, insira um CPF com até 11 dígitos",
+  invalidCpfCharacter: "O CPF deve conter apenas números",
 };
 
 const validateEmail = (
@@ -350,6 +354,78 @@ const validateInstagram = (
   return { isValid: true, errorMessage: "" };
 };
 
+const validateCpf = (
+  cpf: string
+): { isValid: boolean; errorMessage: string } => {
+  if (!cpf) {
+    return {
+      isValid: false,
+      errorMessage: errorMessages.mandatoryField,
+    };
+  }
+
+  if (cpf.length > CPF_MAX_LENGTH) {
+    return {
+      isValid: false,
+      errorMessage: errorMessages.invalidCpfLength,
+    };
+  }
+
+  if (!/^\d+$/.test(cpf)) {
+    return {
+      isValid: false,
+      errorMessage: errorMessages.invalidCpfCharacter,
+    };
+  }
+
+  if (cpf.length !== CPF_MAX_LENGTH || /^(\d)\1+$/.test(cpf)) {
+    return {
+      isValid: false,
+      errorMessage: errorMessages.invalidCpf,
+    };
+  }
+
+  let sum = 0;
+  let remainder;
+
+  for (let i = 1; i <= 9; i++) {
+    sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+  }
+
+  remainder = (sum * 10) % 11;
+
+  if (remainder === 10 || remainder === 11) {
+    remainder = 0;
+  }
+
+  if (remainder !== parseInt(cpf.substring(9, 10))) {
+    return {
+      isValid: false,
+      errorMessage: errorMessages.invalidCpf,
+    };
+  }
+
+  sum = 0;
+  for (let i = 1; i <= 10; i++) {
+    sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+  }
+
+  remainder = (sum * 10) % 11;
+
+  if (remainder === 10 || remainder === 11) {
+    remainder = 0;
+  }
+
+  if (remainder !== parseInt(cpf.substring(10, 11))) {
+    return {
+      isValid: false,
+      errorMessage: errorMessages.invalidCpf,
+    };
+  }
+
+  return { isValid: true, errorMessage: "" };
+};
+
 export {
   validateEmail,
   validatePassword,
@@ -365,4 +441,5 @@ export {
   validateBirthday,
   validateAge,
   validateInstagram,
+  validateCpf,
 };

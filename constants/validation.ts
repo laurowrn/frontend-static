@@ -12,6 +12,7 @@ const BIRTHDAY_MAX_LENGTH = 8;
 const AGE_MAX_LENGTH = 2;
 const INSTAGRA_MAX_LENGTH = 30;
 const CUPOM_MAX_LENGTH = 30;
+const CPF_MAX_LENGTH = 11;
 
 const emailRegex = new RegExp(
   `^(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,})){1,${
@@ -176,4 +177,5 @@ export {
   AGE_MAX_LENGTH,
   INSTAGRA_MAX_LENGTH,
   CUPOM_MAX_LENGTH,
+  CPF_MAX_LENGTH,
 };
