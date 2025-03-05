@@ -35,7 +35,7 @@ import { useRouter } from "expo-router";
 import FormCheckbox from "./FormCheckbox";
 import FormPickerTextInput from "./FormPickerTextInput";
 
-interface FormInputConfig {
+export interface FormInputConfig {
   name: string;
   initialValue?: string;
   title?: string;
@@ -67,13 +67,44 @@ interface TextInputStyleType {
 
 interface UserInfoFormProps {
   ticketType?: string;
+  onSubmit?: () => void;
+  formState: Record<
+    string,
+    {
+      value: string;
+      isValid: boolean;
+      errorMessage: string;
+      isFocused: boolean;
+    }
+  >;
+  setFormState: React.Dispatch<
+    React.SetStateAction<
+      Record<
+        string,
+        {
+          value: string;
+          isValid: boolean;
+          errorMessage: string;
+          isFocused: boolean;
+        }
+      >
+    >
+  >;
+  formInputs: FormInputConfig[];
+  setIsSubmitButtondisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
+export default function UserInfoForm({
+  ticketType,
+  onSubmit,
+  formInputs,
+  setFormState,
+  formState,
+  setIsSubmitButtondisabled,
+}: UserInfoFormProps) {
   const { colors } = useTheme();
   const router = useRouter();
   const [birthday, setBirthday] = useState<string>("01/01/2025");
-  const [isSubmitButtonDisabled, setIsSubmitButtondisabled] = useState(true);
 
   const blurredTextInputStyle: TextInputStyleType = {
     backgroundColor: colors.surfaceVariant,
@@ -96,141 +127,6 @@ export default function UserInfoForm({ ticketType }: UserInfoFormProps) {
   const blurredIconStyle = { color: colors.onSurfaceVariant };
   const focusedIconStyle = { color: colors.onPrimary };
   const errorIconStyle = { color: colors.onError };
-
-  const formInputs: FormInputConfig[] = [
-    {
-      type: "text-input",
-      name: "name",
-      placeholder: "Nome",
-      validator: validateName,
-      maxLength: NAME_MAX_LENGTH,
-      iconName: "person",
-      inputMode: "text",
-      autoCapitalize: "words",
-      autoComplete: "off",
-      autoCorrect: false,
-      autoFocus: true,
-    },
-    {
-      type: "text-input",
-      name: "email",
-      placeholder: "E-mail",
-      validator: validateEmail,
-      iconName: "mail",
-      maxLength: EMAIL_MAX_LENGTH,
-      inputMode: "email",
-      autoCapitalize: "none",
-      autoComplete: "off",
-      autoCorrect: false,
-      autoFocus: false,
-    },
-    {
-      type: "text-input",
-      name: "confirm-email",
-      placeholder: "Confirme seu e-mail",
-      matches: "email",
-      iconName: "mail",
-      maxLength: EMAIL_MAX_LENGTH,
-      inputMode: "email",
-      autoCapitalize: "none",
-      autoComplete: "off",
-      autoCorrect: false,
-      autoFocus: false,
-    },
-    {
-      type: "form-picker-input-text",
-      name: "mobile-number",
-      placeholder: "Telefone",
-      validator: validateMobileNumber,
-      maxLength: MOBILE_NUMBER_MAX_LENGTH,
-      iconName: "call",
-      inputMode: "text",
-      autoCapitalize: "none",
-      autoComplete: "off",
-      autoCorrect: false,
-      autoFocus: false,
-    },
-    {
-      type: "form-picker-input-text",
-      name: "confirm-mobile-number",
-      placeholder: "Confirme seu telefone",
-      matches: "mobile-number",
-      maxLength: MOBILE_NUMBER_MAX_LENGTH,
-      iconName: "call",
-      inputMode: "text",
-      autoCapitalize: "none",
-      autoComplete: "off",
-      autoCorrect: false,
-      autoFocus: false,
-    },
-    {
-      type: "text-input",
-      name: "identification-number",
-      placeholder: "CPF",
-      validator: validateCpf,
-      maxLength: CPF_MAX_LENGTH,
-      iconName: "person",
-      inputMode: "text",
-      autoCapitalize: "none",
-      autoComplete: "off",
-      autoCorrect: false,
-      autoFocus: false,
-    },
-    {
-      type: "text-input",
-      name: "instagram",
-      placeholder: "Instagram",
-      validator: validateInstagram,
-      maxLength: INSTAGRA_MAX_LENGTH,
-      iconName: "logo-instagram",
-      autoCapitalize: "none",
-      autoComplete: "off",
-      autoCorrect: false,
-      autoFocus: false,
-    },
-    {
-      type: "birthday-picker",
-      name: "birthday",
-      placeholder: "Data de nascimento",
-      validator: validateBirthday,
-      iconName: "calendar",
-    },
-    {
-      type: "checkbox",
-      name: "coupon",
-      placeholder: "Cupom",
-      iconName: "wallet",
-      maxLength: CUPOM_MAX_LENGTH,
-      inputMode: "email",
-      autoCapitalize: "none",
-      autoComplete: "off",
-      autoCorrect: false,
-      autoFocus: false,
-    },
-    {
-      type: "submit-button",
-      name: "buy",
-      title: "Comprar",
-      disabled: isSubmitButtonDisabled,
-      submit: async () => {
-        router.push(
-          `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&mobileNumber=${formState["mobile-number"].value}&identificationNumber=${formState["identification-number"].value}&ticketType=${ticketType}&birthday=${birthday}&instagram=${formState["instagram"].value}&coupon=${formState["coupon"].value}`
-        );
-      },
-    },
-  ];
-
-  const [formState, setFormState] = useState(
-    formInputs.reduce((acc, input) => {
-      acc[input.name] = {
-        value: "",
-        isValid: true,
-        errorMessage: "",
-        isFocused: false,
-      };
-      return acc;
-    }, {} as Record<string, { value: string; isValid: boolean; errorMessage: string; isFocused: boolean }>)
-  );
 
   useEffect(() => {
     const allFieldsValid = formInputs

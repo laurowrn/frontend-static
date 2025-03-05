@@ -52,14 +52,6 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="confirm"
-            options={{
-              presentation: "transparentModal",
-              animation: "fade",
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
             name="success"
             options={{
               headerShown: false,
