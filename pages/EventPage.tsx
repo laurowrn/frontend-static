@@ -28,6 +28,7 @@ import { TikkoIcons } from "@/hooks/useDefaultFonts";
 import TicketTypeSelector from "@/components/form/TicketTypeSelector";
 import { useEventGateway } from "@/context/EventGatewayContext";
 import { useRouter } from "expo-router";
+import Footer from "@/components/structure/Footer";
 
 export default function EventPage() {
   const { colors, theme } = useTheme();
@@ -473,84 +474,12 @@ export default function EventPage() {
           </View>
           <View
             style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-evenly",
               width: "100%",
+              height: verticalScale(1),
+              backgroundColor: colors.surfaceVariant,
             }}
-          >
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                width: moderateScale(100),
-                height: moderateScale(80),
-              }}
-            >
-              <View
-                style={{
-                  width: moderateScale(45),
-                  height: moderateScale(45),
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <TikkoIcons
-                  name="mark1"
-                  size={fontSize(40)}
-                  color={colors.primary}
-                />
-              </View>
-              <Text
-                style={{
-                  color: colors.primary,
-                  fontFamily: Fonts.bold,
-                  fontSize: fontSize(14),
-                }}
-              >
-                © 2025 Tikko
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                width: moderateScale(100),
-                height: moderateScale(80),
-              }}
-              onPress={() => {
-                WebBrowser.openBrowserAsync(
-                  "https://api.whatsapp.com/send?phone=5547997689918&text=Ol%C3%A1%2C%20eu%20gostaria%20de%20tirar%20uma%20d%C3%BAvida."
-                );
-              }}
-            >
-              <View
-                style={{
-                  width: moderateScale(45),
-                  height: moderateScale(45),
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Ionicons
-                  name="logo-whatsapp"
-                  size={fontSize(25)}
-                  color={colors.primary}
-                  style={{ alignSelf: "center" }}
-                />
-              </View>
-
-              <Text
-                style={{
-                  color: colors.primary,
-                  fontFamily: Fonts.bold,
-                  fontSize: fontSize(14),
-                }}
-              >
-                Fale conosco.
-              </Text>
-            </TouchableOpacity>
-          </View>
+          />
+          <Footer />
           <View
             style={{
               height: verticalScale(60),
