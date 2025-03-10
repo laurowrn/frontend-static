@@ -322,21 +322,17 @@ const validateBirthday = (
 const validateAge = (
   age: string
 ): { isValid: boolean; errorMessage: string } => {
-  console.log(age);
   if (!age) {
-    console.log("idade vazia");
     return {
       isValid: false,
       errorMessage: errorMessages.mandatoryField,
     };
   } else if (!ageRegex.test(age)) {
-    console.log("idade invalida");
     return {
       isValid: false,
       errorMessage: errorMessages.invalidAge,
     };
   } else {
-    console.log("menor de idade");
     const ageNumber = parseInt(age, 10);
     if (ageNumber < 18) {
       return {
