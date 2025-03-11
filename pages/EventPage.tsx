@@ -246,9 +246,6 @@ export default function EventPage() {
       title: "Comprar",
       disabled: isSubmitButtonDisabled,
       submit: async () => {
-        // router.push(
-        //   `/confirm?email=${formState["email"].value}&name=${formState["name"].value}&mobileNumber=${formState["mobile-number"].value}&identificationNumber=${formState["identification-number"].value}&ticketType=${ticketType}&birthday=${birthday}&instagram=${formState["instagram"].value}&coupon=${formState["coupon"].value}`
-        // );
         setIsConfirmationPopupVisible(true);
       },
     },
