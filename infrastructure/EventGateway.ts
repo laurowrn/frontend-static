@@ -42,6 +42,8 @@ export interface TicketPricing {
   ticketType: string;
   lot: number;
   price: number;
+  maleCapacity?: number;
+  femaleCapacity?: number;
 }
 
 export interface RegisterAndJoinResponse {

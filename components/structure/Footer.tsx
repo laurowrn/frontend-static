@@ -67,7 +67,7 @@ export default function Footer() {
         }}
         onPress={() => {
           WebBrowser.openBrowserAsync(
-            "mailto:tikko.eventos@gmail.com?subject=Dúvida"
+            "mailto:contato@tikko.com?subject=Dúvida"
           );
         }}
       >
@@ -79,7 +79,7 @@ export default function Footer() {
             textAlign: "center",
           }}
         >
-          E-mail: tikko.eventos@gmail.com
+          E-mail: contato@tikko.com
         </Text>
         <Feather
           name="arrow-up-right"

@@ -43,6 +43,8 @@ export class HttpEventGateway implements EventGateway {
         price: pricing["price"],
         ticketType: pricing["ticket_type"],
         event: pricing["event_id"],
+        maleCapacity: pricing["male_capacity"],
+        femaleCapacity: pricing["female_capacity"],
       })),
     };
     return eventWithTicketPricing;
