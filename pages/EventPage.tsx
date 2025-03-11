@@ -302,6 +302,9 @@ export default function EventPage() {
             femaleCapacity: ticket.femaleCapacity ?? 0,
           }));
         setTicketTypes(ticketPricings);
+        setTicketSelectorStyles(
+          Array(ticketPricings.length).fill(ticketTypeStyles[0])
+        );
         console.log(ticketPricings);
       } catch (error) {
         router.push("/error");
@@ -310,12 +313,6 @@ export default function EventPage() {
       }
     })();
   }, []);
-
-  useEffect(() => {
-    setTicketSelectorStyles(
-      Array(ticketTypes.length).fill(ticketTypeStyles[0])
-    );
-  }, [ticketTypes]);
 
   if (loading) {
     return (
