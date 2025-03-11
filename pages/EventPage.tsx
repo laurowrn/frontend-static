@@ -866,9 +866,7 @@ export default function EventPage() {
                       } pessoas`}
                       ticketName={`${item.ticketType.toUpperCase()}`}
                       ticketPrice={
-                        item.price / 100 < 1
-                          ? `0,${item.price}`
-                          : `${item.price / 100},00`
+                        item.price < 1 ? `0,${item.price}` : `${item.price},00`
                       }
                       iconName={ticketSelectorStyles[index].iconName}
                       onPress={() => {
@@ -894,18 +892,18 @@ export default function EventPage() {
                           id: "3",
                           title: "Preço",
                           subtitle: `Valor total do produto R$ ${
-                            item.price / 100 < 1
+                            item.price < 1
                               ? `0,${item.price}`
-                              : `${item.price / 100},00`
+                              : `${item.price},00`
                           }\nBônus de R$ ${
-                            item.price / 100 < 1
+                            item.price < 1
                               ? `0,${item.price / 2}`
-                              : `${item.price / 100 / 2},00`
+                              : `${item.price / 2},00`
                           } em consumo`,
                           quantity: `R$ ${
-                            item.price / 100 < 1
+                            item.price < 1
                               ? `0,${item.price}`
-                              : `${item.price / 100},00`
+                              : `${item.price},00`
                           }`,
                         },
                       ]}
