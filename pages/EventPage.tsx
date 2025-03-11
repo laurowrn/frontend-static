@@ -311,6 +311,13 @@ export default function EventPage() {
     })();
   }, []);
 
+  function formatMoney(value: number): string {
+    return value.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
   if (loading) {
     return (
       <DefaultContainer>
@@ -865,9 +872,7 @@ export default function EventPage() {
                         (item.maleCapacity ?? 0) + (item.femaleCapacity ?? 0)
                       } pessoas`}
                       ticketName={`${item.ticketType.toUpperCase()}`}
-                      ticketPrice={
-                        item.price < 1 ? `0,${item.price}` : `${item.price},00`
-                      }
+                      ticketPrice={formatMoney(item.price)}
                       iconName={ticketSelectorStyles[index].iconName}
                       onPress={() => {
                         handleTicketTypeChange(index);
@@ -891,20 +896,12 @@ export default function EventPage() {
                         {
                           id: "3",
                           title: "Preço",
-                          subtitle: `Valor total do produto R$ ${
-                            item.price < 1
-                              ? `0,${item.price}`
-                              : `${item.price},00`
-                          }\nBônus de R$ ${
-                            item.price < 1
-                              ? `0,${item.price / 2}`
-                              : `${item.price / 2},00`
-                          } em consumo`,
-                          quantity: `R$ ${
-                            item.price < 1
-                              ? `0,${item.price}`
-                              : `${item.price},00`
-                          }`,
+                          subtitle: `Valor total do produto R$ ${formatMoney(
+                            item.price
+                          )}\nBônus de R$ ${formatMoney(
+                            item.price / 2
+                          )} em consumo`,
+                          quantity: `R$ ${formatMoney(item.price)}`,
                         },
                       ]}
                     />
