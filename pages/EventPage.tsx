@@ -26,7 +26,9 @@ import FormButton from "@/components/form/FormButton";
 import DefaultContainer from "@/components/containers/DefaultContainer";
 import * as WebBrowser from "expo-web-browser";
 import { TikkoIcons } from "@/hooks/useDefaultFonts";
-import TicketTypeSelector from "@/components/form/TicketTypeSelector";
+import TicketTypeSelector, {
+  ListItem,
+} from "@/components/form/TicketTypeSelector";
 import { useEventGateway } from "@/context/EventGatewayContext";
 import { ExternalPathString, useRouter } from "expo-router";
 import Footer from "@/components/structure/Footer";
@@ -49,6 +51,7 @@ import {
   validateMobileNumber,
   validateName,
 } from "@/helpers/validators";
+import { TicketPricing } from "@/infrastructure/EventGateway";
 
 export default function EventPage() {
   const { colors, theme } = useTheme();
@@ -68,9 +71,25 @@ export default function EventPage() {
     useState(false);
   const [isConfirmationChecked, setIsConfirmationChecked] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
-  const [ticketTypes, setTicketTypes] = useState([
-    { id: 1, eventId: 1, ticketType: "Masculino", lot: 1, price: 20000 },
-    { id: 2, eventId: 1, ticketType: "Feminino", lot: 1, price: 20000 },
+  const [ticketTypes, setTicketTypes] = useState<TicketPricing[]>([
+    {
+      id: 1,
+      eventId: 1,
+      ticketType: "Masculino",
+      lot: 1,
+      price: 20000,
+      maleCapacity: 7,
+      femaleCapacity: 7,
+    },
+    {
+      id: 2,
+      eventId: 1,
+      ticketType: "Feminino",
+      lot: 1,
+      price: 20000,
+      maleCapacity: 7,
+      femaleCapacity: 7,
+    },
   ]);
   const [ticketType, setTicketType] = useState<string>("");
   const [isTicketTypeSelected, setIsTicketTypeSelected] = useState(false);
@@ -235,6 +254,30 @@ export default function EventPage() {
     },
   ];
 
+  const listItems: ListItem[] = [
+    {
+      id: "1",
+      title: "Limite de ingressos masculinos",
+      subtitle: "Quantidade limite de ingressos masculinos",
+      hasBottomDivider: true,
+      quantity: "20",
+    },
+    {
+      id: "2",
+      title: "Limite de ingressos femininos",
+      subtitle: "Quantidade limite de ingressos femininos",
+      hasBottomDivider: true,
+      quantity: "20",
+    },
+    {
+      id: "3",
+      title: "Preço",
+      subtitle:
+        "Valor total do produto R$ 15.000,00\nBônus de R$ 7.500,00 em consumo",
+      quantity: "R$ 15.000,00",
+    },
+  ];
+
   const [formState, setFormState] = useState(
     formInputs.reduce((acc, input) => {
       acc[input.name] = {
@@ -252,7 +295,14 @@ export default function EventPage() {
       try {
         const eventWithTicketType =
           await eventGateway.getEventWithTicketPricing(1);
-        setTicketTypes(eventWithTicketType.ticketPricings);
+        const ticketPricings: TicketPricing[] =
+          eventWithTicketType.ticketPricings.map((ticket) => ({
+            ...ticket,
+            maleCapacity: ticket.maleCapacity ?? 0,
+            femaleCapacity: ticket.femaleCapacity ?? 0,
+          }));
+        setTicketTypes(ticketPricings);
+        console.log(ticketPricings);
       } catch (error) {
         router.push("/error");
       } finally {
@@ -260,6 +310,12 @@ export default function EventPage() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    setTicketSelectorStyles(
+      Array(ticketTypes.length).fill(ticketTypeStyles[0])
+    );
+  }, [ticketTypes]);
 
   if (loading) {
     return (
@@ -770,6 +826,34 @@ export default function EventPage() {
                   data={ticketTypes}
                   keyExtractor={(ticket) => ticket.id.toString()}
                   renderItem={({ item, index }) => (
+                    // <TicketTypeSelector
+                    //   style={{
+                    //     backgroundColor:
+                    //       ticketSelectorStyles[index].backgroundColor,
+                    //     borderColor: ticketSelectorStyles[index].borderColor,
+                    //     textColor: ticketSelectorStyles[index].textColor,
+                    //     iconColor: ticketSelectorStyles[index].iconColor,
+                    //     badgeBackgroundColor:
+                    //       ticketSelectorStyles[index].approvalBackgroundColor,
+                    //     badgeTextcolor:
+                    //       ticketSelectorStyles[index].approvalTextColor,
+                    //   }}
+                    //   hasBadge={true}
+                    //   badgeText="20 pessoas"
+                    //   ticketName={`${item.ticketType.toUpperCase()} - ${
+                    //     item.lot == 1 ? "PRÉ-VENDA" : `LOTE ${item.lot}`
+                    //   }`}
+                    //   ticketPrice={
+                    //     item.price / 100 < 1
+                    //       ? `0,${item.price}`
+                    //       : `${item.price / 100},00`
+                    //   }
+                    //   iconName={ticketSelectorStyles[index].iconName}
+                    //   onPress={() => {
+                    //     handleTicketTypeChange(index);
+                    //   }}
+                    //   expandable={true}
+                    // />
                     <TicketTypeSelector
                       style={{
                         backgroundColor:
@@ -777,17 +861,16 @@ export default function EventPage() {
                         borderColor: ticketSelectorStyles[index].borderColor,
                         textColor: ticketSelectorStyles[index].textColor,
                         iconColor: ticketSelectorStyles[index].iconColor,
-                        textcolor: ticketSelectorStyles[index].textColor,
-                        tagBackgroundColor:
+                        badgeBackgroundColor:
                           ticketSelectorStyles[index].approvalBackgroundColor,
-                        tagTextcolor:
+                        badgeTextcolor:
                           ticketSelectorStyles[index].approvalTextColor,
                       }}
-                      isRestricted={true}
-                      tagText="Aprovação necessária"
-                      ticketName={`${item.ticketType.toUpperCase()} - ${
-                        item.lot == 1 ? "PRÉ-VENDA" : `LOTE ${item.lot}`
-                      }`}
+                      hasBadge={true}
+                      badgeText={`${
+                        (item.maleCapacity ?? 0) + (item.femaleCapacity ?? 0)
+                      } pessoas`}
+                      ticketName={`${item.ticketType.toUpperCase()}`}
                       ticketPrice={
                         item.price / 100 < 1
                           ? `0,${item.price}`
@@ -797,6 +880,41 @@ export default function EventPage() {
                       onPress={() => {
                         handleTicketTypeChange(index);
                       }}
+                      expandable={true}
+                      expandedList={[
+                        {
+                          id: "1",
+                          title: "Limite de ingressos masculinos",
+                          subtitle: "Quantidade limite de ingressos masculinos",
+                          hasBottomDivider: true,
+                          quantity: `${item.maleCapacity}`,
+                        },
+                        {
+                          id: "2",
+                          title: "Limite de ingressos femininos",
+                          subtitle: "Quantidade limite de ingressos femininos",
+                          hasBottomDivider: true,
+                          quantity: `${item.femaleCapacity}`,
+                        },
+                        {
+                          id: "3",
+                          title: "Preço",
+                          subtitle: `Valor total do produto R$ ${
+                            item.price / 100 < 1
+                              ? `0,${item.price}`
+                              : `${item.price / 100},00`
+                          }\nBônus de R$ ${
+                            item.price / 100 < 1
+                              ? `0,${item.price / 2}`
+                              : `${item.price / 100 / 2},00`
+                          } em consumo`,
+                          quantity: `R$ ${
+                            item.price / 100 < 1
+                              ? `0,${item.price}`
+                              : `${item.price / 100},00`
+                          }`,
+                        },
+                      ]}
                     />
                   )}
                   contentContainerStyle={{ gap: verticalScale(8) }}
