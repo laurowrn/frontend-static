@@ -2,7 +2,7 @@ import { Fonts } from "@/constants/fonts";
 import { useTheme } from "@/context/ThemeContext";
 import { fontSize, moderateScale } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Animated, {
   BounceIn,
@@ -14,6 +14,10 @@ import Animated, {
 export default function Error() {
   const { colors } = useTheme();
   const router = useRouter();
+  const params = useLocalSearchParams<{
+    message?: string;
+  }>();
+  const { message } = params;
   return (
     <Animated.View
       entering={FadeIn}
@@ -49,7 +53,7 @@ export default function Error() {
             color: colors.onError,
           }}
         >
-          Falha na comunicação com o servidor, tente novamente.
+          {message}
         </Text>
         <TouchableOpacity
           style={{

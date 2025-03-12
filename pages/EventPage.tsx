@@ -303,8 +303,8 @@ export default function EventPage() {
           Array(ticketPricings.length).fill(ticketTypeStyles[0])
         );
         console.log(ticketPricings);
-      } catch (error) {
-        router.push("/error");
+      } catch (error: any) {
+        router.push(`/error?message=${error.message}`);
       } finally {
         setLoading(false);
       }
@@ -561,8 +561,8 @@ export default function EventPage() {
                         } else {
                           router.replace("/success");
                         }
-                      } catch (error) {
-                        router.push("/error");
+                      } catch (error: any) {
+                        router.push(`/error?message=${error.message}`);
                       } finally {
                         setIsCheckoutLoading(false);
                       }

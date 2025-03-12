@@ -22,7 +22,7 @@ export class HttpEventGateway implements EventGateway {
       `${this.baseUrl}/public/event/${eventId}/with-ticket-pricing`
     );
     if (!response.ok) {
-      throw new Error("Failed to fetch event");
+      throw new Error("Falha em pegar informações do evento.");
     }
     const jsonReponse = await response.json();
     const eventWithTicketPricing: GetEventWithTicketPricingResponse = {
@@ -91,8 +91,13 @@ export class HttpEventGateway implements EventGateway {
       }
     );
 
+    if (response.status == 409) {
+      throw new Error(
+        "Falha: você só pode comprar um ingresso para este evento."
+      );
+    }
     if (!response.ok) {
-      throw new Error("Failed to register and join event");
+      throw new Error("Falha na comunicação com o servidor, tente novamente.");
     }
 
     const result: any = await response.json();
