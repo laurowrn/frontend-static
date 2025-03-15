@@ -5,7 +5,7 @@ import { useSession } from "@/context/AuthContext";
 import DefaultContainer from "@/components/containers/DefaultContainer";
 
 export default function MainLayout() {
-  const { session, isLoading } = useSession();
+  const { session, isLoading, signOut } = useSession();
 
   if (isLoading) {
     return (
@@ -17,14 +17,18 @@ export default function MainLayout() {
     );
   }
 
+  if (!session) {
+    return <Redirect href="/login" />;
+  }
+
   if (session) {
-    const decoded = jwtDecode(session);
-    console.log(session);
-    if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+    const decoded = jwtDecode<{ exp?: number }>(session);
+
+    if (decoded.exp && Date.now() / 1000 >= decoded.exp) {
+      signOut();
       return <Redirect href="/login" />;
     }
   }
-
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen

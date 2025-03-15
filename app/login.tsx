@@ -1,17 +1,28 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { Platform, Text, TouchableOpacity } from "react-native";
+import { Platform, Text, TouchableOpacity, View } from "react-native";
 import { useAuthRequest, makeRedirectUri } from "expo-auth-session";
-import { useEffect } from "react";
+import { useEffect, useState, version } from "react";
 import * as WebBrowser from "expo-web-browser";
-import { useSession } from "@/context/AuthContext"; // Adjust the import path
+import { useSession } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
+import { useTheme } from "@/context/ThemeContext";
+import {
+  fontSize,
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from "@/helpers/responsiveScaling";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Fonts } from "@/constants/fonts";
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
+  const { colors } = useTheme();
   const router = useRouter();
   const { signIn, session } = useSession();
-  const redirectUri = makeRedirectUri();
+  const redirectUri = makeRedirectUri({ path: "/login" });
+  const [state, setState] = useState<string | null>(null);
 
   let baseUrl: string = "";
   const appEnv = process.env.EXPO_PUBLIC_APP_ENV || "";
@@ -36,6 +47,7 @@ export default function Login() {
       extraParams: {
         redirect_uri: redirectUri,
       },
+      usePKCE: true,
     },
     {
       authorizationEndpoint: `${baseUrl}/public/login/google`,
@@ -43,14 +55,56 @@ export default function Login() {
   );
 
   useEffect(() => {
+    if (request) {
+      setState(request.state); // Store the state from the request
+    }
+  }, [request]);
+
+  useEffect(() => {
     if (response?.type === "success") {
       const { params } = response;
-      const token = params.token;
-      signIn(token);
-      router.replace("/(main)/validar");
+      const receivedState = params.state;
+
+      fetch(`${baseUrl}/public/login/verify`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            router.push(
+              `/error?message=${encodeURIComponent(
+                "Não foi possível verificar o seu usuário"
+              )}`
+            );
+          }
+        })
+        .then((data) => {
+          const token = data.token;
+          if (token) {
+            signIn(token);
+            router.replace("/(main)");
+          }
+        })
+        .catch((err) =>
+          router.push(
+            `/error?message=${encodeURIComponent(
+              "Não foi possível verificar o seu usuário: " + err
+            )}`
+          )
+        );
     } else if (response?.type === "error") {
+      router.push(
+        `/error?message=${encodeURIComponent(
+          "Não foi possível realizar o login"
+        )}`
+      );
     }
-  }, [response, signIn]);
+  }, [response, signIn, state]);
 
   const handleLogin = async () => {
     if (request) {
@@ -70,9 +124,47 @@ export default function Login() {
           </Text>
         </TouchableOpacity>
       ) : (
-        <Text style={{ color: "black", marginTop: 20 }}>
-          Logged in! Session token: {session}
-        </Text>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            rowGap: verticalScale(15),
+          }}
+        >
+          <Text
+            style={{
+              color: colors.onBackground,
+              fontFamily: Fonts.extraBold,
+              fontSize: fontSize(20),
+            }}
+          >
+            Você já está logado
+          </Text>
+          <TouchableOpacity
+            style={{
+              backgroundColor: colors.primary,
+              padding: moderateScale(10),
+              borderRadius: moderateScale(10),
+              flexDirection: "row",
+              columnGap: horizontalScale(5),
+            }}
+            onPress={() => {
+              router.replace("/(main)");
+            }}
+          >
+            <Text
+              style={{
+                color: colors.onPrimary,
+                fontFamily: Fonts.extraBold,
+                fontSize: fontSize(15),
+                alignContent: "center",
+              }}
+            >
+              Vá para o aplicativo
+            </Text>
+            <Ionicons size={fontSize(15)} name="arrow-forward" />
+          </TouchableOpacity>
+        </View>
       )}
     </DefaultContainer>
   );

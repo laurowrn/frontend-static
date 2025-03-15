@@ -22,10 +22,11 @@ import {
   View,
 } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function Validar() {
   const [permission, requestPermission] = useCameraPermissions();
-  const [isCameraVisible, setIsCameraVisible] = useState(true);
+  const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [scannedData, setScannedData] = useState<string | null>(null);
   const { colors } = useTheme();
   const [isValidationLoading, setIsValidationLoading] = useState(false);
@@ -241,6 +242,20 @@ export default function Validar() {
               setIsConfirmationPopupVisible(true);
             }}
           >
+            <Ionicons
+              name="arrow-back"
+              size={fontSize(30)}
+              color={colors.onPrimary}
+              style={{
+                position: "absolute",
+                backgroundColor: colors.primary,
+                padding: moderateScale(8),
+                borderRadius: moderateScale(10),
+                top: verticalScale(40),
+                left: horizontalScale(40),
+              }}
+              onPress={() => setIsCameraVisible(false)}
+            />
             <View
               style={{
                 width: moderateScale(300),
@@ -255,16 +270,27 @@ export default function Validar() {
         </View>
       ) : (
         <DefaultContainer>
-          <Text
+          <TouchableOpacity
             style={{
-              color: colors.onBackground,
-              fontFamily: Fonts.bold,
-              fontSize: fontSize(20),
-              textAlign: "center",
+              backgroundColor: colors.primary,
+              padding: moderateScale(10),
+              borderRadius: moderateScale(10),
+            }}
+            onPress={() => {
+              setIsCameraVisible(true);
             }}
           >
-            {scannedData}
-          </Text>
+            <Text
+              style={{
+                color: colors.onPrimary,
+                fontFamily: Fonts.bold,
+                fontSize: fontSize(20),
+                textAlign: "center",
+              }}
+            >
+              Validar ingresso
+            </Text>
+          </TouchableOpacity>
         </DefaultContainer>
       )}
     </View>
