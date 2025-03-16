@@ -23,11 +23,21 @@ import {
 } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useGateway } from "@/context/GatewayContext";
+import { useSession } from "@/context/AuthContext";
 
 export default function Validar() {
+  const { ticketGateway } = useGateway();
+  const { session } = useSession();
   const [permission, requestPermission] = useCameraPermissions();
   const [isCameraVisible, setIsCameraVisible] = useState(false);
-  const [scannedData, setScannedData] = useState<string | null>(null);
+  const [scannedData, setScannedData] = useState({
+    ticketId: "",
+    eventId: "",
+    userId: "",
+    ticketPricingId: "",
+    alreadyValidated: false,
+  });
   const { colors } = useTheme();
   const [isValidationLoading, setIsValidationLoading] = useState(false);
   const [isConfirmationPopupVisible, setIsConfirmationPopupVisible] =
@@ -138,7 +148,7 @@ export default function Validar() {
                   color: colors.onBackground,
                 }}
               >
-                Nome: {userInfo.name}
+                Nome: {scannedData.userId}
               </Text>
               <Text
                 style={{
@@ -148,7 +158,7 @@ export default function Validar() {
                   color: colors.onBackground,
                 }}
               >
-                E-mail: {userInfo.email}
+                E-mail: {scannedData.ticketId}
               </Text>
               <Text
                 style={{
@@ -158,7 +168,7 @@ export default function Validar() {
                   color: colors.onBackground,
                 }}
               >
-                Telefone: {userInfo.mobileNumber}
+                Telefone: {scannedData.alreadyValidated}
               </Text>
             </View>
 
@@ -238,8 +248,24 @@ export default function Validar() {
             }}
             onBarcodeScanned={async (data) => {
               setIsCameraVisible(false);
-              setScannedData(data.data);
-              setIsConfirmationPopupVisible(true);
+              let ticket;
+              try {
+                ticket = await ticketGateway.getTicket(
+                  data.data,
+                  session || ""
+                );
+                setScannedData(ticket);
+                setIsConfirmationPopupVisible(true);
+              } catch (error: any) {
+                setScannedData({
+                  ticketId: "",
+                  eventId: "",
+                  userId: "",
+                  ticketPricingId: "",
+                  alreadyValidated: false,
+                });
+                router.push(`/error?message=${error.message}`);
+              }
             }}
           >
             <Ionicons

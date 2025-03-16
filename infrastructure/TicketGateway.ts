@@ -1,15 +1,11 @@
 export interface TicketGateway {
-  getTicket(ticketId: string): Promise<Ticket>;
+  getTicket(ticketId: string, jwtToken: string): Promise<Ticket>;
 }
 
 export interface Ticket {
-  uuid: string;
-  event_id: string;
-  user_id: string;
+  ticketId: string;
+  eventId: string;
+  userId: string;
   alreadyValidated: boolean;
-  validatedBy: number;
-  validationDate: Date;
-  ticketPricingId: number;
-  isPrivate: boolean;
-  autoAccept: boolean;
+  ticketPricingId: string;
 }

@@ -1,4 +1,4 @@
-import { EventGatewayProvider } from "@/context/EventGatewayContext";
+import { GatewayProvider } from "@/context/GatewayContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { useDefaultFonts } from "@/hooks/useDefaultFonts";
 import { Stack } from "expo-router";
@@ -40,7 +40,7 @@ export default function RootLayout() {
 
   return (
     <SessionProvider>
-      <EventGatewayProvider baseUrl={baseUrl}>
+      <GatewayProvider baseUrl={baseUrl}>
         <ThemeProvider>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
@@ -91,7 +91,7 @@ export default function RootLayout() {
             />
           </Stack>
         </ThemeProvider>
-      </EventGatewayProvider>
+      </GatewayProvider>
     </SessionProvider>
   );
 }

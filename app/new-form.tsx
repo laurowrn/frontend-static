@@ -43,9 +43,7 @@ export default function NewForm() {
             ticketName={"Camarote 1"}
             ticketPrice={"15.000,00"}
             iconName={"ellipse-outline"}
-            onPress={() => {
-              console.log("teste");
-            }}
+            onPress={() => {}}
           />
         </View>
       </Surface>

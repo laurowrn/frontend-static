@@ -29,7 +29,7 @@ import { TikkoIcons } from "@/hooks/useDefaultFonts";
 import TicketTypeSelector, {
   ListItem,
 } from "@/components/form/TicketTypeSelector";
-import { useEventGateway } from "@/context/EventGatewayContext";
+import { useGateway } from "@/context/GatewayContext";
 import { ExternalPathString, useRouter } from "expo-router";
 import Footer from "@/components/structure/Footer";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
@@ -56,7 +56,7 @@ import { TicketPricing } from "@/infrastructure/EventGateway";
 export default function EventPage() {
   const { colors, theme } = useTheme();
   const router = useRouter();
-  const eventGateway = useEventGateway();
+  const { eventGateway } = useGateway();
   type TicketSelectorStyle = {
     backgroundColor: string;
     iconColor: string;
@@ -291,7 +291,7 @@ export default function EventPage() {
     (async () => {
       try {
         const eventWithTicketType =
-          await eventGateway.getEventWithTicketPricing(1);
+          await eventGateway.getEventWithTicketPricing(3);
         const ticketPricings: TicketPricing[] =
           eventWithTicketType.ticketPricings.map((ticket) => ({
             ...ticket,
@@ -302,7 +302,6 @@ export default function EventPage() {
         setTicketSelectorStyles(
           Array(ticketPricings.length).fill(ticketTypeStyles[0])
         );
-        console.log(ticketPricings);
       } catch (error: any) {
         router.push(`/error?message=${error.message}`);
       } finally {
