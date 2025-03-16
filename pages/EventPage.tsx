@@ -291,7 +291,7 @@ export default function EventPage() {
     (async () => {
       try {
         const eventWithTicketType =
-          await eventGateway.getEventWithTicketPricing(3);
+          await eventGateway.getEventWithTicketPricing(1);
         const ticketPricings: TicketPricing[] =
           eventWithTicketType.ticketPricings.map((ticket) => ({
             ...ticket,
