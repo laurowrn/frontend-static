@@ -104,6 +104,7 @@ export default function Login() {
         )}`
       );
     }
+    WebBrowser.dismissAuthSession();
   }, [response, signIn, state]);
 
   const handleLogin = async () => {
