@@ -14,6 +14,8 @@ import {
 } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Fonts } from "@/constants/fonts";
+import * as Crypto from "expo-crypto";
+import { BACKEND_BASE_URL, FRONTEND_BASE_URL } from "@/helpers/applicationUrl";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -21,96 +23,54 @@ export default function Login() {
   const { colors } = useTheme();
   const router = useRouter();
   const { signIn, session } = useSession();
-  const redirectUri = makeRedirectUri({ path: "/login" });
-  const [state, setState] = useState<string | null>(null);
-
-  let baseUrl: string = "";
-  const appEnv = process.env.EXPO_PUBLIC_APP_ENV || "";
-  if (appEnv === "DEV") {
-    if (Platform.OS === "web") {
-      const userAgent = navigator.userAgent.toLowerCase();
-      if (/android|iphone|ipad|ipod|mobile/i.test(userAgent)) {
-        baseUrl = process.env.EXPO_PUBLIC_DEV_MOBILE_BACKEND_BASE_URL || "";
-      } else {
-        baseUrl = process.env.EXPO_PUBLIC_DEV_DESKTOP_BACKEND_BASE_URL || "";
-      }
-    }
-  } else {
-    baseUrl = process.env.EXPO_PUBLIC_BACKEND_BASE_URL || "";
-  }
-
-  const [request, response, promptAsync] = useAuthRequest(
-    {
-      clientId: "your-actual-google-client-id",
-      redirectUri: redirectUri,
-      scopes: ["openid", "profile", "email"],
-      extraParams: {
-        redirect_uri: redirectUri,
-      },
-      usePKCE: true,
-    },
-    {
-      authorizationEndpoint: `${baseUrl}/public/login/google`,
-    }
-  );
-
-  useEffect(() => {
-    if (request) {
-      setState(request.state); // Store the state from the request
-    }
-  }, [request]);
-
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { params } = response;
-      const receivedState = params.state;
-
-      fetch(`${baseUrl}/public/login/verify`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            router.push(
-              `/error?message=${encodeURIComponent(
-                "Não foi possível verificar o seu usuário"
-              )}`
-            );
-          }
-        })
-        .then((data) => {
-          const token = data.token;
-          if (token) {
-            signIn(token);
-            router.replace("/(main)");
-          }
-        })
-        .catch((err) =>
-          router.push(
-            `/error?message=${encodeURIComponent(
-              "Não foi possível verificar o seu usuário: " + err
-            )}`
-          )
-        );
-    } else if (response?.type === "error") {
-      router.push(
-        `/error?message=${encodeURIComponent(
-          "Não foi possível realizar o login"
-        )}`
-      );
-    }
-    WebBrowser.dismissAuthSession();
-  }, [response, signIn, state]);
+  // const redirectUri = makeRedirectUri({ path: "/login/" });
 
   const handleLogin = async () => {
-    if (request) {
-      await promptAsync();
-    }
+    const generateRandomState = async (): Promise<string> => {
+      const randomBytes = await Crypto.getRandomBytesAsync(16);
+      return Array.from(randomBytes)
+        .map((byte) => byte.toString(16).padStart(2, "0"))
+        .join("");
+    };
+
+    const randomState = await generateRandomState();
+    await WebBrowser.openAuthSessionAsync(
+      `${BACKEND_BASE_URL}/public/login/google?state=${randomState}`,
+      `${FRONTEND_BASE_URL}/login/`
+    );
+
+    fetch(`${BACKEND_BASE_URL}/public/login/verify`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          router.push(
+            `/error?message=${encodeURIComponent(
+              "Não foi possível verificar o seu usuário"
+            )}`
+          );
+        }
+      })
+      .then((data) => {
+        const token = data.token;
+        if (token) {
+          signIn(token);
+          router.replace("/(main)");
+        }
+      })
+      .catch((err) =>
+        router.push(
+          `/error?message=${encodeURIComponent(
+            "Não foi possível verificar o seu usuário: " + err
+          )}`
+        )
+      );
   };
 
   return (

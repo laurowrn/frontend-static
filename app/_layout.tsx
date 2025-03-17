@@ -6,6 +6,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import { SessionProvider } from "@/context/AuthContext";
+import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
 
 export const unstable_settings = {
   initialRouteName: "index",
@@ -23,24 +24,10 @@ export default function RootLayout() {
   if (!fontsLoaded && !error) {
     return null;
   }
-  let baseUrl: string = "";
-  const appEnv = process.env.EXPO_PUBLIC_APP_ENV || "";
-  if (appEnv === "DEV") {
-    if (Platform.OS === "web") {
-      const userAgent = navigator.userAgent.toLowerCase();
-      if (/android|iphone|ipad|ipod|mobile/i.test(userAgent)) {
-        baseUrl = process.env.EXPO_PUBLIC_DEV_MOBILE_BACKEND_BASE_URL || "";
-      } else {
-        baseUrl = process.env.EXPO_PUBLIC_DEV_DESKTOP_BACKEND_BASE_URL || "";
-      }
-    }
-  } else {
-    baseUrl = process.env.EXPO_PUBLIC_BACKEND_BASE_URL || "";
-  }
 
   return (
     <SessionProvider>
-      <GatewayProvider baseUrl={baseUrl}>
+      <GatewayProvider baseUrl={BACKEND_BASE_URL}>
         <ThemeProvider>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
