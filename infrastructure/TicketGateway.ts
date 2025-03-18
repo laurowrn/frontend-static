@@ -1,5 +1,6 @@
 export interface TicketGateway {
-  getTicket(ticketId: string, jwtToken: string): Promise<Ticket>;
+  get(ticketId: string, jwtToken: string): Promise<Ticket>;
+  validate(ticketId: string, jwtToken: string): Promise<void>;
 }
 
 export interface Ticket {
@@ -8,4 +9,6 @@ export interface Ticket {
   userId: string;
   alreadyValidated: boolean;
   ticketPricingId: string;
+  ticketType: string;
+  name: string;
 }

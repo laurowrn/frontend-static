@@ -23,7 +23,6 @@ export default function Login() {
   const { colors } = useTheme();
   const router = useRouter();
   const { signIn, session } = useSession();
-  // const redirectUri = makeRedirectUri({ path: "/login/" });
 
   const handleLogin = async () => {
     const generateRandomState = async (): Promise<string> => {
@@ -36,7 +35,7 @@ export default function Login() {
     const randomState = await generateRandomState();
     await WebBrowser.openAuthSessionAsync(
       `${BACKEND_BASE_URL}/public/login/google?state=${randomState}`,
-      `${FRONTEND_BASE_URL}/login/`
+      `${FRONTEND_BASE_URL}/login`
     );
 
     fetch(`${BACKEND_BASE_URL}/public/login/verify`, {
@@ -64,7 +63,7 @@ export default function Login() {
           router.replace("/(main)");
         }
       })
-      .catch((err) =>
+      .catch((err: any) =>
         router.push(
           `/error?message=${encodeURIComponent(
             "Não foi possível verificar o seu usuário: " + err

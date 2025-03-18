@@ -37,6 +37,8 @@ export default function Validar() {
     userId: "",
     ticketPricingId: "",
     alreadyValidated: false,
+    ticketType: "",
+    name: "",
   });
   const { colors } = useTheme();
   const [isValidationLoading, setIsValidationLoading] = useState(false);
@@ -148,7 +150,7 @@ export default function Validar() {
                   color: colors.onBackground,
                 }}
               >
-                Nome: {scannedData.userId}
+                Nome: {scannedData.name}
               </Text>
               <Text
                 style={{
@@ -158,17 +160,7 @@ export default function Validar() {
                   color: colors.onBackground,
                 }}
               >
-                E-mail: {scannedData.ticketId}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: Fonts.bold,
-                  fontSize: fontSize(16),
-                  textAlign: "justify",
-                  color: colors.onBackground,
-                }}
-              >
-                Telefone: {scannedData.alreadyValidated}
+                Tipo do ingresso: {scannedData.ticketType}
               </Text>
             </View>
 
@@ -211,8 +203,20 @@ export default function Validar() {
                   borderRadius: moderateScale(10),
                   flex: 2,
                 }}
-                onPress={() => {}}
-                disabled={false}
+                onPress={async () => {
+                  try {
+                    setIsValidationLoading(true);
+                    await ticketGateway.validate(
+                      scannedData.ticketId,
+                      session || ""
+                    );
+                    setIsValidationLoading(false);
+                    setIsConfirmationPopupVisible(false);
+                  } catch (error: any) {
+                    router.push(`/error?message=${error.message}`);
+                  }
+                }}
+                disabled={isValidationLoading}
               >
                 {isValidationLoading ? (
                   <ActivityIndicator size="small" color={colors.onPrimary} />
@@ -225,7 +229,7 @@ export default function Validar() {
                       textAlign: "center",
                     }}
                   >
-                    Continuar
+                    Validar
                   </Text>
                 )}
               </TouchableOpacity>
@@ -250,10 +254,8 @@ export default function Validar() {
               setIsCameraVisible(false);
               let ticket;
               try {
-                ticket = await ticketGateway.getTicket(
-                  data.data,
-                  session || ""
-                );
+                ticket = await ticketGateway.get(data.data, session || "");
+                console.log(ticket);
                 setScannedData(ticket);
                 setIsConfirmationPopupVisible(true);
               } catch (error: any) {
@@ -263,6 +265,8 @@ export default function Validar() {
                   userId: "",
                   ticketPricingId: "",
                   alreadyValidated: false,
+                  ticketType: "",
+                  name: "",
                 });
                 router.push(`/error?message=${error.message}`);
               }
