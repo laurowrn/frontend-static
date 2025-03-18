@@ -35,7 +35,7 @@ export default function Login() {
     const randomState = await generateRandomState();
     await WebBrowser.openAuthSessionAsync(
       `${BACKEND_BASE_URL}/public/login/google?state=${randomState}`,
-      `${FRONTEND_BASE_URL}/login`
+      `${FRONTEND_BASE_URL}/login/`
     );
 
     fetch(`${BACKEND_BASE_URL}/public/login/verify`, {
