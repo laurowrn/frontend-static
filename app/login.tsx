@@ -25,7 +25,7 @@ export default function Login() {
   const { signIn, session } = useSession();
 
   const handleLogin = async () => {
-    const generateRandomState = async (): Promise<string> => {
+    const generateRandomState = async () => {
       const randomBytes = await Crypto.getRandomBytesAsync(16);
       return Array.from(randomBytes)
         .map((byte) => byte.toString(16).padStart(2, "0"))
@@ -33,43 +33,41 @@ export default function Login() {
     };
 
     const randomState = await generateRandomState();
-    await WebBrowser.openAuthSessionAsync(
+    const result = await WebBrowser.openAuthSessionAsync(
       `${BACKEND_BASE_URL}/public/login/google?state=${randomState}`,
       `${FRONTEND_BASE_URL}/login/`
     );
 
-    fetch(`${BACKEND_BASE_URL}/public/login/verify`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
+    if (result.type === "success") {
+      await fetch(`${BACKEND_BASE_URL}/public/login/verify`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw new Error("Verificação falhou");
+          }
+        })
+        .then((data) => {
+          const token = data.token;
+          if (token) {
+            signIn(token);
+            router.replace("/(main)");
+          }
+        })
+        .catch((err) => {
           router.push(
             `/error?message=${encodeURIComponent(
-              "Não foi possível verificar o seu usuário"
+              "Não foi possível verificar o seu usuário: " + err.message
             )}`
           );
-        }
-      })
-      .then((data) => {
-        const token = data.token;
-        if (token) {
-          signIn(token);
-          router.replace("/(main)");
-        }
-      })
-      .catch((err: any) =>
-        router.push(
-          `/error?message=${encodeURIComponent(
-            "Não foi possível verificar o seu usuário: " + err
-          )}`
-        )
-      );
+        });
+    }
   };
 
   return (
