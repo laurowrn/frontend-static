@@ -13,13 +13,11 @@ import {
 } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Fonts } from "@/constants/fonts";
-import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
+import { BACKEND_BASE_URL, FRONTEND_BASE_URL } from "@/helpers/applicationUrl";
 import { useEffect } from "react";
 
 WebBrowser.maybeCompleteAuthSession();
-const redirectUri = AuthSession.makeRedirectUri({
-  path: "/login",
-});
+const redirectUri = `${FRONTEND_BASE_URL}/login/`;
 
 export default function Login() {
   const { colors } = useTheme();
@@ -28,7 +26,7 @@ export default function Login() {
 
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
-      redirectUri,
+      redirectUri: redirectUri,
       clientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "",
       responseType: "code",
       scopes: ["openid", "profile", "email"],
