@@ -1,7 +1,6 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { Platform, Text, TouchableOpacity, View } from "react-native";
-import { useAuthRequest, makeRedirectUri } from "expo-auth-session";
-import { useEffect, useState, version } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useSession } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
@@ -14,68 +13,75 @@ import {
 } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Fonts } from "@/constants/fonts";
-import * as Crypto from "expo-crypto";
-import { BACKEND_BASE_URL, FRONTEND_BASE_URL } from "@/helpers/applicationUrl";
+import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
+import { useEffect } from "react";
 
 WebBrowser.maybeCompleteAuthSession();
+const redirectUri = AuthSession.makeRedirectUri();
 
 export default function Login() {
   const { colors } = useTheme();
   const router = useRouter();
   const { signIn, session } = useSession();
 
-  const handleLogin = async () => {
-    const generateRandomState = async () => {
-      const randomBytes = await Crypto.getRandomBytesAsync(16);
-      return Array.from(randomBytes)
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join("");
-    };
+  const [request, result, promptAsync] = AuthSession.useAuthRequest(
+    {
+      redirectUri,
+      clientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || "",
+      responseType: "code",
+      scopes: ["openid", "profile", "email"],
+    },
+    {
+      authorizationEndpoint: "https://accounts.google.com/o/oauth2/v2/auth",
+      tokenEndpoint: "https://oauth2.googleapis.com/token",
+      userInfoEndpoint: "https://openidconnect.googleapis.com/v1/userinfo",
+    }
+  );
 
-    const randomState = await generateRandomState();
-    const result = await WebBrowser.openAuthSessionAsync(
-      `${BACKEND_BASE_URL}/public/login/google?state=${randomState}`,
-      `${FRONTEND_BASE_URL}/login/`
-    );
+  const exchangeCodeWithBackend = async (code: string) => {
+    try {
+      const response = await fetch(
+        `${BACKEND_BASE_URL}/public/login/exchange`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            code,
+            redirectUri,
+            codeVerifier: request?.codeVerifier,
+          }),
+        }
+      );
 
-    if (result.type === "success") {
-      await fetch(`${BACKEND_BASE_URL}/public/login/verify`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else {
-            throw new Error("Verificação falhou");
-          }
-        })
-        .then((data) => {
-          const token = data.token;
-          if (token) {
-            signIn(token);
-            router.replace("/(main)");
-          }
-        })
-        .catch((err) => {
-          router.push(
-            `/error?message=${encodeURIComponent(
-              "Não foi possível verificar o seu usuário: " + err.message
-            )}`
-          );
-        });
+      const data = await response.json();
+      signIn(data.token);
+      router.replace("/(main)/validar");
+    } catch (error) {
+      console.error("Token exchange error:", error);
     }
   };
+
+  useEffect(() => {
+    (async function handleResult() {
+      if (result) {
+        if (result.type === "error") {
+          return;
+        }
+        if (result.type === "success" && result.params.code) {
+          await exchangeCodeWithBackend(result.params.code);
+        }
+      }
+    })();
+  }, [result]);
 
   return (
     <DefaultContainer>
       {!session ? (
         <TouchableOpacity
           style={{ backgroundColor: "blue", padding: 20, width: "100%" }}
-          onPress={handleLogin}
+          onPress={() => promptAsync()}
         >
           <Text style={{ color: "white", textAlign: "center", fontSize: 30 }}>
             Login with Google

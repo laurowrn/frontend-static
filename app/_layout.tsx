@@ -4,7 +4,6 @@ import { useDefaultFonts } from "@/hooks/useDefaultFonts";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { Platform } from "react-native";
 import { SessionProvider } from "@/context/AuthContext";
 import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
 

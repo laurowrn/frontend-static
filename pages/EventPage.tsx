@@ -661,7 +661,7 @@ export default function EventPage() {
                     fontSize: fontSize(14),
                   }}
                 >
-                  22:00 - 6:00
+                  22:00 - 7:00
                 </Text>
               </View>
             </View>
@@ -985,7 +985,7 @@ export default function EventPage() {
                   textAlign: "justify",
                 }}
               >
-                Mesas e reservas: +55 98406-4466
+                Mesas e reservas: +55 47 98406-4466
                 <br />
                 <br />
                 Você precisa ser aceito para fazer parte. Não existe venda
