@@ -17,7 +17,9 @@ import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
 import { useEffect } from "react";
 
 WebBrowser.maybeCompleteAuthSession();
-const redirectUri = AuthSession.makeRedirectUri();
+const redirectUri = AuthSession.makeRedirectUri({
+  path: "/login",
+});
 
 export default function Login() {
   const { colors } = useTheme();
