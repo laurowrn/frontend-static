@@ -22,7 +22,7 @@ export default function Login() {
   const { colors } = useTheme();
   const router = useRouter();
   const { signIn, session } = useSession();
-  const redirectUri = `${FRONTEND_BASE_URL}/login`;
+  const redirectUri = `${FRONTEND_BASE_URL}/login/`;
 
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
