@@ -17,12 +17,12 @@ import { BACKEND_BASE_URL, FRONTEND_BASE_URL } from "@/helpers/applicationUrl";
 import { useEffect } from "react";
 
 WebBrowser.maybeCompleteAuthSession();
-const redirectUri = `${FRONTEND_BASE_URL}/login/`;
 
 export default function Login() {
   const { colors } = useTheme();
   const router = useRouter();
   const { signIn, session } = useSession();
+  const redirectUri = `${FRONTEND_BASE_URL}/login`;
 
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
