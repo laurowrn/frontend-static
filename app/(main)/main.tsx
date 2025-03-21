@@ -2,16 +2,10 @@ import DefaultContainer from "@/components/containers/DefaultContainer";
 import GenericButton from "@/components/GenericButton";
 import { Fonts } from "@/constants/fonts";
 import { useTheme } from "@/context/ThemeContext";
-import {
-  fontSize,
-  horizontalScale,
-  moderateScale,
-} from "@/helpers/responsiveScaling";
+import { fontSize, horizontalScale } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { BottomNavigation } from "react-native-paper";
+import { View, Text } from "react-native";
 
 export default function Main() {
   const { colors } = useTheme();

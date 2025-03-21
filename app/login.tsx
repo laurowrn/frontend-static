@@ -68,6 +68,7 @@ export default function Login() {
       setIsLoginLoading(false);
       router.replace("/main");
     } catch (error: any) {
+      setIsLoginLoading(false);
       router.push(`/error?message=${error.message}`);
     }
   };
@@ -79,6 +80,10 @@ export default function Login() {
           router.push(
             `/error?message=${encodeURIComponent("Falha ao realizar login")}`
           );
+          return;
+        }
+        if (result.type === "dismiss") {
+          setIsLoginLoading(false);
           return;
         }
         if (result.type === "success" && result.params.code) {
@@ -121,6 +126,7 @@ export default function Login() {
               setIsLoginLoading(true);
               promptAsync();
             }}
+            disabled={isLoginLoading}
           >
             {isLoginLoading ? (
               <ActivityIndicator size="small" color={colors.onPrimary} />

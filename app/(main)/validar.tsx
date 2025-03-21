@@ -25,7 +25,7 @@ import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useGateway } from "@/context/GatewayContext";
 import { useSession } from "@/context/AuthContext";
-import { Divider } from "react-native-paper";
+import { Divider, Snackbar } from "react-native-paper";
 
 export default function Validar() {
   const { ticketGateway } = useGateway();
@@ -51,6 +51,9 @@ export default function Validar() {
     mobileNumber: "Mobile number",
   });
   const router = useRouter();
+  const [isSuccessVisible, setIsSuccessVisible] = useState(false);
+  const onToggleSnackBar = () => setIsSuccessVisible(!isSuccessVisible);
+  const onDismissSnackBar = () => setIsSuccessVisible(false);
 
   if (!permission) {
     return <View />;
@@ -213,7 +216,10 @@ export default function Validar() {
                     );
                     setIsValidationLoading(false);
                     setIsConfirmationPopupVisible(false);
+                    setIsCameraVisible(true);
+                    setIsSuccessVisible(true);
                   } catch (error: any) {
+                    setIsValidationLoading(false);
                     router.push(`/error?message=${error.message}`);
                   }
                 }}
@@ -297,6 +303,18 @@ export default function Validar() {
                 borderStyle: "dashed",
               }}
             />
+            <Snackbar
+              visible={isSuccessVisible}
+              onDismiss={onDismissSnackBar}
+              action={{
+                label: "Fechar",
+                onPress: () => {},
+                labelStyle: { color: "white" },
+              }}
+              style={{ backgroundColor: "green" }}
+            >
+              Ingresso validado com sucesso!
+            </Snackbar>
           </CameraView>
         </View>
       ) : (

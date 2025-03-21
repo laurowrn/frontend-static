@@ -7,6 +7,23 @@ export class HttpTicketGateway implements TicketGateway {
     this.baseUrl = baseUrl;
   }
 
+  async getByEmail(email: string): Promise<string> {
+    const response = await fetch(`${this.baseUrl}/private/ticket/by-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Falha em pegar informações do ingresso pelo email.");
+    }
+
+    const jsonResponse = await response.json();
+    return jsonResponse["ticket_uuid"];
+  }
+
   async get(ticketId: string, jwtToken: string): Promise<Ticket> {
     const response = await fetch(`${this.baseUrl}/private/ticket/${ticketId}`, {
       method: "GET",

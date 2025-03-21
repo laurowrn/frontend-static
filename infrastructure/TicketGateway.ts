@@ -1,5 +1,6 @@
 export interface TicketGateway {
   get(ticketId: string, jwtToken: string): Promise<Ticket>;
+  getByEmail(email: string): Promise<string>;
   validate(ticketId: string, jwtToken: string): Promise<void>;
 }
 
