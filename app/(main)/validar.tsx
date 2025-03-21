@@ -25,6 +25,7 @@ import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useGateway } from "@/context/GatewayContext";
 import { useSession } from "@/context/AuthContext";
+import { Divider } from "react-native-paper";
 
 export default function Validar() {
   const { ticketGateway } = useGateway();
@@ -300,27 +301,75 @@ export default function Validar() {
         </View>
       ) : (
         <DefaultContainer>
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.primary,
-              padding: moderateScale(10),
-              borderRadius: moderateScale(10),
-            }}
-            onPress={() => {
-              setIsCameraVisible(true);
-            }}
-          >
-            <Text
+          <View style={{ rowGap: verticalScale(50) }}>
+            <View style={{ rowGap: verticalScale(15) }}>
+              <Text
+                style={{
+                  fontFamily: Fonts.semiBold,
+                  fontSize: fontSize(30),
+                  color: colors.onBackground,
+                  textAlign: "center",
+                }}
+              >
+                Instruções
+              </Text>
+              <Divider style={{ backgroundColor: colors.onBackground }} />
+              <Text
+                style={{
+                  fontFamily: Fonts.semiBold,
+                  fontSize: fontSize(20),
+                  color: colors.onBackground,
+                  textAlign: "justify",
+                }}
+              >
+                1) Clique em "Validar ingresso" e permita que o aplicativo
+                acesse a câmera do seu celular.
+              </Text>
+              <Text
+                style={{
+                  fontFamily: Fonts.semiBold,
+                  fontSize: fontSize(20),
+                  color: colors.onBackground,
+                  textAlign: "justify",
+                }}
+              >
+                2) Com a câmera aberta, aponte para o QR Code do ingresso para
+                escaneá-lo.
+              </Text>
+              <Text
+                style={{
+                  fontFamily: Fonts.semiBold,
+                  fontSize: fontSize(20),
+                  color: colors.onBackground,
+                  textAlign: "justify",
+                }}
+              >
+                3) Após escanear, uma tela mostrará as informações do comprador.
+                Confira os dados antes de confirmar a validação.
+              </Text>
+            </View>
+            <TouchableOpacity
               style={{
-                color: colors.onPrimary,
-                fontFamily: Fonts.bold,
-                fontSize: fontSize(20),
-                textAlign: "center",
+                backgroundColor: colors.primary,
+                padding: moderateScale(10),
+                borderRadius: moderateScale(10),
+              }}
+              onPress={() => {
+                setIsCameraVisible(true);
               }}
             >
-              Validar ingresso
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: colors.onPrimary,
+                  fontFamily: Fonts.bold,
+                  fontSize: fontSize(20),
+                  textAlign: "center",
+                }}
+              >
+                Validar ingresso
+              </Text>
+            </TouchableOpacity>
+          </View>
         </DefaultContainer>
       )}
     </View>

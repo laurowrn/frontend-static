@@ -661,7 +661,7 @@ export default function EventPage() {
                     fontSize: fontSize(14),
                   }}
                 >
-                  22:00 - 7:00
+                  22:00 - 6:00
                 </Text>
               </View>
             </View>
@@ -826,34 +826,6 @@ export default function EventPage() {
                   data={ticketTypes}
                   keyExtractor={(ticket) => ticket.id.toString()}
                   renderItem={({ item, index }) => (
-                    // <TicketTypeSelector
-                    //   style={{
-                    //     backgroundColor:
-                    //       ticketSelectorStyles[index].backgroundColor,
-                    //     borderColor: ticketSelectorStyles[index].borderColor,
-                    //     textColor: ticketSelectorStyles[index].textColor,
-                    //     iconColor: ticketSelectorStyles[index].iconColor,
-                    //     badgeBackgroundColor:
-                    //       ticketSelectorStyles[index].approvalBackgroundColor,
-                    //     badgeTextcolor:
-                    //       ticketSelectorStyles[index].approvalTextColor,
-                    //   }}
-                    //   hasBadge={true}
-                    //   badgeText="20 pessoas"
-                    //   ticketName={`${item.ticketType.toUpperCase()} - ${
-                    //     item.lot == 1 ? "PRÉ-VENDA" : `LOTE ${item.lot}`
-                    //   }`}
-                    //   ticketPrice={
-                    //     item.price / 100 < 1
-                    //       ? `0,${item.price}`
-                    //       : `${item.price / 100},00`
-                    //   }
-                    //   iconName={ticketSelectorStyles[index].iconName}
-                    //   onPress={() => {
-                    //     handleTicketTypeChange(index);
-                    //   }}
-                    //   expandable={true}
-                    // />
                     <TicketTypeSelector
                       style={{
                         backgroundColor:
@@ -876,7 +848,9 @@ export default function EventPage() {
                       onPress={() => {
                         handleTicketTypeChange(index);
                       }}
-                      expandable={true}
+                      expandable={
+                        item.femaleCapacity != 1 && item.maleCapacity != 1
+                      }
                       expandedList={[
                         {
                           id: "1",
@@ -985,7 +959,7 @@ export default function EventPage() {
                   textAlign: "justify",
                 }}
               >
-                Mesas e reservas: +55 47 98406-4466
+                Mesas e reservas: +55 98406-4466
                 <br />
                 <br />
                 Você precisa ser aceito para fazer parte. Não existe venda

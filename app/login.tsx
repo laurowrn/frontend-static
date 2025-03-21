@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useSession } from "@/context/AuthContext";
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { useTheme } from "@/context/ThemeContext";
 import {
   fontSize,
@@ -13,17 +13,25 @@ import {
 } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Fonts } from "@/constants/fonts";
-import { BACKEND_BASE_URL, FRONTEND_BASE_URL } from "@/helpers/applicationUrl";
-import { useEffect } from "react";
+import {
+  BACKEND_BASE_URL,
+  FRONTEND_BASE_URL,
+  GOOGLE_REDIRECT_URI,
+} from "@/helpers/applicationUrl";
+import { useEffect, useState } from "react";
+import FormButton from "@/components/form/FormButton";
+import GenericButton from "@/components/GenericButton";
+import { TikkoIcons } from "@/hooks/useDefaultFonts";
+import { ActivityIndicator } from "react-native-paper";
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
   const router = useRouter();
   const { signIn, session } = useSession();
-  const redirectUri = `${FRONTEND_BASE_URL}/login/`;
-
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
+  const redirectUri = GOOGLE_REDIRECT_URI;
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
       redirectUri: redirectUri,
@@ -57,9 +65,10 @@ export default function Login() {
 
       const data = await response.json();
       signIn(data.token);
-      router.replace("/(main)/validar");
-    } catch (error) {
-      console.error("Token exchange error:", error);
+      setIsLoginLoading(false);
+      router.replace("/main");
+    } catch (error: any) {
+      router.push(`/error?message=${error.message}`);
     }
   };
 
@@ -67,6 +76,9 @@ export default function Login() {
     (async function handleResult() {
       if (result) {
         if (result.type === "error") {
+          router.push(
+            `/error?message=${encodeURIComponent("Falha ao realizar login")}`
+          );
           return;
         }
         if (result.type === "success" && result.params.code) {
@@ -79,56 +91,69 @@ export default function Login() {
   return (
     <DefaultContainer>
       {!session ? (
-        <TouchableOpacity
-          style={{ backgroundColor: "blue", padding: 20, width: "100%" }}
-          onPress={() => promptAsync()}
-        >
-          <Text style={{ color: "white", textAlign: "center", fontSize: 30 }}>
-            Login with Google
-          </Text>
-        </TouchableOpacity>
-      ) : (
         <View
           style={{
             justifyContent: "center",
             alignItems: "center",
-            rowGap: verticalScale(15),
+            width: "100%",
           }}
         >
+          <TikkoIcons
+            name="logo1"
+            size={fontSize(100)}
+            color={colors.primary}
+          />
           <Text
             style={{
+              fontFamily: Fonts.semiBold,
+              fontSize: fontSize(30),
               color: colors.onBackground,
-              fontFamily: Fonts.extraBold,
-              fontSize: fontSize(20),
+              textAlign: "center",
             }}
           >
-            Você já está logado
+            Entre na sua conta
           </Text>
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.primary,
-              padding: moderateScale(10),
-              borderRadius: moderateScale(10),
-              flexDirection: "row",
-              columnGap: horizontalScale(5),
-            }}
+          <View style={{ height: verticalScale(120) }} />
+          <GenericButton
+            backgroundColor={colors.primary}
+            textColor={colors.onPrimary}
             onPress={() => {
-              router.replace("/(main)");
+              setIsLoginLoading(true);
+              promptAsync();
             }}
           >
-            <Text
-              style={{
-                color: colors.onPrimary,
-                fontFamily: Fonts.extraBold,
-                fontSize: fontSize(15),
-                alignContent: "center",
-              }}
-            >
-              Vá para o aplicativo
-            </Text>
-            <Ionicons size={fontSize(15)} name="arrow-forward" />
-          </TouchableOpacity>
+            {isLoginLoading ? (
+              <ActivityIndicator size="small" color={colors.onPrimary} />
+            ) : (
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "100%",
+                  justifyContent: "center",
+                  columnGap: horizontalScale(10),
+                }}
+              >
+                <Ionicons
+                  name="logo-google"
+                  size={fontSize(24)}
+                  color={colors.onPrimary}
+                />
+                <Text
+                  style={{
+                    fontFamily: Fonts.semiBold,
+                    fontSize: fontSize(22),
+                    color: colors.onPrimary,
+                    textAlign: "center",
+                  }}
+                >
+                  Login com Google
+                </Text>
+              </View>
+            )}
+          </GenericButton>
         </View>
+      ) : (
+        <Redirect href={"/(main)/main"} />
       )}
     </DefaultContainer>
   );

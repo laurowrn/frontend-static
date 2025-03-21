@@ -1,11 +1,13 @@
 import { GatewayProvider } from "@/context/GatewayContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { useDefaultFonts } from "@/hooks/useDefaultFonts";
-import { Stack } from "expo-router";
+import { Redirect, Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { SessionProvider } from "@/context/AuthContext";
 import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
+import { View, Text } from "react-native";
+import ErrorPage from "@/pages/ErrorPage";
 
 export const unstable_settings = {
   initialRouteName: "index",

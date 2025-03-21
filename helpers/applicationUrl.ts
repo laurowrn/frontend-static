@@ -22,6 +22,12 @@ const getFrontendUrl = (): string => {
   return frontendUrl;
 };
 
+const getRedirectUri = (): string => {
+  const frontendUrl = getFrontendUrl();
+
+  return `${frontendUrl}${process.env.EXPO_PUBLIC_GOOGLE_REDIRECT_ROUTE}`;
+};
+
 const getBackendUrl = (): string => {
   const appEnv = process.env.EXPO_PUBLIC_APP_ENV || "";
   let baseUrl: string = "";
@@ -44,3 +50,4 @@ const getBackendUrl = (): string => {
 
 export const FRONTEND_BASE_URL = getFrontendUrl();
 export const BACKEND_BASE_URL = getBackendUrl();
+export const GOOGLE_REDIRECT_URI = getRedirectUri();
