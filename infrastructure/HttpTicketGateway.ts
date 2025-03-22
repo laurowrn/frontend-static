@@ -8,12 +8,12 @@ export class HttpTicketGateway implements TicketGateway {
   }
 
   async getByEmail(email: string): Promise<string> {
-    const response = await fetch(`${this.baseUrl}/private/ticket/by-email`, {
+    const response = await fetch(`${this.baseUrl}/public/ticket/by-email`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email: email }),
     });
 
     if (!response.ok) {
