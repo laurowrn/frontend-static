@@ -25,7 +25,7 @@ export default function Ticket() {
   const [ticketId, setTicketId] = useState("a");
   const router = useRouter();
   const [isTicketLoading, setIsTicketLoading] = useState(false);
-  const [isQRCodeVisible, setIsQRCodeVisible] = useState(true);
+  const [isQRCodeVisible, setIsQRCodeVisible] = useState(false);
   const { colors } = useTheme();
   return (
     <DefaultContainer>
