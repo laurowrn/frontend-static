@@ -166,7 +166,15 @@ export default function Ticket() {
               {isTicketLoading ? (
                 <ActivityIndicator size="small" color={colors.onPrimary} />
               ) : (
-                <Text>Obter ingresso</Text>
+                <Text
+                  style={{
+                    fontFamily: Fonts.semiBold,
+                    fontSize: fontSize(16),
+                    color: colors.onPrimary,
+                  }}
+                >
+                  Obter ingresso
+                </Text>
               )}
             </GenericButton>
           </View>
