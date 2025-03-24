@@ -26,6 +26,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useGateway } from "@/context/GatewayContext";
 import { useSession } from "@/context/AuthContext";
 import { Divider, Snackbar } from "react-native-paper";
+import { Ticket } from "@/infrastructure/TicketGateway";
+import { useStorageState } from "@/hooks/useStorageState";
 
 export default function Validar() {
   const { ticketGateway } = useGateway();
@@ -54,7 +56,8 @@ export default function Validar() {
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
   const onToggleSnackBar = () => setIsSuccessVisible(!isSuccessVisible);
   const onDismissSnackBar = () => setIsSuccessVisible(false);
-
+  const [[isLoadingLastTicketId, lastTicketId], setlastTicketId] =
+    useStorageState("lastTicketId");
   if (!permission) {
     return <View />;
   }
@@ -216,6 +219,7 @@ export default function Validar() {
                     );
                     setIsValidationLoading(false);
                     setIsConfirmationPopupVisible(false);
+                    setlastTicketId(scannedData.ticketId);
                     setIsCameraVisible(true);
                     setIsSuccessVisible(true);
                   } catch (error: any) {
@@ -258,11 +262,13 @@ export default function Validar() {
               barcodeTypes: ["qr"],
             }}
             onBarcodeScanned={async (data) => {
+              if (data.data === lastTicketId) {
+                return;
+              }
               setIsCameraVisible(false);
               let ticket;
               try {
                 ticket = await ticketGateway.get(data.data, session || "");
-                console.log(ticket);
                 setScannedData(ticket);
                 setIsConfirmationPopupVisible(true);
               } catch (error: any) {
