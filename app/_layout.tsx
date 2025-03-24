@@ -8,6 +8,7 @@ import { SessionProvider } from "@/context/AuthContext";
 import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
 import { View, Text } from "react-native";
 import ErrorPage from "@/pages/ErrorPage";
+import StripeProvider from "@/providers/StripeProvider";
 
 export const unstable_settings = {
   initialRouteName: "index",
@@ -30,54 +31,62 @@ export default function RootLayout() {
     <SessionProvider>
       <GatewayProvider baseUrl={BACKEND_BASE_URL}>
         <ThemeProvider>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="colmeia-reflections" />
-            <Stack.Screen
-              name="error"
-              options={{
-                presentation: "transparentModal",
-                animation: "fade",
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="success"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="cancel"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="politica-privacidade"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="termos-e-condicoes"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="sobre"
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="login"
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack>
+          <StripeProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="colmeia-reflections" />
+              <Stack.Screen
+                name="error"
+                options={{
+                  presentation: "transparentModal",
+                  animation: "fade",
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="success"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="cancel"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="politica-privacidade"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="termos-e-condicoes"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="sobre"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="login"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="checkout"
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack>
+          </StripeProvider>
         </ThemeProvider>
       </GatewayProvider>
     </SessionProvider>

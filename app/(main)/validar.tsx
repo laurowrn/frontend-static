@@ -10,11 +10,9 @@ import {
 } from "@/helpers/responsiveScaling";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
-import { isValidElement, useState } from "react";
-import * as WebBrowser from "expo-web-browser";
+import { useState } from "react";
 import {
   ActivityIndicator,
-  Button,
   Pressable,
   StyleSheet,
   Text,
@@ -26,7 +24,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useGateway } from "@/context/GatewayContext";
 import { useSession } from "@/context/AuthContext";
 import { Divider, Snackbar } from "react-native-paper";
-import { Ticket } from "@/infrastructure/TicketGateway";
 import { useStorageState } from "@/hooks/useStorageState";
 
 export default function Validar() {
@@ -47,14 +44,8 @@ export default function Validar() {
   const [isValidationLoading, setIsValidationLoading] = useState(false);
   const [isConfirmationPopupVisible, setIsConfirmationPopupVisible] =
     useState(false);
-  const [userInfo, setUserInfo] = useState({
-    name: "User Name",
-    email: "E-mail",
-    mobileNumber: "Mobile number",
-  });
   const router = useRouter();
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
-  const onToggleSnackBar = () => setIsSuccessVisible(!isSuccessVisible);
   const onDismissSnackBar = () => setIsSuccessVisible(false);
   const [[isLoadingLastTicketId, lastTicketId], setlastTicketId] =
     useStorageState("lastTicketId");

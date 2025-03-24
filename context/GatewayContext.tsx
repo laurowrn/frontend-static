@@ -3,10 +3,13 @@ import { TicketGateway } from "@/infrastructure/TicketGateway";
 import { HttpEventGateway } from "@/infrastructure/HttpEventGateway";
 import { HttpTicketGateway } from "@/infrastructure/HttpTicketGateway";
 import { createContext, useContext } from "react";
+import { StripePaymentGateway } from "@/infrastructure/StripePaymentGateway";
+import HttpStripePaymentGateway from "@/infrastructure/HttpStripePaymentGateway";
 
 interface GatewayContextValue {
   eventGateway: EventGateway;
   ticketGateway: TicketGateway;
+  stripePaymentGateway: StripePaymentGateway;
 }
 
 const GatewayContext = createContext<GatewayContextValue | null>(null);
@@ -16,10 +19,13 @@ export const GatewayProvider: React.FC<
 > = ({ baseUrl, children }) => {
   const eventGateway: EventGateway = new HttpEventGateway(baseUrl);
   const ticketGateway: TicketGateway = new HttpTicketGateway(baseUrl);
+  const stripePaymentGateway: StripePaymentGateway =
+    new HttpStripePaymentGateway(baseUrl);
 
   const value: GatewayContextValue = {
     eventGateway,
     ticketGateway,
+    stripePaymentGateway,
   };
 
   return (
