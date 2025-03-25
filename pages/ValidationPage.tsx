@@ -1,6 +1,6 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
 import { Fonts } from "@/constants/fonts";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
 import { Text } from "react-native";
 

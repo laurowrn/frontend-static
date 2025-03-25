@@ -14,7 +14,7 @@ import {
   moderateScale,
   verticalScale,
 } from "@/helpers/responsiveScaling";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import { Fonts } from "@/constants/fonts";
 import { Picker } from "@react-native-picker/picker";
 

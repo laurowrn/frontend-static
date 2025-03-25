@@ -1,7 +1,7 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
 import GenericButton from "@/components/GenericButton";
 import { Fonts } from "@/constants/fonts";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import { fontSize, horizontalScale } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";

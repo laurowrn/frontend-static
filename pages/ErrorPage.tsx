@@ -1,5 +1,5 @@
 import { Fonts } from "@/constants/fonts";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import { fontSize, moderateScale } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";

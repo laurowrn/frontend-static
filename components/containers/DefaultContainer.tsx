@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import { horizontalScale } from "@/helpers/responsiveScaling";
 import { Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

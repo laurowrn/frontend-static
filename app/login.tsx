@@ -4,7 +4,7 @@ import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useSession } from "@/context/AuthContext";
 import { Redirect, useRouter } from "expo-router";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import {
   fontSize,
   horizontalScale,
