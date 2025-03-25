@@ -4,5 +4,5 @@ import { useEffect } from "react";
 import { Text } from "react-native";
 
 export default function Index() {
-  return <Redirect href="/colmeia-reflections" />;
+  return <Redirect href="/events/1" />;
 }
