@@ -92,6 +92,12 @@ export default function RootLayout() {
                   headerShown: false,
                 }}
               />
+              <Stack.Screen
+                name="new-event-page"
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Stack>
           </StripeProvider>
         </PaperProvider>

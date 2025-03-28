@@ -27,7 +27,7 @@ import { ActivityIndicator } from "react-native-paper";
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
-  const { colors, theme } = useTheme();
+  const { colors } = useTheme();
   const router = useRouter();
   const { signIn, session } = useSession();
   const [isLoginLoading, setIsLoginLoading] = useState(false);

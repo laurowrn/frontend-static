@@ -60,7 +60,7 @@ type EventPageProps = {
   eventId: string;
 };
 export default function EventPage({ eventId }: EventPageProps) {
-  const { colors, theme } = useTheme();
+  const { colors, dark } = useTheme();
   const router = useRouter();
   const { eventGateway } = useGateway();
   const [event, setEvent] = useState<GetEventWithTicketPricingResponse>({
@@ -639,7 +639,7 @@ export default function EventPage({ eventId }: EventPageProps) {
             <TikkoIcons
               name="logo1"
               size={fontSize(40)}
-              color={theme === "dark" ? colors.onBackground : colors.primary}
+              color={dark ? colors.onBackground : colors.primary}
             />
             <View style={styles.container}>
               <Image
