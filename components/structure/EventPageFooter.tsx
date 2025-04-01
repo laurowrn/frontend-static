@@ -6,13 +6,12 @@ import {
 import { TikkoIcons } from "@/hooks/useDefaultFonts";
 import { View, Text, TouchableOpacity } from "react-native";
 import * as WebBrowser from "expo-web-browser";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { Fonts } from "@/constants/fonts";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 
-export default function Footer() {
+export default function EventPageFooter() {
   const { colors } = useTheme();
   const router = useRouter();
   return (

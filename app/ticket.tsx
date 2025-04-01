@@ -4,7 +4,7 @@ import GenericButton from "@/components/GenericButton";
 import { Fonts } from "@/constants/fonts";
 import { useSession } from "@/context/AuthContext";
 import { useGateway } from "@/context/GatewayContext";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import {
   fontSize,
   horizontalScale,

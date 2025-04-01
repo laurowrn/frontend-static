@@ -44,6 +44,7 @@ export interface TicketPricing {
   price: number;
   maleCapacity?: number;
   femaleCapacity?: number;
+  requiresApproval?: boolean;
 }
 
 export interface RegisterAndJoinResponse {

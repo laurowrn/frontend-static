@@ -1,20 +1,27 @@
 import { GatewayProvider } from "@/context/GatewayContext";
-import { ThemeProvider } from "@/context/ThemeContext";
 import { useDefaultFonts } from "@/hooks/useDefaultFonts";
-import { Redirect, Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { SessionProvider } from "@/context/AuthContext";
 import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
-import { View, Text } from "react-native";
-import ErrorPage from "@/pages/ErrorPage";
+import { useColorScheme } from "react-native";
 import StripeProvider from "@/providers/StripeProvider";
+import { colors } from "../colorScheme.json";
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 
 export const unstable_settings = {
   initialRouteName: "index",
 };
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
+  const paperTheme =
+    colorScheme === "dark"
+      ? { ...MD3DarkTheme, colors: colors.dark }
+      : { ...MD3LightTheme, colors: colors.light };
+
   const { fontsLoaded, error } = useDefaultFonts();
 
   useEffect(() => {
@@ -30,7 +37,7 @@ export default function RootLayout() {
   return (
     <SessionProvider>
       <GatewayProvider baseUrl={BACKEND_BASE_URL}>
-        <ThemeProvider>
+        <PaperProvider theme={paperTheme}>
           <StripeProvider>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="index" />
@@ -85,9 +92,15 @@ export default function RootLayout() {
                   headerShown: false,
                 }}
               />
+              <Stack.Screen
+                name="new-event-page"
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Stack>
           </StripeProvider>
-        </ThemeProvider>
+        </PaperProvider>
       </GatewayProvider>
     </SessionProvider>
   );

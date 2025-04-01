@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import {
   Text,
   StyleSheet,
@@ -31,7 +31,7 @@ import TicketTypeSelector, {
 } from "@/components/form/TicketTypeSelector";
 import { useGateway } from "@/context/GatewayContext";
 import { ExternalPathString, useRouter } from "expo-router";
-import Footer from "@/components/structure/Footer";
+import EventPageFooter from "@/components/structure/EventPageFooter";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import {
   AGE_MAX_LENGTH,
@@ -51,12 +51,42 @@ import {
   validateMobileNumber,
   validateName,
 } from "@/helpers/validators";
-import { TicketPricing } from "@/infrastructure/EventGateway";
+import {
+  GetEventWithTicketPricingResponse,
+  TicketPricing,
+} from "@/infrastructure/EventGateway";
 
-export default function EventPage() {
-  const { colors, theme } = useTheme();
+type EventPageProps = {
+  eventId: string;
+};
+export default function EventPage({ eventId }: EventPageProps) {
+  const { colors, dark } = useTheme();
   const router = useRouter();
   const { eventGateway } = useGateway();
+  const [event, setEvent] = useState<GetEventWithTicketPricingResponse>({
+    event: {
+      autoAccept: false,
+      description: "",
+      endDate: new Date(),
+      startDate: new Date(),
+      id: "",
+      isPaid: false,
+      isPrivate: true,
+      location: "",
+      name: "",
+    },
+    ticketPricings: [
+      {
+        id: 1,
+        eventId: 1,
+        ticketType: "Masculino",
+        lot: 1,
+        price: 20000,
+        maleCapacity: 7,
+        femaleCapacity: 7,
+      },
+    ],
+  });
   type TicketSelectorStyle = {
     backgroundColor: string;
     iconColor: string;
@@ -291,7 +321,8 @@ export default function EventPage() {
     (async () => {
       try {
         const eventWithTicketType =
-          await eventGateway.getEventWithTicketPricing(1);
+          await eventGateway.getEventWithTicketPricing(Number(eventId));
+        setEvent(eventWithTicketType);
         const ticketPricings: TicketPricing[] =
           eventWithTicketType.ticketPricings.map((ticket) => ({
             ...ticket,
@@ -303,7 +334,7 @@ export default function EventPage() {
           Array(ticketPricings.length).fill(ticketTypeStyles[0])
         );
       } catch (error: any) {
-        router.push(`/error?message=${error.message}`);
+        router.push(`/error?message=${encodeURI(error.message)}`);
       } finally {
         setLoading(false);
       }
@@ -608,7 +639,7 @@ export default function EventPage() {
             <TikkoIcons
               name="logo1"
               size={fontSize(40)}
-              color={theme === "dark" ? colors.onBackground : colors.primary}
+              color={dark ? colors.onBackground : colors.primary}
             />
             <View style={styles.container}>
               <Image
@@ -627,7 +658,8 @@ export default function EventPage() {
                 width: "100%",
               }}
             >
-              Colmeia - Reflections Experience 22’03’25
+              {/* Colmeia - Reflections Experience 22’03’25 */}
+              {event.event.name}
             </Text>
             <View
               style={{
@@ -652,7 +684,11 @@ export default function EventPage() {
                     paddingBottom: verticalScale(5),
                   }}
                 >
-                  sábado, 22 de março
+                  {`${event.event.startDate.toLocaleDateString("pt-BR", {
+                    weekday: "long",
+                  })}, ${event.event.startDate.toLocaleDateString("pt-BR", {
+                    dateStyle: "long",
+                  })}`}
                 </Text>
                 <Text
                   style={{
@@ -661,7 +697,11 @@ export default function EventPage() {
                     fontSize: fontSize(14),
                   }}
                 >
-                  22:00 - 6:00
+                  {`${event.event.startDate.toLocaleTimeString("pt-BR", {
+                    timeStyle: "short",
+                  })} - ${event.event.endDate.toLocaleTimeString("pt-BR", {
+                    timeStyle: "short",
+                  })}`}
                 </Text>
               </View>
             </View>
@@ -718,29 +758,7 @@ export default function EventPage() {
                         flexDirection: "row",
                       }}
                     >
-                      R. Antônio Lopes Gonçalves Bastos, 1083
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.onBackground,
-                        fontFamily: Fonts.regular,
-                        fontSize: fontSize(14),
-                        flexWrap: "wrap",
-                        flexDirection: "row",
-                      }}
-                    >
-                      Bairro Rio Pequeno
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.onBackground,
-                        fontFamily: Fonts.regular,
-                        fontSize: fontSize(14),
-                        flexWrap: "wrap",
-                        flexDirection: "row",
-                      }}
-                    >
-                      Camboriú - SC
+                      {event.event.location}
                     </Text>
                   </View>
                   <TouchableOpacity
@@ -959,36 +977,7 @@ export default function EventPage() {
                   textAlign: "justify",
                 }}
               >
-                Mesas e reservas: +55 98406-4466
-                <br />
-                <br />
-                Você precisa ser aceito para fazer parte. Não existe venda
-                direta de ingressos, e o valor só é debitado após a aprovação.
-                <br />
-                <br />A Colmeia é um evento de música eletrônica inovador que
-                oferece uma experiência única para o público e artistas. Com um
-                rigoroso processo de seleção, garante a participação de um
-                público exclusivo e altamente engajado. O evento promove
-                colaboração e criatividade, proporcionando novas sensações e
-                momentos memoráveis, enquanto revitaliza a cena musical
-                eletrônica e destaca sua casa como um centro de inovação e
-                inclusão.
-                <br />
-                <br />
-                Política de Cancelamento:
-                <br />
-                <br />O Código de Defesa do Consumidor (Artigo 49) prevê que, em
-                até 7 (sete) dias, o consumidor pode desistir da compra, desde
-                que esse prazo não ultrapasse 48 (quarenta e oito) horas antes
-                do evento. O reembolso é realizado via um processador de
-                pagamentos online, pela mesma forma de pagamento utilizada na
-                compra, descontada a taxa de conveniência (se houver), no prazo
-                de até 45 (quarenta e cinco) dias após o cancelamento. No caso
-                de compras com cartões de crédito, o valor será devolvido como
-                crédito nas faturas seguintes.
-                <br />
-                <br />
-                Bem-vindo à experiência Colmeia!
+                {event.event.description}
               </Text>
             </View>
             <View
@@ -998,7 +987,7 @@ export default function EventPage() {
                 backgroundColor: colors.surfaceVariant,
               }}
             />
-            <Footer />
+            <EventPageFooter />
             <View
               style={{
                 height: verticalScale(60),

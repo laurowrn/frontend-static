@@ -8,7 +8,7 @@ import {
 import Linking from "expo-linking";
 import { TouchableOpacity, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
 import { Fonts } from "@/constants/fonts";
 import GenericButton from "./GenericButton";

@@ -1,7 +1,7 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
 import FormButton from "@/components/form/FormButton";
 import { Fonts } from "@/constants/fonts";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import {
   fontSize,
   horizontalScale,

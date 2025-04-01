@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Appearance, Stripe, loadStripe } from "@stripe/stripe-js";
-import createPaymentIntentClientSecret from "@/helpers/createPaymentIntentClientSecret";
 import CheckoutForm from "@/components/CheckoutForm";
 import {
   fontSize,
@@ -17,7 +16,7 @@ import {
   verticalScale,
 } from "@/helpers/responsiveScaling";
 import { Fonts } from "@/constants/fonts";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "react-native-paper";
 import DefaultContainer from "@/components/containers/DefaultContainer";
 import { useGateway } from "@/context/GatewayContext";
 
