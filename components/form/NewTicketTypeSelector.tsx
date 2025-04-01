@@ -94,7 +94,7 @@ export default function NewTicketTypeSelector({
                 fontFamily: Fonts.bold,
                 flexShrink: 1,
               }}
-              variant="bodyLarge"
+              variant="titleSmall"
             >
               {title}
             </Text>
@@ -111,7 +111,7 @@ export default function NewTicketTypeSelector({
                   },
                   style.badge,
                 ]}
-                variant="labelMedium"
+                variant="labelSmall"
               >
                 {badgeText}
               </Text>
@@ -128,7 +128,7 @@ export default function NewTicketTypeSelector({
               style={{
                 fontFamily: Fonts.bold,
               }}
-              variant="bodyLarge"
+              variant="titleSmall"
             >
               {price}
             </Text>

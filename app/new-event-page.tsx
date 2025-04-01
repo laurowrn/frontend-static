@@ -16,14 +16,21 @@ import {
   verticalScale,
 } from "@/helpers/responsiveScaling";
 import React, { useState } from "react";
-import { FlatList, StyleProp, View, ViewStyle } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  ScrollView,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
 import NewTicketTypeSelector, {
   TicketSelectorStyle,
 } from "@/components/form/NewTicketTypeSelector";
 import { Formik, FormikHelpers, FormikValues } from "formik";
 import { Fonts } from "@/constants/fonts";
 import * as Yup from "yup";
-import { validateMobileNumber } from "@/helpers/validators";
+import { validateBirthday, validateMobileNumber } from "@/helpers/validators";
 import MaskInput from "react-native-mask-input";
 
 interface TicketType {
@@ -46,21 +53,18 @@ const ticketTypes: TicketType[] = [
     id: 2,
     title: "FEMININO",
     price: "R$ 15,00",
-    hasBadge: false,
+    hasBadge: true,
+    badgeText: "Requer aprovação",
   },
   {
     id: 3,
-    title: "VIP",
+    title: "CAMAROTE 1",
     price: "R$ 50,00",
-    hasBadge: true,
-    badgeText: "Acesso especial",
   },
   {
     id: 4,
-    title: "VIP",
+    title: "CAMAROTE 2",
     price: "R$ 50,00",
-    hasBadge: true,
-    badgeText: "Acesso especial",
   },
 ];
 
@@ -108,6 +112,24 @@ const TicketFormSchema = Yup.object().shape({
         : context.createError({ message: result.errorMessage });
     })
     .required("Este campo é obrigatório"),
+  confirmMobileNumber: Yup.string()
+    .test("confirm-mobile-number-validation", (value, context) => {
+      const cleanValue = value?.replace(/[()\s-]/g, "") || "";
+      const result = validateMobileNumber(cleanValue);
+      return result.isValid
+        ? true
+        : context.createError({ message: result.errorMessage });
+    })
+    .oneOf([Yup.ref("mobileNumber")], "Os números de telefone devem ser iguais")
+    .required("Este campo é obrigatório"),
+  birthday: Yup.string()
+    .test("birthday-validation", (value, context) => {
+      const result = validateBirthday(value || "");
+      return result.isValid
+        ? true
+        : context.createError({ message: result.errorMessage });
+    })
+    .required("Este campo é obrigatório"),
 });
 
 export default function NewEventPage() {
@@ -136,13 +158,20 @@ export default function NewEventPage() {
     setSelectedTicketId(ticketId);
   };
 
-  const renderTicketItem = ({ item }: { item: TicketType }) => {
+  const renderTicketItem = ({
+    item,
+    setFieldValue, // Pass setFieldValue from Formik
+  }: {
+    item: TicketType;
+    setFieldValue: (field: string, value: any) => void;
+  }) => {
     const isSelected = selectedTicketId === item.id;
     return (
       <NewTicketTypeSelector
         isSelected={isSelected}
         onPress={() => {
-          handleTicketSelection(item.id);
+          setSelectedTicketId(item.id); // Update local state
+          setFieldValue("selectedTicket", item.id.toString()); // Update Formik field
           setIsTicketTypeSelected(true);
         }}
         style={
@@ -166,7 +195,9 @@ export default function NewEventPage() {
             email: "",
             confirmEmail: "",
             mobileNumber: "+55",
+            confirmMobileNumber: "+55",
             birthday: "",
+            coupon: "",
           }}
           onSubmit={(values) => console.log(values)}
           validationSchema={TicketFormSchema}
@@ -179,28 +210,20 @@ export default function NewEventPage() {
             errors,
             touched,
             setFieldValue,
-            validateForm,
             isSubmitting,
             setSubmitting,
             isValid,
-            isValidating,
           }) => (
             <View style={{ rowGap: verticalScale(10) }}>
               <FlatList
                 data={ticketTypes}
-                renderItem={renderTicketItem}
+                renderItem={({ item }) =>
+                  renderTicketItem({ item, setFieldValue })
+                }
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={{ gap: verticalScale(8) }}
                 extraData={selectedTicketId}
                 style={{ paddingTop: verticalScale(10) }}
-                onTouchEnd={() => {
-                  if (selectedTicketId) {
-                    setFieldValue(
-                      "selectedTicket",
-                      selectedTicketId.toString()
-                    );
-                  }
-                }}
               />
 
               {isTicketTypeSelected && !isFormShown && (
@@ -412,6 +435,66 @@ export default function NewEventPage() {
                           }}
                           variant="bodyLarge"
                         >
+                          Confirme seu telefone
+                        </Text>
+                      }
+                      placeholder={
+                        !touched.confirmMobileNumber &&
+                        values.confirmMobileNumber === "+55"
+                          ? "Digite seu telefone"
+                          : undefined
+                      }
+                      style={{
+                        backgroundColor: colors.elevation.level0,
+                        fontFamily: Fonts.regular,
+                      }}
+                      contentStyle={{
+                        fontFamily: Fonts.regular,
+                      }}
+                      left={<TextInput.Icon icon="phone" />}
+                      autoCapitalize="none"
+                      autoComplete="tel"
+                      autoCorrect={false}
+                      autoFocus={false}
+                      value={values.confirmMobileNumber} // Controls label animation
+                      onChangeText={handleChange("confirmMobileNumber")}
+                      onBlur={handleBlur("confirmMobileNumber")}
+                      render={(props) => (
+                        <MaskInput
+                          {...props}
+                          value={values.confirmMobileNumber}
+                          onChangeText={(masked) => {
+                            setFieldValue("confirmMobileNumber", masked);
+                          }}
+                          mask={phoneMask}
+                          keyboardType="phone-pad"
+                        />
+                      )}
+                    />
+                    {errors.confirmMobileNumber &&
+                      touched.confirmMobileNumber && (
+                        <HelperText
+                          type="error"
+                          style={{
+                            color: colors.error,
+                            padding: moderateScale(4),
+                          }}
+                        >
+                          {errors.confirmMobileNumber}
+                        </HelperText>
+                      )}
+                  </View>
+                  <View>
+                    <TextInput
+                      mode="outlined"
+                      label={
+                        <Text
+                          style={{
+                            backgroundColor: colors.elevation.level2,
+                            color: colors.onSurfaceVariant,
+                          }}
+                          variant="bodyLarge"
+                        >
                           Data de nascimento
                         </Text>
                       }
@@ -492,11 +575,57 @@ export default function NewEventPage() {
                       </View>
                     </Button>
                   </View>
+                  {hasCoupon && (
+                    <View style={{ paddingBottom: verticalScale(10) }}>
+                      <TextInput
+                        onChangeText={handleChange("coupon")}
+                        onBlur={handleBlur("coupon")}
+                        value={values.coupon}
+                        mode="outlined"
+                        label={
+                          <Text
+                            style={{
+                              backgroundColor: colors.elevation.level2,
+                              color: colors.onSurfaceVariant,
+                              fontFamily: Fonts.regular,
+                            }}
+                            variant="bodyLarge"
+                          >
+                            Cupom
+                          </Text>
+                        }
+                        placeholder="Digite seu cupom"
+                        style={{
+                          backgroundColor: colors.elevation.level0,
+                          fontFamily: Fonts.regular,
+                        }}
+                        contentStyle={{ fontFamily: Fonts.regular }}
+                        left={<TextInput.Icon icon="ticket-outline" />}
+                        autoCapitalize="none"
+                        autoComplete="off"
+                        autoCorrect={false}
+                        autoFocus={false}
+                      />
+                      {errors.coupon && touched.coupon && (
+                        <HelperText
+                          type="error"
+                          style={{
+                            color: colors.error,
+                            padding: moderateScale(4),
+                          }}
+                        >
+                          {errors.coupon}
+                        </HelperText>
+                      )}
+                    </View>
+                  )}
+
                   <Button
                     mode="contained"
                     onPress={() => {
-                      setIsFormShown(true);
+                      handleSubmit();
                     }}
+                    disabled={!isValid || isSubmitting}
                   >
                     Comprar
                   </Button>
