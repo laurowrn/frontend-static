@@ -758,31 +758,8 @@ export default function EventPage({ eventId }: EventPageProps) {
                         flexDirection: "row",
                       }}
                     >
-                      {/* R. Antônio Lopes Gonçalves Bastos, 1083 */}
                       {event.event.location}
                     </Text>
-                    {/* <Text
-                      style={{
-                        color: colors.onBackground,
-                        fontFamily: Fonts.regular,
-                        fontSize: fontSize(14),
-                        flexWrap: "wrap",
-                        flexDirection: "row",
-                      }}
-                    >
-                      Bairro Rio Pequeno
-                    </Text>
-                    <Text
-                      style={{
-                        color: colors.onBackground,
-                        fontFamily: Fonts.regular,
-                        fontSize: fontSize(14),
-                        flexWrap: "wrap",
-                        flexDirection: "row",
-                      }}
-                    >
-                      Camboriú - SC
-                    </Text> */}
                   </View>
                   <TouchableOpacity
                     style={{
