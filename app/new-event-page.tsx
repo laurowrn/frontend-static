@@ -5,6 +5,7 @@ import {
   TouchableRipple,
   Icon,
   IconButton,
+  Divider,
 } from "react-native-paper";
 import { useState } from "react";
 import { TicketPricing } from "@/infrastructure/EventGateway";
@@ -23,6 +24,7 @@ import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as WebBrowser from "expo-web-browser";
 import EventPageHeader from "@/components/structure/EventPageHeader";
+import EventPageDescription from "@/components/structure/EventPageDescription";
 export default function NewEventPage() {
   const { colors, dark } = useTheme();
   const [event, setEvent] = useState<{
@@ -75,6 +77,19 @@ export default function NewEventPage() {
           eventLocationUrl={"https://maps.app.goo.gl/gX3NzN7wEgR5Q1M18"}
         />
         <TicketBuyingForm ticketTypes={ticketTypes} />
+        <EventPageDescription
+          description={`Mesas e reservas: +55 98406-4466
+
+Você precisa ser aceito para fazer parte. Não existe venda direta de ingressos, e o valor só é debitado após a aprovação.
+
+A Colmeia é um evento de música eletrônica inovador que oferece uma experiência única para o público e artistas. Com um rigoroso processo de seleção, garante a participação de um público exclusivo e altamente engajado. O evento promove colaboração e criatividade, proporcionando novas sensações e momentos memoráveis, enquanto revitaliza a cena musical eletrônica e destaca sua casa como um centro de inovação e inclusão.
+
+Política de Cancelamento:
+
+O Código de Defesa do Consumidor (Artigo 49) prevê que, em até 7 (sete) dias, o consumidor pode desistir da compra, desde que esse prazo não ultrapasse 48 (quarenta e oito) horas antes do evento. O reembolso é realizado via um processador de pagamentos online, pela mesma forma de pagamento utilizada na compra, descontada a taxa de conveniência (se houver), no prazo de até 45 (quarenta e cinco) dias após o cancelamento. No caso de compras com cartões de crédito, o valor será devolvido como crédito nas faturas seguintes.
+
+Bem-vindo à experiência Colmeia!`}
+        />
       </View>
     </DefaultContainer>
   );
