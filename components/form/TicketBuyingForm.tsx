@@ -1,14 +1,22 @@
 import {
   Button,
   Checkbox,
+  Dialog,
   Divider,
   HelperText,
+  Portal,
   Text,
   TextInput,
+  TouchableRipple,
   useTheme,
 } from "react-native-paper";
 import TicketFormContainer from "@/components/containers/TicketFormContainer";
-import { moderateScale, verticalScale } from "@/helpers/responsiveScaling";
+import {
+  fontSize,
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from "@/helpers/responsiveScaling";
 import React, { useState } from "react";
 import { FlatList, View } from "react-native";
 import NewTicketTypeSelector, {
@@ -22,6 +30,8 @@ import MaskInput from "react-native-mask-input";
 import ExpandedTicketTypeSelector from "@/components/form/ExpandedTicketTypeSelector";
 import { TicketPricing } from "@/infrastructure/EventGateway";
 import formatMoney from "@/helpers/formatMoney";
+import * as WebBrowser from "expo-web-browser";
+import { useRouter } from "expo-router";
 
 const phoneMask = [
   "+",
@@ -99,6 +109,12 @@ export default function TicketBuyingForm({
   const [isTicketTypeSelected, setIsTicketTypeSelected] = useState(false);
   const [isFormShown, setIsFormShown] = useState(false);
   const [hasCoupon, setHasCoupon] = useState(false);
+  const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] =
+    useState(false);
+  const showConfirmationDialog = () => setIsConfirmationDialogVisible(true);
+  const hideConfirmationDialog = () => setIsConfirmationDialogVisible(false);
+  const [isConfirmationChecked, setIsConfirmationChecked] = useState(false);
+  const router = useRouter();
 
   const ticketSelectorSelectedStyle: TicketSelectorStyle = {
     selector: {
@@ -197,6 +213,128 @@ export default function TicketBuyingForm({
           isValid,
         }) => (
           <View style={{ rowGap: verticalScale(10) }}>
+            <Portal>
+              <Dialog
+                visible={isConfirmationDialogVisible}
+                onDismiss={hideConfirmationDialog}
+              >
+                <Dialog.Title>Confirmação</Dialog.Title>
+                <Dialog.Content>
+                  <Text
+                    style={{ textAlign: "justify", fontFamily: Fonts.regular }}
+                    variant="bodyMedium"
+                  >
+                    Ao completar a compra, você deverá esperar a confirmação do
+                    organizador do evento. Após a confirmação, o seu ingresso
+                    chegará por WhatsApp.
+                  </Text>
+                  <TouchableRipple
+                    onPress={() => {
+                      WebBrowser.openBrowserAsync(
+                        "https://api.whatsapp.com/send?phone=5547997689918&text=Ol%C3%A1%2C%20eu%20gostaria%20de%20tirar%20uma%20d%C3%BAvida."
+                      );
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: colors.primary,
+                        fontFamily: Fonts.semiBold,
+                      }}
+                      variant="bodyMedium"
+                    >
+                      Qualquer dúvida fale conosco.
+                    </Text>
+                  </TouchableRipple>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      columnGap: horizontalScale(10),
+                      paddingVertical: verticalScale(20),
+                      width: "100%",
+                    }}
+                  >
+                    <TouchableRipple
+                      onPress={() =>
+                        setIsConfirmationChecked(!isConfirmationChecked)
+                      }
+                    >
+                      <Checkbox
+                        status={isConfirmationChecked ? "checked" : "unchecked"}
+                      />
+                    </TouchableRipple>
+                    <View style={{ flex: 1 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          flexWrap: "wrap",
+                          alignItems: "center",
+                          rowGap: verticalScale(5),
+                        }}
+                      >
+                        <Text
+                          style={{
+                            textAlign: "left",
+                            fontFamily: Fonts.semiBold,
+                          }}
+                          variant="bodyMedium"
+                        >
+                          Concordo com a{" "}
+                        </Text>
+                        <Text
+                          style={{
+                            textAlign: "left",
+                            color: colors.primary,
+                            fontFamily: Fonts.black,
+                          }}
+                          onPress={() => router.push("/politica-privacidade")}
+                          variant="bodyMedium"
+                        >
+                          Política de Privacidade{" "}
+                        </Text>
+                        <Text
+                          style={{
+                            textAlign: "left",
+                            fontFamily: Fonts.semiBold,
+                          }}
+                          variant="bodyMedium"
+                        >
+                          e os{" "}
+                        </Text>
+                        <Text
+                          style={{
+                            textAlign: "left",
+                            color: colors.primary,
+                            fontFamily: Fonts.black,
+                          }}
+                          onPress={() => router.push("/termos-e-condicoes")}
+                          variant="bodyMedium"
+                        >
+                          Termos e Condições.
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </Dialog.Content>
+                <Dialog.Actions style={{ columnGap: horizontalScale(20) }}>
+                  <Button
+                    mode="contained"
+                    onPress={() => {}}
+                    buttonColor={colors.error}
+                    textColor={colors.onError}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    mode="contained"
+                    onPress={hideConfirmationDialog}
+                    disabled={!isConfirmationChecked}
+                  >
+                    Continuar
+                  </Button>
+                </Dialog.Actions>
+              </Dialog>
+            </Portal>
             <FlatList
               data={ticketTypes}
               renderItem={({ item }) =>
@@ -606,7 +744,8 @@ export default function TicketBuyingForm({
                 <Button
                   mode="contained"
                   onPress={() => {
-                    handleSubmit();
+                    // handleSubmit();
+                    showConfirmationDialog();
                   }}
                   disabled={!isValid || isSubmitting}
                 >
