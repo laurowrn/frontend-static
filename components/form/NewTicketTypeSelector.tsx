@@ -14,6 +14,7 @@ import {
   Icon,
   Text,
   useTheme,
+  Checkbox,
 } from "react-native-paper";
 
 export interface TicketSelectorStyle {
@@ -55,7 +56,8 @@ export default function NewTicketTypeSelector({
         },
         style.selector,
       ]}
-      elevation={3}
+      mode="flat"
+      elevation={5}
     >
       <TouchableRipple
         onPress={() => {
@@ -77,10 +79,7 @@ export default function NewTicketTypeSelector({
             alignItems: "center",
           }}
         >
-          <Icon
-            source={isSelected ? "checkbox-outline" : "checkbox-blank-outline"}
-            size={20}
-          />
+          <Checkbox status={isSelected ? "checked" : "unchecked"} />
           <View
             style={{
               flex: 1,
