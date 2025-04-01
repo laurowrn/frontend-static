@@ -1,17 +1,13 @@
-import { colors } from "@/constants/colors";
 import { Fonts } from "@/constants/fonts";
 import {
   moderateScale,
   verticalScale,
-  fontSize,
   horizontalScale,
 } from "@/helpers/responsiveScaling";
-import { useState } from "react";
 import { TextStyle, View, ViewStyle } from "react-native";
 import {
   Surface,
   TouchableRipple,
-  Icon,
   Text,
   useTheme,
   Checkbox,

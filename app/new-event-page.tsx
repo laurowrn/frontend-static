@@ -2,6 +2,7 @@ import DefaultContainer from "@/components/containers/DefaultContainer";
 import {
   Button,
   Checkbox,
+  Divider,
   HelperText,
   Surface,
   Text,
@@ -32,6 +33,7 @@ import { Fonts } from "@/constants/fonts";
 import * as Yup from "yup";
 import { validateBirthday, validateMobileNumber } from "@/helpers/validators";
 import MaskInput from "react-native-mask-input";
+import ExpandedTicketTypeSelector from "@/components/form/ExpandedTicketTypeSelector";
 
 interface TicketType {
   id: number;
@@ -154,10 +156,6 @@ export default function NewEventPage() {
     badge: {},
   };
 
-  const handleTicketSelection = (ticketId: number) => {
-    setSelectedTicketId(ticketId);
-  };
-
   const renderTicketItem = ({
     item,
     setFieldValue, // Pass setFieldValue from Formik
@@ -227,14 +225,17 @@ export default function NewEventPage() {
               />
 
               {isTicketTypeSelected && !isFormShown && (
-                <Button
-                  mode="contained"
-                  onPress={() => {
-                    setIsFormShown(true);
-                  }}
-                >
-                  Solicitar participação
-                </Button>
+                <View>
+                  <Divider style={{ marginBottom: verticalScale(10) }} />
+                  <Button
+                    mode="contained"
+                    onPress={() => {
+                      setIsFormShown(true);
+                    }}
+                  >
+                    Solicitar participação
+                  </Button>
+                </View>
               )}
               {isFormShown && (
                 <View style={{ rowGap: verticalScale(5) }}>
@@ -619,7 +620,7 @@ export default function NewEventPage() {
                       )}
                     </View>
                   )}
-
+                  <Divider style={{ marginBottom: verticalScale(10) }} />
                   <Button
                     mode="contained"
                     onPress={() => {
