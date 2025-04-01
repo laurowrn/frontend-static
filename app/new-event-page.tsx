@@ -1,30 +1,13 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import {
-  useTheme,
-  Text,
-  TouchableRipple,
-  Icon,
-  IconButton,
-  Divider,
-} from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import { useState } from "react";
 import { TicketPricing } from "@/infrastructure/EventGateway";
 import TicketBuyingForm from "@/components/form/TicketBuyingForm";
 import { View } from "react-native";
-import { TikkoIcons } from "@/hooks/useDefaultFonts";
-import {
-  fontSize,
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from "@/helpers/responsiveScaling";
-import { Image } from "expo-image";
-import { Fonts } from "@/constants/fonts";
-import Feather from "@expo/vector-icons/Feather";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import * as WebBrowser from "expo-web-browser";
+import { verticalScale } from "@/helpers/responsiveScaling";
 import EventPageHeader from "@/components/structure/EventPageHeader";
 import EventPageDescription from "@/components/structure/EventPageDescription";
+import EventPageFooter from "@/components/structure/EventPageFooter";
 export default function NewEventPage() {
   const { colors, dark } = useTheme();
   const [event, setEvent] = useState<{
@@ -90,6 +73,7 @@ O Código de Defesa do Consumidor (Artigo 49) prevê que, em até 7 (sete) dias,
 
 Bem-vindo à experiência Colmeia!`}
         />
+        <EventPageFooter />
       </View>
     </DefaultContainer>
   );

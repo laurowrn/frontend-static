@@ -31,7 +31,7 @@ import TicketTypeSelector, {
 } from "@/components/form/TicketTypeSelector";
 import { useGateway } from "@/context/GatewayContext";
 import { ExternalPathString, useRouter } from "expo-router";
-import Footer from "@/components/structure/Footer";
+import EventPageFooter from "@/components/structure/EventPageFooter";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import {
   AGE_MAX_LENGTH,
@@ -987,7 +987,7 @@ export default function EventPage({ eventId }: EventPageProps) {
                 backgroundColor: colors.surfaceVariant,
               }}
             />
-            <Footer />
+            <EventPageFooter />
             <View
               style={{
                 height: verticalScale(60),
