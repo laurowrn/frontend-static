@@ -63,7 +63,7 @@ export default function NewTicketTypeSelector({
           flex: 1,
           width: "100%",
           paddingVertical: verticalScale(8),
-          paddingHorizontal: moderateScale(10),
+          paddingHorizontal: horizontalScale(5),
         }}
       >
         <View

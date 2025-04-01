@@ -4,71 +4,25 @@ import {
   Checkbox,
   Divider,
   HelperText,
-  Surface,
   Text,
   TextInput,
-  TouchableRipple,
   useTheme,
 } from "react-native-paper";
 import TicketFormContainer from "@/components/containers/TicketFormContainer";
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from "@/helpers/responsiveScaling";
+import { moderateScale, verticalScale } from "@/helpers/responsiveScaling";
 import React, { useState } from "react";
-import {
-  Dimensions,
-  FlatList,
-  ScrollView,
-  StyleProp,
-  View,
-  ViewStyle,
-} from "react-native";
+import { FlatList, View } from "react-native";
 import NewTicketTypeSelector, {
   TicketSelectorStyle,
 } from "@/components/form/NewTicketTypeSelector";
-import { Formik, FormikHelpers, FormikValues } from "formik";
+import { Formik } from "formik";
 import { Fonts } from "@/constants/fonts";
 import * as Yup from "yup";
 import { validateBirthday, validateMobileNumber } from "@/helpers/validators";
 import MaskInput from "react-native-mask-input";
 import ExpandedTicketTypeSelector from "@/components/form/ExpandedTicketTypeSelector";
-
-interface TicketType {
-  id: number;
-  title: string;
-  price: string;
-  hasBadge?: boolean;
-  badgeText?: string;
-}
-
-const ticketTypes: TicketType[] = [
-  {
-    id: 1,
-    title: "MASCULINO",
-    price: "R$ 20,00",
-    hasBadge: true,
-    badgeText: "Requer aprovação",
-  },
-  {
-    id: 2,
-    title: "FEMININO",
-    price: "R$ 15,00",
-    hasBadge: true,
-    badgeText: "Requer aprovação",
-  },
-  {
-    id: 3,
-    title: "CAMAROTE 1",
-    price: "R$ 50,00",
-  },
-  {
-    id: 4,
-    title: "CAMAROTE 2",
-    price: "R$ 50,00",
-  },
-];
+import { TicketPricing } from "@/infrastructure/EventGateway";
+import formatMoney from "@/helpers/formatMoney";
 
 const phoneMask = [
   "+",
@@ -141,6 +95,27 @@ export default function NewEventPage() {
   const [isFormShown, setIsFormShown] = useState(false);
   const [hasCoupon, setHasCoupon] = useState(false);
 
+  const [ticketTypes, setTicketTypes] = useState<TicketPricing[]>([
+    {
+      id: 1,
+      eventId: 1,
+      ticketType: "Masculino",
+      lot: 1,
+      price: 20000,
+      maleCapacity: 0,
+      femaleCapacity: 0,
+    },
+    {
+      id: 2,
+      eventId: 1,
+      ticketType: "Feminino",
+      lot: 1,
+      price: 15000,
+      maleCapacity: 0,
+      femaleCapacity: 1,
+    },
+  ]);
+
   const ticketSelectorSelectedStyle: TicketSelectorStyle = {
     selector: {
       backgroundColor: colors.primaryContainer,
@@ -158,27 +133,53 @@ export default function NewEventPage() {
 
   const renderTicketItem = ({
     item,
-    setFieldValue, // Pass setFieldValue from Formik
+    setFieldValue,
   }: {
-    item: TicketType;
+    item: TicketPricing;
     setFieldValue: (field: string, value: any) => void;
   }) => {
     const isSelected = selectedTicketId === item.id;
+    if (item.femaleCapacity! > 0 || item.maleCapacity! > 0) {
+      return (
+        <ExpandedTicketTypeSelector
+          isSelected={isSelected}
+          onPress={() => {
+            setSelectedTicketId(item.id);
+            setFieldValue("selectedTicket", item.id.toString());
+            setIsTicketTypeSelected(true);
+          }}
+          style={
+            isSelected
+              ? ticketSelectorSelectedStyle
+              : ticketSelectorDefaultStyle
+          }
+          title={item.ticketType}
+          price={`R$ ${formatMoney(item.price)}`}
+          hasBadge={item.requiresApproval}
+          badgeText={"Requer aprovação"}
+          sublist={[
+            item.maleCapacity?.toString() || "",
+            item.femaleCapacity?.toString() || "",
+            item.price.toString() || "",
+          ]}
+        />
+      );
+    }
     return (
       <NewTicketTypeSelector
         isSelected={isSelected}
         onPress={() => {
-          setSelectedTicketId(item.id); // Update local state
-          setFieldValue("selectedTicket", item.id.toString()); // Update Formik field
+          setSelectedTicketId(item.id);
+          setFieldValue("selectedTicket", item.id.toString());
           setIsTicketTypeSelected(true);
         }}
         style={
           isSelected ? ticketSelectorSelectedStyle : ticketSelectorDefaultStyle
         }
-        title={item.title}
-        price={item.price}
-        hasBadge={item.hasBadge}
-        badgeText={item.badgeText || ""}
+        title={item.ticketType}
+        price={`R$ ${formatMoney(item.price)}`}
+        hasBadge={item.requiresApproval}
+        badgeText={"Requer aprovação"}
       />
     );
   };
@@ -397,7 +398,7 @@ export default function NewEventPage() {
                       autoComplete="tel"
                       autoCorrect={false}
                       autoFocus={false}
-                      value={values.mobileNumber} // Controls label animation
+                      value={values.mobileNumber}
                       onChangeText={handleChange("mobileNumber")}
                       onBlur={handleBlur("mobileNumber")}
                       render={(props) => (
@@ -457,7 +458,7 @@ export default function NewEventPage() {
                       autoComplete="tel"
                       autoCorrect={false}
                       autoFocus={false}
-                      value={values.confirmMobileNumber} // Controls label animation
+                      value={values.confirmMobileNumber}
                       onChangeText={handleChange("confirmMobileNumber")}
                       onBlur={handleBlur("confirmMobileNumber")}
                       render={(props) => (
