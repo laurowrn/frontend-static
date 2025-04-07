@@ -28,13 +28,13 @@ export default function EventPageContainer({
       if (response.platform === "web") {
         const resp = response as WebImageColors;
         const newColorList = [
-          resp.dominant,
+          // resp.dominant,
           resp.vibrant,
           resp.lightVibrant || "#CCCCCC",
-          resp.darkVibrant || "#333333",
+          // resp.darkVibrant || "#333333",
           // resp.muted || "#666666",
           // resp.lightMuted || "#999999",
-          // resp.darkMuted || "#222222",
+          resp.darkMuted || "#222222",
           colors.backdrop,
           colors.background,
         ];
@@ -57,7 +57,7 @@ export default function EventPageContainer({
       contentContainerStyle={styles.contentContainer}
     >
       <LinearGradient
-        locations={[0, 0.05, 0.1, 0.15, 0.35, 0.5, 1]}
+        locations={[0, 0.1, 0.2, 0.35, 1]}
         colors={
           colorList.length >= 2
             ? (colorList as [string, string, ...string[]])
