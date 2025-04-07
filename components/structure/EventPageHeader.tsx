@@ -33,11 +33,7 @@ export default function EventPageHeader({
   const { colors, dark } = useTheme();
   return (
     <View style={{ alignItems: "center", rowGap: verticalScale(15) }}>
-      <TikkoIcons
-        name="logo1"
-        size={fontSize(40)}
-        color={dark ? colors.onBackground : colors.primary}
-      />
+      <TikkoIcons name="logo1" size={fontSize(40)} color={colors.primary} />
       <View
         style={{
           width: moderateScale(250),

@@ -334,7 +334,7 @@ export default function EventPage({ eventId }: EventPageProps) {
           Array(ticketPricings.length).fill(ticketTypeStyles[0])
         );
       } catch (error: any) {
-        router.push(`/error?message=${encodeURI(error.message)}`);
+        router.push(`/error?message=${encodeURIComponent(error.message)}`);
       } finally {
         setLoading(false);
       }

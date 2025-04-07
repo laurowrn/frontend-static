@@ -49,6 +49,7 @@
     "react-dom": "18.3.1",
     "react-native": "0.76.7",
     "react-native-gesture-handler": "~2.20.2",
+    "react-native-image-colors": "^2.4.0",
     "react-native-mask-input": "^1.2.3",
     "react-native-paper": "^5.13.1",
     "react-native-qrcode-styled": "^0.3.3",
@@ -57,7 +58,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
-    "yup": "^1.6.1"
+    "yup": "^1.6.1",
+    "expo-linear-gradient": "~14.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
