@@ -1,13 +1,17 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { useTheme } from "react-native-paper";
-import { useState } from "react";
+import { Button, useTheme, Text } from "react-native-paper";
+import { useEffect, useState } from "react";
 import { TicketPricing } from "@/infrastructure/EventGateway";
 import TicketBuyingForm from "@/components/form/TicketBuyingForm";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { verticalScale } from "@/helpers/responsiveScaling";
 import EventPageHeader from "@/components/structure/EventPageHeader";
 import EventPageDescription from "@/components/structure/EventPageDescription";
 import EventPageFooter from "@/components/structure/EventPageFooter";
+import { getColors, ImageColorsResult } from "react-native-image-colors";
+import { WebImageColors } from "react-native-image-colors/build/types";
+import { LinearGradient } from "expo-linear-gradient";
+import EventPageContainer from "@/components/structure/EventPageContainer";
 export default function NewEventPage() {
   const { colors, dark } = useTheme();
   const [event, setEvent] = useState<{
@@ -45,8 +49,10 @@ export default function NewEventPage() {
     },
   ]);
 
+  const [colorList, setColorList] = useState<string[]>([]);
+
   return (
-    <DefaultContainer backgroundColor={colors.background}>
+    <EventPageContainer backgroundColor={colors.background}>
       <View style={{ alignItems: "center", rowGap: verticalScale(15) }}>
         <EventPageHeader
           eventTitle={"Colmeia - Reflections Experience 22’03’25"}
@@ -75,6 +81,6 @@ Bem-vindo à experiência Colmeia!`}
         />
         <EventPageFooter />
       </View>
-    </DefaultContainer>
+    </EventPageContainer>
   );
 }
