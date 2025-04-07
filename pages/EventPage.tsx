@@ -55,6 +55,7 @@ import {
   GetEventWithTicketPricingResponse,
   TicketPricing,
 } from "@/infrastructure/EventGateway";
+import * as Location from "expo-location";
 
 type EventPageProps = {
   eventId: string;
@@ -74,6 +75,10 @@ export default function EventPage({ eventId }: EventPageProps) {
       isPrivate: true,
       location: "",
       name: "",
+      addressName: "",
+      addressComplement: "",
+      longitude: 0,
+      latitude: 0,
     },
     ticketPricings: [
       {
@@ -317,6 +322,8 @@ export default function EventPage({ eventId }: EventPageProps) {
     }, {} as Record<string, { value: string; isValid: boolean; errorMessage: string; isFocused: boolean }>)
   );
 
+  const [address, setAddress] = useState<string>("");
+
   useEffect(() => {
     (async () => {
       try {
@@ -340,6 +347,28 @@ export default function EventPage({ eventId }: EventPageProps) {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (event.event.latitude && event.event.longitude) {
+      (async () => {
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.event.latitude}&lon=${event.event.longitude}&zoom=18&addressdetails=1&accept-language=pt-BR`
+          );
+          const result = await response.json();
+          if (result) {
+            setAddress(
+              `${result.address.road}, ${result.address.suburb}, ${result.address.city} - ${result.address.state}`
+            );
+          } else {
+            console.log("No address found for the given coordinates.");
+          }
+        } catch (error) {
+          console.error("Error fetching address:", error);
+        }
+      })();
+    }
+  }, [event.event.latitude, event.event.longitude]);
 
   function formatMoney(value: number): string {
     return value.toLocaleString("pt-BR", {
@@ -747,7 +776,7 @@ export default function EventPage({ eventId }: EventPageProps) {
                         paddingBottom: verticalScale(5),
                       }}
                     >
-                      Lounge GV
+                      {event.event.addressName}
                     </Text>
                     <Text
                       style={{
@@ -758,7 +787,7 @@ export default function EventPage({ eventId }: EventPageProps) {
                         flexDirection: "row",
                       }}
                     >
-                      {event.event.location}
+                      {address}
                     </Text>
                   </View>
                   <TouchableOpacity

@@ -21,6 +21,10 @@ export interface Event {
   location: string;
   isPrivate: boolean;
   autoAccept: boolean;
+  addressName: string;
+  longitude: number;
+  latitude: number;
+  addressComplement: string;
 }
 
 export interface User {

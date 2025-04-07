@@ -36,6 +36,10 @@ export class HttpEventGateway implements EventGateway {
         location: jsonReponse["event"]["location"],
         isPrivate: jsonReponse["event"]["is_private"],
         autoAccept: jsonReponse["event"]["auto_accept"],
+        addressName: jsonReponse["event"]["address_name"],
+        longitude: jsonReponse["event"]["longitude"],
+        latitude: jsonReponse["event"]["latitude"],
+        addressComplement: jsonReponse["event"]["address_complement"],
       },
       ticketPricings: jsonReponse["ticket_pricing"].map((pricing: any) => ({
         id: pricing["id"],
