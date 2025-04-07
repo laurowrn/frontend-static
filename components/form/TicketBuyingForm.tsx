@@ -25,13 +25,18 @@ import NewTicketTypeSelector, {
 import { Formik } from "formik";
 import { Fonts } from "@/constants/fonts";
 import * as Yup from "yup";
-import { validateBirthday, validateMobileNumber } from "@/helpers/validators";
+import {
+  validateBirthday,
+  validateCpf,
+  validateMobileNumber,
+} from "@/helpers/validators";
 import MaskInput from "react-native-mask-input";
 import ExpandedTicketTypeSelector from "@/components/form/ExpandedTicketTypeSelector";
 import { TicketPricing } from "@/infrastructure/EventGateway";
 import formatMoney from "@/helpers/formatMoney";
 import * as WebBrowser from "expo-web-browser";
-import { useRouter } from "expo-router";
+import { ExternalPathString, useRouter } from "expo-router";
+import { useGateway } from "@/context/GatewayContext";
 
 const phoneMask = [
   "+",
@@ -56,6 +61,22 @@ const phoneMask = [
 ];
 
 const dateMask = [/\d/, /\d/, "/", /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/];
+const identificationNumberMask = [
+  /\d/,
+  /\d/,
+  /\d/,
+  ".",
+  /\d/,
+  /\d/,
+  /\d/,
+  ".",
+  /\d/,
+  /\d/,
+  /\d/,
+  "-",
+  /\d/,
+  /\d/,
+];
 
 const TicketFormSchema = Yup.object().shape({
   email: Yup.string()
@@ -87,6 +108,15 @@ const TicketFormSchema = Yup.object().shape({
     })
     .oneOf([Yup.ref("mobileNumber")], "Os números de telefone devem ser iguais")
     .required("Este campo é obrigatório"),
+  instagramAccount: Yup.string().max(30).required("Este campo é obrigatório"),
+  identificationNumber: Yup.string()
+    .test("identification-number-validation", (value, context) => {
+      const result = validateCpf(value?.replace(/[.-]/g, "") || "");
+      return result.isValid
+        ? true
+        : context.createError({ message: result.errorMessage });
+    })
+    .required("Este campo é obrigatório"),
   birthday: Yup.string()
     .test("birthday-validation", (value, context) => {
       const result = validateBirthday(value || "");
@@ -115,6 +145,7 @@ export default function TicketBuyingForm({
   const hideConfirmationDialog = () => setIsConfirmationDialogVisible(false);
   const [isConfirmationChecked, setIsConfirmationChecked] = useState(false);
   const router = useRouter();
+  const { eventGateway } = useGateway();
 
   const ticketSelectorSelectedStyle: TicketSelectorStyle = {
     selector: {
@@ -195,6 +226,8 @@ export default function TicketBuyingForm({
           mobileNumber: "+55",
           confirmMobileNumber: "+55",
           birthday: "",
+          identificationNumber: "",
+          instagramAccount: "",
           coupon: "",
         }}
         onSubmit={(values) => console.log(values)}
@@ -319,16 +352,59 @@ export default function TicketBuyingForm({
                 <Dialog.Actions style={{ columnGap: horizontalScale(20) }}>
                   <Button
                     mode="contained"
-                    onPress={() => {}}
+                    onPress={hideConfirmationDialog}
                     buttonColor={colors.error}
                     textColor={colors.onError}
+                    disabled={isSubmitting}
                   >
                     Cancelar
                   </Button>
                   <Button
                     mode="contained"
-                    onPress={hideConfirmationDialog}
-                    disabled={!isConfirmationChecked}
+                    onPress={async () => {
+                      handleSubmit();
+                      if (isSubmitting) return;
+
+                      let registerAndJoinData;
+                      try {
+                        registerAndJoinData =
+                          await eventGateway.registerAndJoin(
+                            {
+                              email: values.email,
+                              username: values.name,
+                              gender: values.selectedTicket,
+                              birthday: new Date(
+                                values.birthday.split("/").reverse().join("-")
+                              ).toISOString(),
+                              mobileNumber: values.mobileNumber.replace(
+                                /[()\s-]/g,
+                                ""
+                              ),
+                              instagram: values.instagramAccount,
+                              identificationNumber:
+                                values.identificationNumber.replace(
+                                  /[.-]/g,
+                                  ""
+                                ),
+                            },
+                            1,
+                            Number(values.selectedTicket),
+                            values.coupon
+                          );
+                        if (registerAndJoinData.paymentURL) {
+                          router.push(
+                            registerAndJoinData.paymentURL as ExternalPathString
+                          );
+                        } else {
+                          router.replace("/success");
+                        }
+                      } catch (error: any) {
+                        router.push(`/error?message=${error.message}`);
+                      }
+                      hideConfirmationDialog();
+                    }}
+                    disabled={!isConfirmationChecked || isSubmitting}
+                    loading={isSubmitting}
                   >
                     Continuar
                   </Button>
@@ -661,6 +737,103 @@ export default function TicketBuyingForm({
                     </HelperText>
                   )}
                 </View>
+                <View>
+                  <TextInput
+                    mode="outlined"
+                    label={
+                      <Text
+                        style={{
+                          backgroundColor: colors.elevation.level2,
+                          color: colors.onSurfaceVariant,
+                        }}
+                        variant="bodyLarge"
+                      >
+                        CPF
+                      </Text>
+                    }
+                    placeholder={"Exemplo: 111.111.111-11"}
+                    style={{
+                      backgroundColor: colors.elevation.level0,
+                      fontFamily: Fonts.regular,
+                    }}
+                    contentStyle={{
+                      fontFamily: Fonts.regular,
+                    }}
+                    left={<TextInput.Icon icon="account" />}
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect={false}
+                    autoFocus={false}
+                    value={values.identificationNumber}
+                    onChangeText={handleChange("identificationNumber")}
+                    onBlur={handleBlur("identificationNumber")}
+                    render={(props) => (
+                      <MaskInput
+                        {...props}
+                        value={values.identificationNumber}
+                        onChangeText={(masked) => {
+                          setFieldValue("identificationNumber", masked);
+                        }}
+                        mask={identificationNumberMask}
+                        keyboardType="phone-pad"
+                      />
+                    )}
+                  />
+                  {errors.identificationNumber &&
+                    touched.identificationNumber && (
+                      <HelperText
+                        type="error"
+                        style={{
+                          color: colors.error,
+                          padding: moderateScale(4),
+                        }}
+                      >
+                        {errors.identificationNumber}
+                      </HelperText>
+                    )}
+                </View>
+                <View>
+                  <TextInput
+                    onChangeText={handleChange("instagramAccount")}
+                    onBlur={handleBlur("instagramAccount")}
+                    value={values.instagramAccount}
+                    mode="outlined"
+                    label={
+                      <Text
+                        style={{
+                          backgroundColor: colors.elevation.level2,
+                          color: colors.onSurfaceVariant,
+                          fontFamily: Fonts.regular,
+                        }}
+                        variant="bodyLarge"
+                      >
+                        Instagram
+                      </Text>
+                    }
+                    placeholder="Digite sua conta do instagram"
+                    style={{
+                      backgroundColor: colors.elevation.level0,
+                      fontFamily: Fonts.regular,
+                    }}
+                    contentStyle={{ fontFamily: Fonts.regular }}
+                    left={<TextInput.Icon icon="instagram" />}
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect={false}
+                    autoFocus={false}
+                  />
+                  {errors.instagramAccount && touched.instagramAccount && (
+                    <HelperText
+                      type="error"
+                      style={{
+                        color: colors.error,
+                        padding: moderateScale(4),
+                      }}
+                    >
+                      {errors.instagramAccount}
+                    </HelperText>
+                  )}
+                </View>
                 <View
                   style={{
                     flexDirection: "row",
@@ -744,7 +917,6 @@ export default function TicketBuyingForm({
                 <Button
                   mode="contained"
                   onPress={() => {
-                    // handleSubmit();
                     showConfirmationDialog();
                   }}
                   disabled={!isValid || isSubmitting}
