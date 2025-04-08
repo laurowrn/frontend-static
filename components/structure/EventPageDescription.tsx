@@ -16,8 +16,8 @@ export default function EventPageDescription({
       <Text
         style={{
           fontFamily: Fonts.regular,
+          fontSize: fontSize(20),
         }}
-        variant="titleMedium"
       >
         Sobre o evento
       </Text>
@@ -26,8 +26,8 @@ export default function EventPageDescription({
         style={{
           fontFamily: Fonts.regular,
           textAlign: "justify",
+          fontSize: fontSize(15),
         }}
-        variant="bodyMedium"
       >
         {description}
       </Text>

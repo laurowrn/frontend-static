@@ -72,16 +72,16 @@ export default function ExpandedTicketTypeSelector({
           <Text
             style={{
               fontFamily: Fonts.bold,
+              fontSize: fontSize(14),
             }}
-            variant="titleSmall"
           >
             {item.title}
           </Text>
           <Text
             style={{
               fontFamily: Fonts.regular,
+              fontSize: fontSize(11),
             }}
-            variant="labelSmall"
           >
             {item.subtitle}
           </Text>
@@ -89,8 +89,8 @@ export default function ExpandedTicketTypeSelector({
         <Text
           style={{
             fontFamily: Fonts.bold,
+            fontSize: fontSize(14),
           }}
-          variant="titleSmall"
         >
           {item.quantity}
         </Text>
@@ -148,8 +148,8 @@ export default function ExpandedTicketTypeSelector({
                 style={{
                   fontFamily: Fonts.bold,
                   flexShrink: 1,
+                  fontSize: fontSize(14),
                 }}
-                variant="titleSmall"
               >
                 {title}
               </Text>
@@ -163,10 +163,10 @@ export default function ExpandedTicketTypeSelector({
                       borderRadius: moderateScale(7),
                       backgroundColor: colors.elevation.level1,
                       color: colors.onSurfaceVariant,
+                      fontSize: fontSize(11),
                     },
                     style.badge,
                   ]}
-                  variant="labelSmall"
                 >
                   {badgeText}
                 </Text>
@@ -181,8 +181,8 @@ export default function ExpandedTicketTypeSelector({
               <Text
                 style={{
                   fontFamily: Fonts.bold,
+                  fontSize: fontSize(14),
                 }}
-                variant="titleSmall"
               >
                 {price}
               </Text>

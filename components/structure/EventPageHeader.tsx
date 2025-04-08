@@ -36,8 +36,8 @@ export default function EventPageHeader({
       <TikkoIcons name="logo1" size={fontSize(40)} color={colors.primary} />
       <View
         style={{
-          width: moderateScale(250),
-          height: moderateScale(250),
+          width: moderateScale(300),
+          height: moderateScale(300),
           overflow: "hidden",
           borderRadius: moderateScale(10),
         }}
@@ -54,8 +54,8 @@ export default function EventPageHeader({
           fontFamily: Fonts.bold,
           textAlign: "center",
           width: "100%",
+          fontSize: fontSize(35),
         }}
-        variant="titleLarge"
       >
         {eventTitle}
       </Text>
@@ -73,8 +73,8 @@ export default function EventPageHeader({
           <Text
             style={{
               fontFamily: Fonts.semiBold,
+              fontSize: fontSize(18),
             }}
-            variant="titleMedium"
           >
             {`${startDate.toLocaleDateString("pt-BR", {
               weekday: "long",
@@ -85,8 +85,8 @@ export default function EventPageHeader({
           <Text
             style={{
               fontFamily: Fonts.regular,
+              fontSize: fontSize(14),
             }}
-            variant="titleSmall"
           >
             {`${startDate.toLocaleTimeString("pt-BR", {
               timeStyle: "short",
@@ -113,16 +113,16 @@ export default function EventPageHeader({
           <Text
             style={{
               fontFamily: Fonts.semiBold,
+              fontSize: fontSize(18),
             }}
-            variant="titleMedium"
           >
             {eventLocationName}
           </Text>
           <Text
             style={{
               fontFamily: Fonts.regular,
+              fontSize: fontSize(14),
             }}
-            variant="titleSmall"
           >
             {eventAddress}
           </Text>

@@ -26,12 +26,12 @@ export default function TicketFormContainer({
           padding: moderateScale(10),
         }}
       >
-        <Text style={{ fontFamily: Fonts.semiBold }} variant="titleMedium">
+        <Text style={{ fontFamily: Fonts.semiBold, fontSize: fontSize(20) }}>
           Obter ingressos
         </Text>
       </Surface>
       <View style={{ padding: moderateScale(10) }}>
-        <Text style={{ fontFamily: Fonts.regular }} variant="titleMedium">
+        <Text style={{ fontFamily: Fonts.regular, fontSize: fontSize(20) }}>
           Bem vindo! Por favor, escolha o tipo de ingresso desejado:
         </Text>
         {children}

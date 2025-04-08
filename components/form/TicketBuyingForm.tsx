@@ -254,8 +254,11 @@ export default function TicketBuyingForm({
                 <Dialog.Title>Confirmação</Dialog.Title>
                 <Dialog.Content>
                   <Text
-                    style={{ textAlign: "justify", fontFamily: Fonts.regular }}
-                    variant="bodyMedium"
+                    style={{
+                      textAlign: "justify",
+                      fontFamily: Fonts.regular,
+                      fontSize: fontSize(15),
+                    }}
                   >
                     Ao completar a compra, você deverá esperar a confirmação do
                     organizador do evento. Após a confirmação, o seu ingresso
@@ -272,8 +275,8 @@ export default function TicketBuyingForm({
                       style={{
                         color: colors.primary,
                         fontFamily: Fonts.semiBold,
+                        fontSize: fontSize(15),
                       }}
-                      variant="bodyMedium"
                     >
                       Qualquer dúvida fale conosco.
                     </Text>
@@ -309,8 +312,8 @@ export default function TicketBuyingForm({
                           style={{
                             textAlign: "left",
                             fontFamily: Fonts.semiBold,
+                            fontSize: fontSize(15),
                           }}
-                          variant="bodyMedium"
                         >
                           Concordo com a{" "}
                         </Text>
@@ -319,9 +322,9 @@ export default function TicketBuyingForm({
                             textAlign: "left",
                             color: colors.primary,
                             fontFamily: Fonts.black,
+                            fontSize: fontSize(15),
                           }}
                           onPress={() => router.push("/politica-privacidade")}
-                          variant="bodyMedium"
                         >
                           Política de Privacidade{" "}
                         </Text>
@@ -329,8 +332,8 @@ export default function TicketBuyingForm({
                           style={{
                             textAlign: "left",
                             fontFamily: Fonts.semiBold,
+                            fontSize: fontSize(15),
                           }}
-                          variant="bodyMedium"
                         >
                           e os{" "}
                         </Text>
@@ -339,9 +342,9 @@ export default function TicketBuyingForm({
                             textAlign: "left",
                             color: colors.primary,
                             fontFamily: Fonts.black,
+                            fontSize: fontSize(15),
                           }}
                           onPress={() => router.push("/termos-e-condicoes")}
-                          variant="bodyMedium"
                         >
                           Termos e Condições.
                         </Text>
@@ -449,8 +452,8 @@ export default function TicketBuyingForm({
                           backgroundColor: colors.elevation.level2,
                           color: colors.onSurfaceVariant,
                           fontFamily: Fonts.regular,
+                          fontSize: fontSize(15),
                         }}
-                        variant="bodyLarge"
                       >
                         Nome
                       </Text>
@@ -491,8 +494,8 @@ export default function TicketBuyingForm({
                           backgroundColor: colors.elevation.level2,
                           color: colors.onSurfaceVariant,
                           fontFamily: Fonts.regular,
+                          fontSize: fontSize(15),
                         }}
-                        variant="bodyLarge"
                       >
                         E-mail
                       </Text>
@@ -533,8 +536,8 @@ export default function TicketBuyingForm({
                           backgroundColor: colors.elevation.level2,
                           color: colors.onSurfaceVariant,
                           fontFamily: Fonts.regular,
+                          fontSize: fontSize(15),
                         }}
-                        variant="bodyLarge"
                       >
                         Confirme seu e-mail
                       </Text>
@@ -572,8 +575,8 @@ export default function TicketBuyingForm({
                           backgroundColor: colors.elevation.level2,
                           color: colors.onSurfaceVariant,
                           fontFamily: Fonts.regular,
+                          fontSize: fontSize(15),
                         }}
-                        variant="bodyLarge"
                       >
                         Telefone
                       </Text>
@@ -631,8 +634,8 @@ export default function TicketBuyingForm({
                           backgroundColor: colors.elevation.level2,
                           color: colors.onSurfaceVariant,
                           fontFamily: Fonts.regular,
+                          fontSize: fontSize(15),
                         }}
-                        variant="bodyLarge"
                       >
                         Confirme seu telefone
                       </Text>
@@ -691,8 +694,8 @@ export default function TicketBuyingForm({
                         style={{
                           backgroundColor: colors.elevation.level2,
                           color: colors.onSurfaceVariant,
+                          fontSize: fontSize(15),
                         }}
-                        variant="bodyLarge"
                       >
                         Data de nascimento
                       </Text>
@@ -745,8 +748,8 @@ export default function TicketBuyingForm({
                         style={{
                           backgroundColor: colors.elevation.level2,
                           color: colors.onSurfaceVariant,
+                          fontSize: fontSize(15),
                         }}
-                        variant="bodyLarge"
                       >
                         CPF
                       </Text>
@@ -804,8 +807,8 @@ export default function TicketBuyingForm({
                           backgroundColor: colors.elevation.level2,
                           color: colors.onSurfaceVariant,
                           fontFamily: Fonts.regular,
+                          fontSize: fontSize(15),
                         }}
-                        variant="bodyLarge"
                       >
                         Instagram
                       </Text>
@@ -861,8 +864,8 @@ export default function TicketBuyingForm({
                       <Text
                         style={{
                           fontFamily: Fonts.semiBold,
+                          fontSize: fontSize(15),
                         }}
-                        variant="bodyLarge"
                       >
                         Possuo cupom
                       </Text>
@@ -882,8 +885,8 @@ export default function TicketBuyingForm({
                             backgroundColor: colors.elevation.level2,
                             color: colors.onSurfaceVariant,
                             fontFamily: Fonts.regular,
+                            fontSize: fontSize(15),
                           }}
-                          variant="bodyLarge"
                         >
                           Cupom
                         </Text>

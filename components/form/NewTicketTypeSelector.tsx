@@ -3,6 +3,7 @@ import {
   moderateScale,
   verticalScale,
   horizontalScale,
+  fontSize,
 } from "@/helpers/responsiveScaling";
 import { TextStyle, View, ViewStyle } from "react-native";
 import {
@@ -89,8 +90,8 @@ export default function NewTicketTypeSelector({
               style={{
                 fontFamily: Fonts.bold,
                 flexShrink: 1,
+                fontSize: fontSize(14),
               }}
-              variant="titleSmall"
             >
               {title}
             </Text>
@@ -104,10 +105,10 @@ export default function NewTicketTypeSelector({
                     borderRadius: moderateScale(7),
                     backgroundColor: colors.elevation.level1,
                     color: colors.onSurfaceVariant,
+                    fontSize: fontSize(11),
                   },
                   style.badge,
                 ]}
-                variant="labelSmall"
               >
                 {badgeText}
               </Text>
@@ -123,8 +124,8 @@ export default function NewTicketTypeSelector({
             <Text
               style={{
                 fontFamily: Fonts.bold,
+                fontSize: fontSize(14),
               }}
-              variant="titleSmall"
             >
               {price}
             </Text>
