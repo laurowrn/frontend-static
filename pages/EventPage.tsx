@@ -16,38 +16,13 @@ interface EventPageProps {
 }
 
 export default function EventPage({ eventId }: EventPageProps) {
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { eventGateway } = useGateway();
   const router = useRouter();
   const [isLoading, setLoading] = useState(true);
-  const [event, setEvent] = useState<GetEventWithTicketPricingResponse>({
-    event: {
-      autoAccept: false,
-      description: "",
-      endDate: new Date(),
-      startDate: new Date(),
-      id: "",
-      isPaid: false,
-      isPrivate: true,
-      location: "",
-      name: "",
-      addressName: "",
-      addressComplement: "",
-      longitude: 0,
-      latitude: 0,
-    },
-    ticketPricings: [
-      {
-        id: 1,
-        eventId: 1,
-        ticketType: "Masculino",
-        lot: 1,
-        price: 0,
-        maleCapacity: 0,
-        femaleCapacity: 0,
-      },
-    ],
-  });
+  const [event, setEvent] = useState<GetEventWithTicketPricingResponse | null>(
+    null
+  );
   const [address, setAddress] = useState("");
 
   useEffect(() => {
@@ -57,41 +32,46 @@ export default function EventPage({ eventId }: EventPageProps) {
           await eventGateway.getEventWithTicketPricing(Number(eventId));
         setEvent(eventWithTicketType);
       } catch (error: any) {
+        console.error("Error fetching event:", error);
         router.push(`/error?message=${encodeURIComponent(error.message)}`);
+        setLoading(false);
       }
     })();
-  }, []);
+  }, [eventId]);
 
   useEffect(() => {
-    if (event.event.latitude && event.event.longitude) {
-      (async () => {
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.event.latitude}&lon=${event.event.longitude}&zoom=18&addressdetails=1&accept-language=pt-BR`
-          );
-          const result = await response.json();
-          if (result) {
-            setAddress(
-              `${result.address.road}, ${result.address.suburb}, ${result.address.city} - ${result.address.state}`
-            );
-            setLoading(false);
-          } else {
-            console.log("No address found for the given coordinates.");
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error("Error fetching address:", error);
-          setLoading(false);
-        }
-      })();
+    if (!event || !event.event.latitude || !event.event.longitude) {
+      return;
     }
-  }, [event.event.latitude, event.event.longitude]);
 
-  const [colorList, setColorList] = useState<string[]>([]);
+    (async () => {
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.event.latitude}&lon=${event.event.longitude}&zoom=18&addressdetails=1&accept-language=pt-BR`
+        );
+        const result = await response.json();
+        if (result?.address) {
+          setAddress(
+            `${result.address.road}, ${result.address.suburb}, ${result.address.city} - ${result.address.state}`
+          );
+        } else {
+          console.warn(
+            "No address found for coordinates:",
+            event.event.latitude,
+            event.event.longitude
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching address:", error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [event]);
 
-  return (
-    <EventPageContainer backgroundColor={colors.background}>
-      {isLoading ? (
+  if (isLoading || !event) {
+    return (
+      <EventPageContainer backgroundColor={colors.background}>
         <View
           style={{
             alignItems: "center",
@@ -100,26 +80,30 @@ export default function EventPage({ eventId }: EventPageProps) {
             width: "100%",
           }}
         >
-          <ActivityIndicator size={"large"} />
+          <ActivityIndicator size="large" />
         </View>
-      ) : (
-        <View style={{ alignItems: "center", rowGap: verticalScale(15) }}>
-          <EventPageHeader
-            eventTitle={event.event.name}
-            eventImageUrl={require("../assets/event_image.png")}
-            startDate={event.event.startDate}
-            endDate={event.event.endDate}
-            eventLocationName={event.event.addressName}
-            eventAddress={address}
-            eventLocationUrl={`https://www.google.com/maps/search/?api=1&query=${event.event.latitude},${event.event.longitude}`}
-          />
-          <TicketBuyingForm
-            ticketTypes={[...event.ticketPricings].sort((a, b) => a.id - b.id)}
-          />
-          <EventPageDescription description={event.event.description} />
-          <EventPageFooter />
-        </View>
-      )}
+      </EventPageContainer>
+    );
+  }
+
+  return (
+    <EventPageContainer backgroundColor={colors.background}>
+      <View style={{ alignItems: "center", rowGap: verticalScale(15) }}>
+        <EventPageHeader
+          eventTitle={event.event.name}
+          eventImageUrl={require("../assets/event_image.png")}
+          startDate={event.event.startDate}
+          endDate={event.event.endDate}
+          eventLocationName={event.event.addressName}
+          eventAddress={address}
+          eventLocationUrl={`https://www.google.com/maps/search/?api=1&query=${event.event.latitude},${event.event.longitude}`}
+        />
+        <TicketBuyingForm
+          ticketTypes={[...event.ticketPricings].sort((a, b) => a.id - b.id)}
+        />
+        <EventPageDescription description={event.event.description} />
+        <EventPageFooter />
+      </View>
     </EventPageContainer>
   );
 }
