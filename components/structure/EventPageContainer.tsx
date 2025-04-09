@@ -1,6 +1,6 @@
 import { ActivityIndicator, Button, useTheme } from "react-native-paper";
 import { horizontalScale, verticalScale } from "@/helpers/responsiveScaling";
-import { Dimensions, ScrollView, StyleSheet } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { getColors } from "react-native-image-colors";
@@ -65,6 +65,16 @@ export default function EventPageContainer({
         }
         style={styles.gradient}
       >
+        <View
+          style={{
+            flex: 1,
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            backgroundColor: colors.background,
+            opacity: 0.4,
+          }}
+        />
         <SafeAreaView style={styles.safeArea}>
           {isLoading ? <ActivityIndicator /> : children}
         </SafeAreaView>
