@@ -10,6 +10,7 @@ import EventPageFooter from "@/components/structure/EventPageFooter";
 import EventPageContainer from "@/components/structure/EventPageContainer";
 import { useGateway } from "@/context/GatewayContext";
 import { useRouter } from "expo-router";
+import EventMap from "@/components/structure/EventMap.web";
 
 interface EventPageProps {
   eventId: string;
@@ -97,11 +98,16 @@ export default function EventPage({ eventId }: EventPageProps) {
           eventLocationName={event.event.addressName}
           eventAddress={address}
           eventLocationUrl={`https://www.google.com/maps/search/?api=1&query=${event.event.latitude},${event.event.longitude}`}
+          eventId={eventId}
         />
         <TicketBuyingForm
           ticketTypes={[...event.ticketPricings].sort((a, b) => a.id - b.id)}
         />
         <EventPageDescription description={event.event.description} />
+        <EventMap
+          latitude={Number(event.event.latitude)}
+          longitude={Number(event.event.longitude)}
+        />
         <EventPageFooter />
       </View>
     </EventPageContainer>
