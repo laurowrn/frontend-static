@@ -9,10 +9,15 @@ import { useColorScheme } from "react-native";
 import StripeProvider from "@/providers/StripeProvider";
 import { colors } from "../colorScheme.json";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
+import { initMercadoPago } from "@mercadopago/sdk-react";
 
 export const unstable_settings = {
   initialRouteName: "index",
 };
+
+initMercadoPago("TEST-5375122b-d965-4d62-a92e-616c8be62cf6", {
+  locale: "pt-BR",
+});
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

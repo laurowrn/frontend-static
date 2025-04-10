@@ -1,5 +1,6 @@
 export interface EventGateway {
   getEvent(eventId: string): Promise<Event>;
+  getEvents(): Promise<Event[]>;
   registerAndJoin(
     user: User,
     eventId: number,

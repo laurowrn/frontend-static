@@ -15,6 +15,29 @@ export class HttpEventGateway implements EventGateway {
     this.baseUrl = baseUrl;
   }
 
+  async getEvents(): Promise<Event[]> {
+    const response = await fetch(`${this.baseUrl}/public/event`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch events");
+    }
+    const jsonResponse = await response.json();
+    return jsonResponse.map((event: any) => ({
+      id: event["id"],
+      name: event["name"],
+      description: event["description"],
+      isPaid: event["is_paid"],
+      startDate: new Date(event["start_date"]),
+      endDate: new Date(event["end_date"]),
+      location: event["location"],
+      isPrivate: event["is_private"],
+      autoAccept: event["auto_accept"],
+      addressName: event["address_name"],
+      longitude: event["longitude"],
+      latitude: event["latitude"],
+      addressComplement: event["address_complement"],
+    }));
+  }
+
   async getEventWithTicketPricing(
     eventId: number
   ): Promise<GetEventWithTicketPricingResponse> {

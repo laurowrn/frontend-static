@@ -5,7 +5,7 @@ import {
   verticalScale,
 } from "@/helpers/responsiveScaling";
 import { TikkoIcons } from "@/hooks/useDefaultFonts";
-import { View } from "react-native";
+import { Touchable, View } from "react-native";
 import {
   useTheme,
   Text,
@@ -16,6 +16,7 @@ import {
   Divider,
   Snackbar,
   Portal,
+  TouchableRipple,
 } from "react-native-paper";
 import { Image } from "expo-image";
 import { Fonts } from "@/constants/fonts";
@@ -23,6 +24,7 @@ import * as WebBrowser from "expo-web-browser";
 import * as Clipboard from "expo-clipboard";
 import { useState } from "react";
 import { FRONTEND_BASE_URL } from "@/helpers/applicationUrl";
+import { useRouter } from "expo-router";
 
 interface EventPageHeaderProps {
   eventId: string;
@@ -53,6 +55,7 @@ export default function EventPageHeader({
   const onToggleCopySnackbar = () =>
     setIsCopySnackbarVisible(!isCopySnackbarVisible);
   const onDismissCopySnackbar = () => setIsCopySnackbarVisible(false);
+  const router = useRouter();
 
   return (
     <View style={{ alignItems: "center", rowGap: verticalScale(15) }}>
@@ -76,7 +79,14 @@ export default function EventPageHeader({
           width: "100%",
         }}
       >
-        <TikkoIcons name="logo1" size={fontSize(40)} color={colors.primary} />
+        <TouchableRipple
+          style={{ borderRadius: moderateScale(10) }}
+          onPress={() => {
+            router.replace("/");
+          }}
+        >
+          <TikkoIcons name="logo1" size={fontSize(40)} color={colors.primary} />
+        </TouchableRipple>
         <Menu
           visible={isShareMenuVisible}
           onDismiss={closeMenu}

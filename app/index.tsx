@@ -1,8 +1,226 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { Redirect } from "expo-router";
-import { useEffect } from "react";
-import { Text } from "react-native";
+import { Fonts } from "@/constants/fonts";
+import {
+  fontSize,
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from "@/helpers/responsiveScaling";
+import { TikkoIcons } from "@/hooks/useDefaultFonts";
+import { View } from "react-native";
+import {
+  ActivityIndicator,
+  Avatar,
+  Button,
+  Card,
+  Divider,
+  Surface,
+  Text,
+  TouchableRipple,
+  useTheme,
+} from "react-native-paper";
+import { Event } from "@/infrastructure/EventGateway";
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import { useGateway } from "@/context/GatewayContext";
+import { useEffect, useState } from "react";
 
 export default function Index() {
-  return <Redirect href="/events/1" />;
+  const { colors } = useTheme();
+  const router = useRouter();
+  const { eventGateway } = useGateway();
+  const [events, setEvents] = useState<Event[] | null>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [addresses, setAddresses] = useState<string[]>();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const collectedEvents = await eventGateway.getEvents();
+        setEvents(collectedEvents);
+      } catch (error: any) {
+        console.error("Error fetching event:", error);
+        router.push(`/error?message=${encodeURIComponent(error.message)}`);
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!events || events.length === 0) {
+      return;
+    }
+
+    (async () => {
+      try {
+        const fetchedAddresses = await Promise.all(
+          events.map(async (event) => {
+            if (event.latitude && event.longitude) {
+              const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.latitude}&lon=${event.longitude}&zoom=18&addressdetails=1&accept-language=pt-BR`
+              );
+              const result = await response.json();
+              if (result?.address) {
+                return `${event.addressName}, ${result.address.city} - ${result.address.state}`;
+              } else {
+                console.warn(
+                  "No address found for coordinates:",
+                  event.latitude,
+                  event.longitude
+                );
+                return "Endereço não encontrado";
+              }
+            }
+            return "Coordenadas inválidas";
+          })
+        );
+        setAddresses(fetchedAddresses);
+      } catch (error) {
+        console.error("Error fetching addresses:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [events]);
+
+  if (isLoading || !events) {
+    return (
+      <DefaultContainer>
+        <View
+          style={{
+            flex: 1,
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ActivityIndicator size="large" />
+        </View>
+      </DefaultContainer>
+    );
+  }
+
+  return (
+    <DefaultContainer>
+      <View
+        style={{
+          flexDirection: "row",
+          flex: 1,
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <TikkoIcons name="mark1" size={fontSize(60)} color={colors.primary} />
+        <Button
+          mode="contained"
+          onPress={() => {
+            router.push("/login");
+          }}
+        >
+          Login
+        </Button>
+      </View>
+      <View style={{ height: verticalScale(100) }} />
+      <TikkoIcons name="logo1" size={fontSize(100)} color={colors.primary} />
+      <View
+        style={{
+          flex: 1,
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ fontFamily: Fonts.regular }}>
+          Uma nova maneira de consumir e gerenciar eventos.
+        </Text>
+      </View>
+      <View
+        style={{
+          width: "100%",
+          height: 1,
+          backgroundColor: colors.surfaceVariant,
+          marginVertical: verticalScale(10),
+        }}
+      />
+      <Text
+        style={{
+          fontFamily: Fonts.bold,
+          fontSize: fontSize(20),
+        }}
+      >
+        Próximos eventos
+      </Text>
+      <View style={{ height: verticalScale(10) }} />
+      <TouchableRipple
+        style={{ width: "100%" }}
+        onPress={async () => {
+          router.push("/events/1");
+        }}
+      >
+        <Surface
+          elevation={1}
+          style={{
+            width: "100%",
+            borderRadius: moderateScale(10),
+            padding: moderateScale(10),
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              columnGap: horizontalScale(10),
+            }}
+          >
+            <View
+              style={{
+                width: moderateScale(100),
+                height: moderateScale(100),
+                overflow: "hidden",
+                borderRadius: moderateScale(10),
+              }}
+            >
+              <Image
+                style={{ flex: 1, width: "100%" }}
+                source={require("../assets/event_image.png")}
+                contentFit="cover"
+                transition={1000}
+              />
+            </View>
+            <View style={{ rowGap: verticalScale(3), flex: 1 }}>
+              <Text style={{ fontSize: fontSize(25), fontFamily: Fonts.bold }}>
+                {events[0].name}
+              </Text>
+
+              <Text
+                style={{
+                  fontSize: fontSize(14),
+                  fontFamily: Fonts.bold,
+                  color: colors.primary,
+                }}
+              >
+                {`${events[0].startDate.toLocaleDateString("pt-BR", {
+                  weekday: "long",
+                })}, ${events[0].startDate.toLocaleDateString("pt-BR", {
+                  dateStyle: "long",
+                })}`}
+              </Text>
+
+              <Text
+                style={{
+                  fontSize: fontSize(14),
+                  fontFamily: Fonts.bold,
+                  flex: 1,
+                }}
+                numberOfLines={1}
+              >
+                {addresses ? addresses[0] : "Endereço não encontrado"}
+              </Text>
+            </View>
+          </View>
+        </Surface>
+      </TouchableRipple>
+    </DefaultContainer>
+  );
 }
