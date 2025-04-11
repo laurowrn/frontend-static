@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 
 import { type ErrorBoundaryProps } from "expo-router";
 import LegalInformationFooter from "@/components/info/LegalInformationFooter";
+import EventCard from "@/components/event/EventCard";
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   const router = useRouter();
@@ -200,79 +201,19 @@ export default function Index() {
         data={events}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
-          <TouchableRipple
-            style={{ width: "100%", marginBottom: verticalScale(10) }}
-            onPress={() => {
-              router.push(`/events/${item.id}`);
+          <EventCard
+            event={{
+              name: item.name,
+              startDate: item.startDate,
+              imageSource: require("../assets/event_image.png"),
             }}
-          >
-            <Surface
-              elevation={1}
-              style={{
-                width: "100%",
-                borderRadius: moderateScale(10),
-                padding: moderateScale(10),
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  columnGap: horizontalScale(10),
-                }}
-              >
-                <View
-                  style={{
-                    width: moderateScale(100),
-                    height: moderateScale(100),
-                    overflow: "hidden",
-                    borderRadius: moderateScale(10),
-                  }}
-                >
-                  <Image
-                    style={{ flex: 1, width: "100%" }}
-                    source={require("../assets/event_image.png")}
-                    contentFit="cover"
-                    transition={1000}
-                  />
-                </View>
-                <View style={{ rowGap: verticalScale(3), flex: 1 }}>
-                  <Text
-                    style={{ fontSize: fontSize(25), fontFamily: Fonts.bold }}
-                  >
-                    {item.name}
-                  </Text>
-
-                  <Text
-                    style={{
-                      fontSize: fontSize(14),
-                      fontFamily: Fonts.bold,
-                      color: colors.primary,
-                    }}
-                  >
-                    {`${item.startDate.toLocaleDateString("pt-BR", {
-                      weekday: "long",
-                    })}, ${item.startDate.toLocaleDateString("pt-BR", {
-                      dateStyle: "long",
-                    })}`}
-                  </Text>
-
-                  <Text
-                    style={{
-                      fontSize: fontSize(14),
-                      fontFamily: Fonts.bold,
-                      flex: 1,
-                    }}
-                    numberOfLines={1}
-                  >
-                    {addresses && addresses[index]
-                      ? addresses[index]
-                      : "Endereço não encontrado"}
-                  </Text>
-                </View>
-              </View>
-            </Surface>
-          </TouchableRipple>
+            address={
+              addresses && addresses[index]
+                ? addresses[index]
+                : "Endereço não encontrado"
+            }
+            onPress={() => router.push(`/next-events/${item.id}`)}
+          />
         )}
       />
       <View

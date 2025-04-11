@@ -97,6 +97,12 @@ export default function RootLayout() {
                   headerShown: false,
                 }}
               />
+              <Stack.Screen
+                name="next-events"
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Stack>
           </StripeProvider>
         </PaperProvider>

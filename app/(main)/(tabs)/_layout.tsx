@@ -11,6 +11,7 @@ import {
   Surface,
   TouchableRipple,
   useTheme,
+  Appbar,
 } from "react-native-paper";
 import {
   SafeAreaView,
@@ -39,7 +40,14 @@ export default function TabLayout() {
           },
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.onSurfaceDisabled,
-          headerShown: false,
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: colors.background,
+            borderWidth: 0,
+          },
+          headerTitleStyle: {
+            color: colors.onBackground,
+          },
         }}
       >
         <Tabs.Screen

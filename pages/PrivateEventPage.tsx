@@ -1,8 +1,4 @@
-import {
-  ActivityIndicator,
-  TouchableRipple,
-  useTheme,
-} from "react-native-paper";
+import { ActivityIndicator, useTheme, IconButton } from "react-native-paper";
 import TicketBuyingForm from "@/components/form/TicketBuyingForm";
 import { View } from "react-native";
 import { verticalScale } from "@/helpers/responsiveScaling";
@@ -12,15 +8,13 @@ import EventPageContainer from "@/components/structure/EventPageContainer";
 import { useRouter } from "expo-router";
 import EventMap from "@/components/structure/EventMap.web";
 import PublicEventPageAppBar from "@/components/structure/EventPageAppBar";
-import { moderateScale, fontSize } from "@/helpers/responsiveScaling";
-import { TikkoIcons } from "@/hooks/useDefaultFonts";
 import { useEventData } from "@/hooks/useEventData";
 
-interface EventPageProps {
+interface PrivateEventPageProps {
   eventId: string;
 }
 
-export default function EventPage({ eventId }: EventPageProps) {
+export default function PrivateEventPage({ eventId }: PrivateEventPageProps) {
   const { colors } = useTheme();
   const { event, address, isLoading } = useEventData(eventId);
   const router = useRouter();
@@ -58,18 +52,12 @@ export default function EventPage({ eventId }: EventPageProps) {
             <PublicEventPageAppBar
               eventId={eventId}
               left={
-                <TouchableRipple
-                  style={{ borderRadius: moderateScale(10) }}
+                <IconButton
+                  icon={"arrow-left"}
                   onPress={() => {
-                    router.replace("/");
+                    router.back();
                   }}
-                >
-                  <TikkoIcons
-                    name="logo1"
-                    size={fontSize(40)}
-                    color={colors.primary}
-                  />
-                </TouchableRipple>
+                />
               }
             />
           }
