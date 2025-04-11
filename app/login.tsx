@@ -92,7 +92,7 @@ export default function Login() {
     <View style={{ width: "100%", flex: 1 }}>
       <Appbar.Header>
         <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title="Checkout" />
+        <Appbar.Content title="Login" />
       </Appbar.Header>
       <DefaultContainer>
         {!session ? (

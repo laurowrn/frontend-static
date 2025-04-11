@@ -1,4 +1,12 @@
-import { ActivityIndicator, useTheme, IconButton } from "react-native-paper";
+import {
+  ActivityIndicator,
+  useTheme,
+  IconButton,
+  Portal,
+  Dialog,
+  Text,
+  Button,
+} from "react-native-paper";
 import TicketBuyingForm from "@/components/form/TicketBuyingForm";
 import { View } from "react-native";
 import { verticalScale } from "@/helpers/responsiveScaling";
@@ -9,6 +17,7 @@ import { useRouter } from "expo-router";
 import EventMap from "@/components/structure/EventMap.web";
 import PublicEventPageAppBar from "@/components/structure/EventPageAppBar";
 import { useEventData } from "@/hooks/useEventData";
+import { useState } from "react";
 
 interface PrivateEventPageProps {
   eventId: string;
@@ -16,7 +25,8 @@ interface PrivateEventPageProps {
 
 export default function PrivateEventPage({ eventId }: PrivateEventPageProps) {
   const { colors } = useTheme();
-  const { event, address, isLoading } = useEventData(eventId);
+  const { event, address, isLoading, isError } = useEventData(eventId);
+  const [isErrorPopupVisible, setIsErrorPopupVisible] = useState(false);
   const router = useRouter();
 
   if (isLoading || !event) {
@@ -33,6 +43,27 @@ export default function PrivateEventPage({ eventId }: PrivateEventPageProps) {
           <ActivityIndicator size="large" />
         </View>
       </EventPageContainer>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Portal>
+        <Dialog
+          visible={isErrorPopupVisible}
+          onDismiss={() => setIsErrorPopupVisible(false)}
+        >
+          <Dialog.Title>Erro</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">Não foi possível listar os eventos</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setIsErrorPopupVisible(false)}>
+              Fechar
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     );
   }
 

@@ -22,8 +22,13 @@ interface EventPageProps {
 
 export default function EventPage({ eventId }: EventPageProps) {
   const { colors } = useTheme();
-  const { event, address, isLoading } = useEventData(eventId);
+  const { event, address, isLoading, isError } = useEventData(eventId);
   const router = useRouter();
+
+  if (isError) {
+    router.replace("/error?message=Falha em carregar informações do evento");
+    return;
+  }
 
   if (isLoading || !event) {
     return (

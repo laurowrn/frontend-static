@@ -17,18 +17,18 @@ export default function MainLayout() {
     );
   }
 
-  if (!session) {
-    return <Redirect href="/login" />;
-  }
+  // if (!session) {
+  //   return <Redirect href="/login" />;
+  // }
 
-  if (session) {
-    const decoded = jwtDecode<{ exp?: number }>(session);
+  // if (session) {
+  //   const decoded = jwtDecode<{ exp?: number }>(session);
 
-    if (decoded.exp && Date.now() / 1000 >= decoded.exp) {
-      signOut();
-      return <Redirect href="/login" />;
-    }
-  }
+  //   if (decoded.exp && Date.now() / 1000 >= decoded.exp) {
+  //     signOut();
+  //     return <Redirect href="/login" />;
+  //   }
+  // }
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen

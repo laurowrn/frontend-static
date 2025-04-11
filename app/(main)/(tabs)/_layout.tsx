@@ -17,7 +17,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { Fonts } from "@/constants/fonts";
 
 export default function TabLayout() {
@@ -30,11 +30,19 @@ export default function TabLayout() {
           tabBarStyle: {
             ...styles.tabBarContainer,
             backgroundColor: colors.background,
-            paddingBottom: insets.bottom ? insets.bottom : verticalScale(10),
+            paddingBottom:
+              Platform.OS === "web"
+                ? moderateScale(5)
+                : insets.bottom
+                ? insets.bottom
+                : verticalScale(10),
             paddingTop: verticalScale(10),
-            height: insets.bottom
-              ? verticalScale(80) + insets.bottom
-              : verticalScale(80),
+            height:
+              Platform.OS === "web"
+                ? verticalScale(80) + moderateScale(5)
+                : insets.bottom
+                ? verticalScale(80) + insets.bottom
+                : verticalScale(80),
             borderColor: colors.elevation.level2,
             borderWidth: moderateScale(1),
           },

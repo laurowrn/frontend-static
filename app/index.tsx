@@ -12,7 +12,12 @@ import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
 export default function Index() {
   const { colors } = useTheme();
   const router = useRouter();
-  const { events, addresses, isLoading } = useAllEventsData();
+  const { events, addresses, isLoading, isError } = useAllEventsData();
+
+  if (isError) {
+    router.replace("/error?message=Falha em carregar eventos");
+    return;
+  }
 
   if (isLoading || !events) {
     return (
