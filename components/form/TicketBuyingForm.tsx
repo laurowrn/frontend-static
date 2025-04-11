@@ -140,6 +140,7 @@ export default function TicketBuyingForm({
   const [isTicketTypeSelected, setIsTicketTypeSelected] = useState(false);
   const [isFormShown, setIsFormShown] = useState(false);
   const [hasCoupon, setHasCoupon] = useState(false);
+  const [isCheckoutVisible, setIsCheckoutVisible] = useState(false);
   const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] =
     useState(false);
   const showConfirmationDialog = () => setIsConfirmationDialogVisible(true);
@@ -220,7 +221,7 @@ export default function TicketBuyingForm({
     <TicketFormContainer>
       <Formik
         initialValues={{
-          selectedTicket: "",
+          selectedTicket: "1",
           name: "",
           email: "",
           confirmEmail: "",
@@ -247,7 +248,7 @@ export default function TicketBuyingForm({
           isValid,
         }) => (
           <View style={{ rowGap: verticalScale(10) }}>
-            {isConfirmationDialogVisible && (
+            {isCheckoutVisible && (
               <Portal>
                 <TransparentCheckoutForm
                   user={{
@@ -267,12 +268,12 @@ export default function TicketBuyingForm({
                   }
                   coupon={values.coupon}
                   onDismiss={() => {
-                    setIsConfirmationDialogVisible(false);
+                    setIsCheckoutVisible(false);
                   }}
                 />
               </Portal>
             )}
-            {/* <Portal>
+            <Portal>
               <Dialog
                 visible={isConfirmationDialogVisible}
                 onDismiss={hideConfirmationDialog}
@@ -393,6 +394,7 @@ export default function TicketBuyingForm({
                     onPress={async () => {
                       handleSubmit();
                       hideConfirmationDialog();
+                      setIsCheckoutVisible(true);
                     }}
                     disabled={!isConfirmationChecked || isSubmitting}
                     loading={isSubmitting}
@@ -401,7 +403,7 @@ export default function TicketBuyingForm({
                   </Button>
                 </Dialog.Actions>
               </Dialog>
-            </Portal> */}
+            </Portal>
             <FlatList
               data={ticketTypes}
               renderItem={({ item }) =>

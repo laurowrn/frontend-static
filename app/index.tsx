@@ -18,6 +18,8 @@ import {
   Text,
   TouchableRipple,
   useTheme,
+  Dialog,
+  Portal,
 } from "react-native-paper";
 import { Event } from "@/infrastructure/EventGateway";
 import { Image } from "expo-image";
@@ -25,11 +27,52 @@ import { useRouter } from "expo-router";
 import { useGateway } from "@/context/GatewayContext";
 import { useEffect, useState } from "react";
 
+import { type ErrorBoundaryProps } from "expo-router";
+
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  const router = useRouter();
+  return (
+    <Portal>
+      <Dialog visible={true} onDismiss={() => {}}>
+        <Dialog.Title>Erro</Dialog.Title>
+        <Dialog.Content>
+          <Text variant="bodyMedium">{error.message}</Text>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button
+            onPress={() => {
+              router.back();
+            }}
+          >
+            Done
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
+  );
+}
+
 export default function Index() {
   const { colors } = useTheme();
   const router = useRouter();
   const { eventGateway } = useGateway();
-  const [events, setEvents] = useState<Event[] | null>([]);
+  const [events, setEvents] = useState<Event[] | null>([
+    {
+      id: "",
+      name: "",
+      description: "",
+      isPaid: false,
+      startDate: new Date(),
+      endDate: new Date(),
+      location: "",
+      isPrivate: false,
+      autoAccept: false,
+      addressName: "",
+      longitude: 0,
+      latitude: 0,
+      addressComplement: "",
+    },
+  ]);
   const [isLoading, setIsLoading] = useState(true);
   const [addresses, setAddresses] = useState<string[]>();
 
@@ -40,7 +83,7 @@ export default function Index() {
         setEvents(collectedEvents);
       } catch (error: any) {
         console.error("Error fetching event:", error);
-        router.push(`/error?message=${encodeURIComponent(error.message)}`);
+        router.navigate(`/error?message=${encodeURIComponent(error.message)}`);
         setIsLoading(false);
       }
     })();
@@ -114,7 +157,7 @@ export default function Index() {
         <Button
           mode="contained"
           onPress={() => {
-            router.push("/login");
+            router.navigate("/login");
           }}
         >
           Login

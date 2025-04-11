@@ -215,7 +215,7 @@ export default function Validar() {
                     setIsSuccessVisible(true);
                   } catch (error: any) {
                     setIsValidationLoading(false);
-                    router.push(`/error?message=${error.message}`);
+                    router.navigate(`/error?message=${error.message}`);
                   }
                 }}
                 disabled={isValidationLoading}
@@ -272,7 +272,7 @@ export default function Validar() {
                   ticketType: "",
                   name: "",
                 });
-                router.push(`/error?message=${error.message}`);
+                router.navigate(`/error?message=${error.message}`);
               }
             }}
           >

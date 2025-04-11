@@ -1,5 +1,5 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useSession } from "@/context/AuthContext";
@@ -8,18 +8,15 @@ import { useTheme } from "react-native-paper";
 import {
   fontSize,
   horizontalScale,
-  moderateScale,
   verticalScale,
 } from "@/helpers/responsiveScaling";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Fonts } from "@/constants/fonts";
 import {
   BACKEND_BASE_URL,
-  FRONTEND_BASE_URL,
   GOOGLE_REDIRECT_URI,
 } from "@/helpers/applicationUrl";
 import { useEffect, useState } from "react";
-import FormButton from "@/components/form/FormButton";
 import GenericButton from "@/components/GenericButton";
 import { TikkoIcons } from "@/hooks/useDefaultFonts";
 import { ActivityIndicator } from "react-native-paper";
@@ -69,7 +66,7 @@ export default function Login() {
       router.replace("/main");
     } catch (error: any) {
       setIsLoginLoading(false);
-      router.push(`/error?message=${error.message}`);
+      router.navigate(`/error?message=${error.message}`);
     }
   };
 

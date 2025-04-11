@@ -1,6 +1,6 @@
 import { GatewayProvider } from "@/context/GatewayContext";
 import { useDefaultFonts } from "@/hooks/useDefaultFonts";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { SessionProvider } from "@/context/AuthContext";

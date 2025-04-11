@@ -56,7 +56,8 @@ export interface TicketPricing {
 export interface RegisterAndJoinResponse {
   eventId: string;
   userId: string;
-  paymentURL?: string;
+  paymentId: string;
+  status: string;
 }
 
 export interface GetEventWithTicketPricingResponse {

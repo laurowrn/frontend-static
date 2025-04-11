@@ -34,7 +34,7 @@ export default function EventPage({ eventId }: EventPageProps) {
         setEvent(eventWithTicketType);
       } catch (error: any) {
         console.error("Error fetching event:", error);
-        router.push(`/error?message=${encodeURIComponent(error.message)}`);
+        router.navigate(`/error?message=${encodeURIComponent(error.message)}`);
         setLoading(false);
       }
     })();

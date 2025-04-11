@@ -74,8 +74,6 @@ export default function TransparentCheckoutForm({
         >
           {ticketPricing.ticketType} - Lote {ticketPricing.lot}
         </Text>
-
-        <View style={{ height: verticalScale(30) }} />
         <Payment
           initialization={{
             amount: 10,
@@ -116,15 +114,13 @@ export default function TransparentCheckoutForm({
                 },
                 coupon
               );
-              if (registerAndJoinData.paymentURL) {
-                router.push(
-                  registerAndJoinData.paymentURL as ExternalPathString
-                );
-              } else {
+              if (registerAndJoinData.status === "approved") {
                 router.replace("/success");
+              } else {
+                router.replace("/fail");
               }
             } catch (error: any) {
-              router.push(`/error?message=${error.message}`);
+              router.navigate(`/error?message=${error.message}`);
             }
           }}
           customization={{
@@ -136,8 +132,10 @@ export default function TransparentCheckoutForm({
                   errorColor: colors.error,
                   baseColor: colors.primary,
                   baseColorFirstVariant: colors.secondary,
-                  fontSizeExtraLarge: "40px",
-                  fontSizeExtraSmall: "40px",
+                  baseColorSecondVariant: colors.tertiary,
+                  inputBackgroundColor: colors.background,
+                  successColor: colors.primary,
+                  textPrimaryColor: colors.onBackground,
                 },
               },
             },

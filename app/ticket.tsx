@@ -159,7 +159,7 @@ export default function Ticket() {
                   setIsQRCodeVisible(true);
                 } catch (error: any) {
                   setIsTicketLoading(false);
-                  router.push(`/error?message=${error.message}`);
+                  router.navigate(`/error?message=${error.message}`);
                 }
               }}
             >

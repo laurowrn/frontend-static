@@ -110,6 +110,7 @@ export class HttpEventGateway implements EventGateway {
       ticket_pricing_id: ticketPricingId.toString(),
       coupom: coupon,
       payment: {
+        transaction_amount: 1500,
         token: payment.token,
         description: "Descricao do pagamento",
         installments: Number(payment.installments),
@@ -145,6 +146,11 @@ export class HttpEventGateway implements EventGateway {
     }
 
     const result: any = await response.json();
-    return result;
+    return {
+      eventId: result["event_id"],
+      userId: result["user_id"],
+      paymentId: result["payment_id"],
+      status: result["status"],
+    };
   }
 }
