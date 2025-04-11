@@ -4,6 +4,7 @@ import {
   RegisterAndJoinResponse,
   User,
   GetEventWithTicketPricingResponse,
+  Payment,
 } from "./EventGateway";
 import { useMemo } from "react";
 import React, { createContext, useContext } from "react";
@@ -90,8 +91,39 @@ export class HttpEventGateway implements EventGateway {
     user: User,
     eventId: number,
     ticketPricingId: number,
+    payment: Payment,
     coupon: string
   ): Promise<RegisterAndJoinResponse> {
+    const body = JSON.stringify({
+      user: {
+        email: user.email,
+        username: user.username,
+        gender: user.gender,
+        birthday: user.birthday,
+        location: user.location,
+        bio: user.bio,
+        instagram_profile: user.instagram,
+        phone_number: user.mobileNumber,
+        identification_number: user.identificationNumber,
+      },
+      event_id: eventId.toString(),
+      ticket_pricing_id: ticketPricingId.toString(),
+      coupom: coupon,
+      payment: {
+        token: payment.token,
+        description: "Descricao do pagamento",
+        installments: Number(payment.installments),
+        payment_method_id: payment.paymentMethodId,
+        issuer_id: payment.issuerId,
+        payer: {
+          email: payment.payer.email,
+          identification: {
+            type: payment.payer.identification.type,
+            number: payment.payer.identification.number,
+          },
+        },
+      },
+    });
     const response = await fetch(
       `${this.baseUrl}/public/user/register-and-join-event`,
       {
@@ -99,22 +131,7 @@ export class HttpEventGateway implements EventGateway {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          user: {
-            email: user.email,
-            username: user.username,
-            gender: user.gender,
-            birthday: user.birthday,
-            location: user.location,
-            bio: user.bio,
-            instagram_profile: user.instagram,
-            phone_number: user.mobileNumber,
-            identification_number: user.identificationNumber,
-          },
-          event_id: eventId,
-          ticket_pricing_id: ticketPricingId,
-          coupon: coupon,
-        }),
+        body: body,
       }
     );
 
@@ -128,10 +145,6 @@ export class HttpEventGateway implements EventGateway {
     }
 
     const result: any = await response.json();
-    return {
-      eventId: result["event_id"],
-      userId: result["user_id"],
-      paymentURL: result["payment_url"],
-    };
+    return result;
   }
 }

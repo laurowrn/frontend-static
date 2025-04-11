@@ -37,6 +37,7 @@ import formatMoney from "@/helpers/formatMoney";
 import * as WebBrowser from "expo-web-browser";
 import { ExternalPathString, useRouter } from "expo-router";
 import { useGateway } from "@/context/GatewayContext";
+import TransparentCheckoutForm from "../TransparentCheckoutForm";
 
 const phoneMask = [
   "+",
@@ -185,7 +186,7 @@ export default function TicketBuyingForm({
               : ticketSelectorDefaultStyle
           }
           title={item.ticketType}
-          price={`R$ ${formatMoney(item.price)}`}
+          price={`${formatMoney(item.price)}`}
           hasBadge={item.requiresApproval}
           badgeText={"Requer aprovação"}
           sublist={[
@@ -208,7 +209,7 @@ export default function TicketBuyingForm({
           isSelected ? ticketSelectorSelectedStyle : ticketSelectorDefaultStyle
         }
         title={item.ticketType}
-        price={`R$ ${formatMoney(item.price)}`}
+        price={`${formatMoney(item.price)}`}
         hasBadge={item.requiresApproval}
         badgeText={"Requer aprovação"}
       />
@@ -230,7 +231,7 @@ export default function TicketBuyingForm({
           instagramAccount: "",
           coupon: "",
         }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => {}}
         validationSchema={TicketFormSchema}
       >
         {({
@@ -246,7 +247,32 @@ export default function TicketBuyingForm({
           isValid,
         }) => (
           <View style={{ rowGap: verticalScale(10) }}>
-            <Portal>
+            {isConfirmationDialogVisible && (
+              <Portal>
+                <TransparentCheckoutForm
+                  user={{
+                    email: values.email,
+                    username: values.name,
+                    gender: values.selectedTicket,
+                    birthday: values.birthday,
+                    mobileNumber: values.mobileNumber,
+                    instagram: values.instagramAccount,
+                    identificationNumber: values.identificationNumber,
+                  }}
+                  eventId={999}
+                  ticketPricing={
+                    ticketTypes.find(
+                      (ticket) => ticket.id === Number(values.selectedTicket)
+                    ) || ({} as TicketPricing)
+                  }
+                  coupon={values.coupon}
+                  onDismiss={() => {
+                    setIsConfirmationDialogVisible(false);
+                  }}
+                />
+              </Portal>
+            )}
+            {/* <Portal>
               <Dialog
                 visible={isConfirmationDialogVisible}
                 onDismiss={hideConfirmationDialog}
@@ -366,44 +392,6 @@ export default function TicketBuyingForm({
                     mode="contained"
                     onPress={async () => {
                       handleSubmit();
-                      if (isSubmitting) return;
-
-                      let registerAndJoinData;
-                      try {
-                        registerAndJoinData =
-                          await eventGateway.registerAndJoin(
-                            {
-                              email: values.email,
-                              username: values.name,
-                              gender: values.selectedTicket,
-                              birthday: new Date(
-                                values.birthday.split("/").reverse().join("-")
-                              ).toISOString(),
-                              mobileNumber: values.mobileNumber.replace(
-                                /[()\s-]/g,
-                                ""
-                              ),
-                              instagram: values.instagramAccount,
-                              identificationNumber:
-                                values.identificationNumber.replace(
-                                  /[.-]/g,
-                                  ""
-                                ),
-                            },
-                            1,
-                            Number(values.selectedTicket),
-                            values.coupon
-                          );
-                        if (registerAndJoinData.paymentURL) {
-                          router.push(
-                            registerAndJoinData.paymentURL as ExternalPathString
-                          );
-                        } else {
-                          router.replace("/success");
-                        }
-                      } catch (error: any) {
-                        router.push(`/error?message=${error.message}`);
-                      }
                       hideConfirmationDialog();
                     }}
                     disabled={!isConfirmationChecked || isSubmitting}
@@ -413,7 +401,7 @@ export default function TicketBuyingForm({
                   </Button>
                 </Dialog.Actions>
               </Dialog>
-            </Portal>
+            </Portal> */}
             <FlatList
               data={ticketTypes}
               renderItem={({ item }) =>

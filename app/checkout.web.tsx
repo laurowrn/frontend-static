@@ -1,18 +1,11 @@
 import { Elements } from "@stripe/react-stripe-js";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  View,
-  Button,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { ActivityIndicator, View, Text } from "react-native";
 import { Appearance, Stripe, loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "@/components/CheckoutForm";
 import {
   fontSize,
   horizontalScale,
-  moderateScale,
   verticalScale,
 } from "@/helpers/responsiveScaling";
 import { Fonts } from "@/constants/fonts";

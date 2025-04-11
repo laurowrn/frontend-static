@@ -15,7 +15,7 @@ export const unstable_settings = {
   initialRouteName: "index",
 };
 
-initMercadoPago("TEST-5375122b-d965-4d62-a92e-616c8be62cf6", {
+initMercadoPago(process.env.EXPO_PUBLIC_MERCADO_PAGO_PUBLIC_KEY || "", {
   locale: "pt-BR",
 });
 

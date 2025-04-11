@@ -223,12 +223,12 @@ export default function ExpandedTicketTypeSelector({
                   {
                     id: "3",
                     title: "Preço",
-                    subtitle: `Valor total do produto R$ ${formatMoney(
+                    subtitle: `Valor total do produto ${formatMoney(
                       Number(sublist[2])
                     )}\nBônus de ${formatMoney(
                       Number(sublist[2]) / 2
                     )} em consumo`,
-                    quantity: `R$ ${formatMoney(Number(sublist[2]))}`,
+                    quantity: `${formatMoney(Number(sublist[2]))}`,
                   },
                 ]}
                 renderItem={renderItem}

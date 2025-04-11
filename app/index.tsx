@@ -85,18 +85,17 @@ export default function Index() {
 
   if (isLoading || !events) {
     return (
-      <DefaultContainer>
-        <View
-          style={{
-            flex: 1,
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ActivityIndicator size="large" />
-        </View>
-      </DefaultContainer>
+      <View
+        style={{
+          flex: 1,
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
     );
   }
 

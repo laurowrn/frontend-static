@@ -5,6 +5,7 @@ export interface EventGateway {
     user: User,
     eventId: number,
     ticketPricingId: number,
+    payment: Payment,
     coupon?: string
   ): Promise<RegisterAndJoinResponse>;
   getEventWithTicketPricing(
@@ -61,4 +62,19 @@ export interface RegisterAndJoinResponse {
 export interface GetEventWithTicketPricingResponse {
   event: Event;
   ticketPricings: TicketPricing[];
+}
+
+export interface Payment {
+  token: string;
+  description: string;
+  installments: string;
+  paymentMethodId: string;
+  issuerId: string;
+  payer: {
+    email: string;
+    identification: {
+      type: string;
+      number: string;
+    };
+  };
 }
