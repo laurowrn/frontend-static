@@ -11,7 +11,7 @@ import { useTheme } from "react-native-paper";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 
-export default function EventPageFooter() {
+export default function LegalInformationFooter() {
   const { colors } = useTheme();
   const router = useRouter();
   return (

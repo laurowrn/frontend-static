@@ -4,7 +4,7 @@ import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useSession } from "@/context/AuthContext";
 import { Redirect, useRouter } from "expo-router";
-import { useTheme } from "react-native-paper";
+import { Appbar, Button, useTheme } from "react-native-paper";
 import {
   fontSize,
   horizontalScale,
@@ -17,9 +17,7 @@ import {
   GOOGLE_REDIRECT_URI,
 } from "@/helpers/applicationUrl";
 import { useEffect, useState } from "react";
-import GenericButton from "@/components/GenericButton";
 import { TikkoIcons } from "@/hooks/useDefaultFonts";
-import { ActivityIndicator } from "react-native-paper";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -63,7 +61,7 @@ export default function Login() {
       const data = await response.json();
       signIn(data.token);
       setIsLoginLoading(false);
-      router.replace("/main");
+      router.replace("/explore");
     } catch (error: any) {
       setIsLoginLoading(false);
       router.navigate(`/error?message=${error.message}`);
@@ -91,73 +89,62 @@ export default function Login() {
   }, [result]);
 
   return (
-    <DefaultContainer>
-      {!session ? (
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
-          <TikkoIcons
-            name="logo1"
-            size={fontSize(100)}
-            color={colors.primary}
-          />
-          <Text
+    <View style={{ width: "100%", flex: 1 }}>
+      <Appbar.Header>
+        <Appbar.BackAction onPress={() => router.back()} />
+        <Appbar.Content title="Checkout" />
+      </Appbar.Header>
+      <DefaultContainer>
+        {!session ? (
+          <View
             style={{
-              fontFamily: Fonts.semiBold,
-              fontSize: fontSize(30),
-              color: colors.onBackground,
-              textAlign: "center",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
             }}
           >
-            Entre na sua conta
-          </Text>
-          <View style={{ height: verticalScale(120) }} />
-          <GenericButton
-            backgroundColor={colors.primary}
-            textColor={colors.onPrimary}
-            onPress={() => {
-              setIsLoginLoading(true);
-              promptAsync();
-            }}
-            disabled={isLoginLoading}
-          >
-            {isLoginLoading ? (
-              <ActivityIndicator size="small" color={colors.onPrimary} />
-            ) : (
-              <View
-                style={{
-                  flexDirection: "row",
-                  width: "100%",
-                  justifyContent: "center",
-                  columnGap: horizontalScale(10),
+            <TikkoIcons
+              name="logo1"
+              size={fontSize(80)}
+              color={colors.primary}
+            />
+            <Text
+              style={{
+                fontFamily: Fonts.semiBold,
+                fontSize: fontSize(25),
+                color: colors.onBackground,
+                textAlign: "center",
+              }}
+            >
+              Entre na sua conta
+            </Text>
+            <View style={{ height: verticalScale(120) }} />
+            <View style={{ width: "100%" }}>
+              <Button
+                mode="contained"
+                onPress={() => {
+                  setIsLoginLoading(true);
+                  promptAsync();
                 }}
+                loading={isLoginLoading}
+                disabled={isLoginLoading}
+                icon={() => (
+                  <Ionicons
+                    name="logo-google"
+                    size={fontSize(20)}
+                    color={colors.onPrimary}
+                    style={{ marginRight: horizontalScale(8) }}
+                  />
+                )}
               >
-                <Ionicons
-                  name="logo-google"
-                  size={fontSize(24)}
-                  color={colors.onPrimary}
-                />
-                <Text
-                  style={{
-                    fontFamily: Fonts.semiBold,
-                    fontSize: fontSize(22),
-                    color: colors.onPrimary,
-                    textAlign: "center",
-                  }}
-                >
-                  Login com Google
-                </Text>
-              </View>
-            )}
-          </GenericButton>
-        </View>
-      ) : (
-        <Redirect href={"/(main)/main"} />
-      )}
-    </DefaultContainer>
+                Login com Google
+              </Button>
+            </View>
+          </View>
+        ) : (
+          <Redirect href={"/explore"} />
+        )}
+      </DefaultContainer>
+    </View>
   );
 }

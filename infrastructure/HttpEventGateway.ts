@@ -110,7 +110,6 @@ export class HttpEventGateway implements EventGateway {
       ticket_pricing_id: ticketPricingId.toString(),
       coupom: coupon,
       payment: {
-        transaction_amount: 1500,
         token: payment.token,
         description: "Descricao do pagamento",
         installments: Number(payment.installments),

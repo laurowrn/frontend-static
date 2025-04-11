@@ -6,7 +6,6 @@ import { View } from "react-native";
 import { verticalScale } from "@/helpers/responsiveScaling";
 import EventPageHeader from "@/components/structure/EventPageHeader";
 import EventPageDescription from "@/components/structure/EventPageDescription";
-import EventPageFooter from "@/components/structure/EventPageFooter";
 import EventPageContainer from "@/components/structure/EventPageContainer";
 import { useGateway } from "@/context/GatewayContext";
 import { useRouter } from "expo-router";
@@ -108,7 +107,11 @@ export default function EventPage({ eventId }: EventPageProps) {
           latitude={Number(event.event.latitude)}
           longitude={Number(event.event.longitude)}
         />
-        <EventPageFooter />
+        <View
+          style={{
+            height: verticalScale(80),
+          }}
+        />
       </View>
     </EventPageContainer>
   );

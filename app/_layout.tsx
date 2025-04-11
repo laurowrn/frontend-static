@@ -92,13 +92,7 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
-                name="checkout"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="new-event-page"
+                name="(main)"
                 options={{
                   headerShown: false,
                 }}
