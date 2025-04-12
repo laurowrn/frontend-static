@@ -49,13 +49,14 @@ export default function TabLayout() {
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.onSurfaceDisabled,
           headerShown: true,
-          headerStyle: {
-            backgroundColor: colors.background,
-            borderWidth: 0,
-          },
-          headerTitleStyle: {
-            color: colors.onBackground,
-          },
+          header: ({ navigation, options }) => (
+            <Appbar.Header>
+              <Appbar.Content
+                title={options.title || "Default Title"}
+                titleStyle={{ fontFamily: Fonts.regular }}
+              />
+            </Appbar.Header>
+          ),
         }}
       >
         <Tabs.Screen

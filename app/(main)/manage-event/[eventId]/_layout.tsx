@@ -8,7 +8,7 @@ export default function MainLayout() {
       screenOptions={{
         headerShown: true,
         header: ({ navigation, options }) => (
-          <Appbar.Header elevated={true}>
+          <Appbar.Header>
             <Appbar.BackAction onPress={() => navigation.pop()} />
             <Appbar.Content
               title={options.title || "Default Title"}
