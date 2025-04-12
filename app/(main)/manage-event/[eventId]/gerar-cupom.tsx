@@ -7,7 +7,7 @@ import {
 } from "@/helpers/responsiveScaling";
 import * as Yup from "yup";
 import { Formik } from "formik";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import {
   TextInput,
   useTheme,
@@ -17,27 +17,55 @@ import {
   Button,
   RadioButton,
 } from "react-native-paper";
-import MaskInput from "react-native-mask-input";
+import Slider from "@react-native-community/slider";
 
 const CouponFormSchema = Yup.object().shape({
-  coupomType: Yup.string().required("Este campo é obrigatório"),
-  cupomValue: Yup.string().required("Este campo é obrigatório"),
-  cupomCode: Yup.string().required("Este campo é obrigatório"),
+  couponType: Yup.string().required("Este campo é obrigatório"),
+  percentualCouponValue: Yup.number().when("couponType", {
+    is: "percentual",
+    then: () =>
+      Yup.number()
+        .required("Este campo é obrigatório")
+        .min(0, "O valor mínimo é 0%")
+        .max(100, "O valor máximo é 100%"),
+    otherwise: () => Yup.number().notRequired(),
+  }),
+  absoluteCouponValue: Yup.string().when("couponType", {
+    is: "absolute",
+    then: () =>
+      Yup.string()
+        .required("Este campo é obrigatório")
+        .matches(/^\d+(,\d{2})?$/, "Formato inválido"),
+  }),
+  couponCode: Yup.string().required("Este campo é obrigatório"),
 });
 
-const percentageCouponValueMask = [/\d/, /\d/, ",", /\d/, /\d/, "%"];
+const styles = StyleSheet.create({
+  sliderContainer: {
+    marginVertical: verticalScale(10),
+  },
+  sliderLabel: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: verticalScale(5),
+  },
+});
 
 export default function Approvals() {
   const { colors } = useTheme();
+
   return (
     <DefaultContainer>
       <Formik
         initialValues={{
           couponType: "percentual",
-          couponValue: "00,00%",
+          percentualCouponValue: 0,
+          absoluteCouponValue: "",
           couponCode: "",
         }}
-        onSubmit={(values) => {}}
+        onSubmit={(values) => {
+          console.log(values);
+        }}
         validationSchema={CouponFormSchema}
       >
         {({
@@ -49,145 +77,21 @@ export default function Approvals() {
           touched,
           setFieldValue,
           isSubmitting,
-          setSubmitting,
           isValid,
         }) => (
           <View style={{ rowGap: verticalScale(10), width: "100%" }}>
-            {/* <Portal>
-              <Dialog
-                visible={isConfirmationDialogVisible}
-                onDismiss={hideConfirmationDialog}
-              >
-                <Dialog.Title>Confirmação</Dialog.Title>
-                <Dialog.Content>
-                  <Text
-                    style={{
-                      textAlign: "justify",
-                      fontFamily: Fonts.regular,
-                      fontSize: fontSize(15),
-                    }}
-                  >
-                    Ao completar a compra, você deverá esperar a confirmação do
-                    organizador do evento. Após a confirmação, o seu ingresso
-                    chegará por WhatsApp.
-                  </Text>
-                  <TouchableRipple
-                    onPress={() => {
-                      WebBrowser.openBrowserAsync(
-                        "https://api.whatsapp.com/send?phone=5547997689918&text=Ol%C3%A1%2C%20eu%20gostaria%20de%20tirar%20uma%20d%C3%BAvida."
-                      );
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: colors.primary,
-                        fontFamily: Fonts.semiBold,
-                        fontSize: fontSize(15),
-                      }}
-                    >
-                      Qualquer dúvida fale conosco.
-                    </Text>
-                  </TouchableRipple>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      columnGap: horizontalScale(10),
-                      paddingVertical: verticalScale(20),
-                      width: "100%",
-                    }}
-                  >
-                    <TouchableRipple
-                      onPress={() =>
-                        setIsConfirmationChecked(!isConfirmationChecked)
-                      }
-                    >
-                      <Checkbox
-                        status={isConfirmationChecked ? "checked" : "unchecked"}
-                      />
-                    </TouchableRipple>
-                    <View style={{ flex: 1 }}>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          flexWrap: "wrap",
-                          alignItems: "center",
-                          rowGap: verticalScale(5),
-                        }}
-                      >
-                        <Text
-                          style={{
-                            textAlign: "left",
-                            fontFamily: Fonts.semiBold,
-                            fontSize: fontSize(15),
-                          }}
-                        >
-                          Concordo com a{" "}
-                        </Text>
-                        <Text
-                          style={{
-                            textAlign: "left",
-                            color: colors.primary,
-                            fontFamily: Fonts.black,
-                            fontSize: fontSize(15),
-                          }}
-                          onPress={() => router.push("/politica-privacidade")}
-                        >
-                          Política de Privacidade{" "}
-                        </Text>
-                        <Text
-                          style={{
-                            textAlign: "left",
-                            fontFamily: Fonts.semiBold,
-                            fontSize: fontSize(15),
-                          }}
-                        >
-                          e os{" "}
-                        </Text>
-                        <Text
-                          style={{
-                            textAlign: "left",
-                            color: colors.primary,
-                            fontFamily: Fonts.black,
-                            fontSize: fontSize(15),
-                          }}
-                          onPress={() => router.push("/termos-e-condicoes")}
-                        >
-                          Termos e Condições.
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                </Dialog.Content>
-                <Dialog.Actions style={{ columnGap: horizontalScale(20) }}>
-                  <Button
-                    mode="contained"
-                    onPress={hideConfirmationDialog}
-                    buttonColor={colors.error}
-                    textColor={colors.onError}
-                    disabled={isSubmitting}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    mode="contained"
-                    onPress={async () => {
-                      handleSubmit();
-                      hideConfirmationDialog();
-                      setIsCheckoutVisible(true);
-                    }}
-                    disabled={!isConfirmationChecked || isSubmitting}
-                    loading={isSubmitting}
-                  >
-                    Continuar
-                  </Button>
-                </Dialog.Actions>
-              </Dialog>
-            </Portal> */}
-
             <Text style={{ fontSize: fontSize(20) }}>Tipo do cupom</Text>
             <RadioButton.Group
-              onValueChange={(value) => setFieldValue("couponType", value)}
+              onValueChange={(value) => {
+                setFieldValue("couponType", value);
+                if (value === "percentual") {
+                  setFieldValue("absoluteCouponValue", "");
+                  setFieldValue("percentualCouponValue", 0); // Always a number
+                } else {
+                  setFieldValue("percentualCouponValue", 0); // Reset to 0, not null
+                  setFieldValue("absoluteCouponValue", "");
+                }
+              }}
               value={values.couponType}
             >
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -212,66 +116,59 @@ export default function Approvals() {
             )}
             <Divider />
             {values.couponType === "percentual" ? (
-              <View>
-                <TextInput
-                  mode="outlined"
-                  label={
-                    <Text
-                      style={{
-                        color: colors.onSurfaceVariant,
-                        fontFamily: Fonts.regular,
-                        fontSize: fontSize(15),
-                      }}
-                    >
-                      Valor do coupom
-                    </Text>
-                  }
-                  placeholder="Digite o valor do cupom"
-                  style={{
-                    backgroundColor: colors.elevation.level0,
-                    fontFamily: Fonts.regular,
-                  }}
-                  contentStyle={{
-                    fontFamily: Fonts.regular,
-                  }}
-                  left={<TextInput.Icon icon="percent" />}
-                  autoCapitalize="none"
-                  autoComplete="off"
-                  autoCorrect={false}
-                  autoFocus={false}
-                  value={values.couponValue}
-                  onChangeText={handleChange("couponValue")}
-                  onBlur={handleBlur("couponValue")}
-                  render={(props) => (
-                    <MaskInput
-                      {...props}
-                      value={values.couponValue}
-                      onChangeText={(masked) => {
-                        setFieldValue("couponValue", masked);
-                      }}
-                      mask={percentageCouponValueMask}
-                      keyboardType="numeric"
-                    />
-                  )}
-                />
-                {errors.couponValue && touched.couponValue && (
-                  <HelperText
-                    type="error"
+              <View style={styles.sliderContainer}>
+                <View style={styles.sliderLabel}>
+                  <Text
                     style={{
-                      color: colors.error,
-                      padding: moderateScale(4),
+                      fontFamily: Fonts.semiBold,
+                      fontSize: fontSize(15),
+                      color: colors.onSurfaceVariant,
                     }}
                   >
-                    {errors.couponValue}
-                  </HelperText>
-                )}
+                    Valor do cupom
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: Fonts.regular,
+                      fontSize: fontSize(15),
+                      color: colors.onSurface,
+                    }}
+                  >
+                    {values.percentualCouponValue.toFixed(2)}%
+                  </Text>
+                </View>
+                <Slider
+                  style={{ width: "100%", height: verticalScale(30) }}
+                  minimumValue={0}
+                  maximumValue={100}
+                  step={5}
+                  value={values.percentualCouponValue}
+                  onValueChange={(value) =>
+                    setFieldValue("percentualCouponValue", value)
+                  }
+                  minimumTrackTintColor={colors.primary}
+                  maximumTrackTintColor={colors.outline}
+                  thumbTintColor={colors.primary}
+                />
+                {errors.percentualCouponValue &&
+                  touched.percentualCouponValue && (
+                    <HelperText
+                      type="error"
+                      style={{
+                        color: colors.error,
+                        padding: moderateScale(4),
+                      }}
+                    >
+                      {errors.percentualCouponValue}
+                    </HelperText>
+                  )}
               </View>
             ) : (
               <View>
                 <TextInput
-                  onChangeText={handleChange("couponValue")}
-                  onBlur={handleBlur("couponValue")}
-                  value={values.couponValue}
+                  onChangeText={handleChange("absoluteCouponValue")}
+                  onBlur={handleBlur("absoluteCouponValue")}
+                  value={values.absoluteCouponValue}
                   mode="outlined"
                   label={
                     <Text
@@ -290,13 +187,14 @@ export default function Approvals() {
                     fontFamily: Fonts.regular,
                   }}
                   contentStyle={{ fontFamily: Fonts.regular }}
-                  left={<TextInput.Icon icon="numeric" />}
+                  left={<TextInput.Icon icon="currency-brl" />}
                   autoCapitalize="none"
                   autoComplete="off"
                   autoCorrect={false}
                   autoFocus={true}
+                  keyboardType="numeric"
                 />
-                {errors.couponValue && touched.couponValue && (
+                {errors.absoluteCouponValue && touched.absoluteCouponValue && (
                   <HelperText
                     type="error"
                     style={{
@@ -304,14 +202,19 @@ export default function Approvals() {
                       padding: moderateScale(4),
                     }}
                   >
-                    {errors.couponValue}
+                    {errors.absoluteCouponValue}
                   </HelperText>
                 )}
               </View>
             )}
             <View style={{ rowGap: verticalScale(5), width: "100%" }}>
               <TextInput
-                onChangeText={handleChange("couponCode")}
+                onChangeText={(text) => {
+                  const cleanedText = text
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, "");
+                  setFieldValue("couponCode", cleanedText);
+                }}
                 onBlur={handleBlur("couponCode")}
                 value={values.couponCode}
                 mode="outlined"
@@ -333,7 +236,7 @@ export default function Approvals() {
                 }}
                 contentStyle={{ fontFamily: Fonts.regular }}
                 left={<TextInput.Icon icon="card-text" />}
-                autoCapitalize="characters"
+                autoCapitalize="none"
                 autoComplete="off"
                 autoCorrect={false}
                 autoFocus={false}
@@ -353,7 +256,7 @@ export default function Approvals() {
               <Divider style={{ marginVertical: verticalScale(10) }} />
               <Button
                 mode="contained"
-                onPress={() => {}}
+                onPress={() => handleSubmit()}
                 disabled={!isValid || isSubmitting}
               >
                 Gerar cupom
