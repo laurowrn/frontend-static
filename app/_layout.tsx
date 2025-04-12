@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { SessionProvider } from "@/context/AuthContext";
 import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
 import { useColorScheme } from "react-native";
-import StripeProvider from "@/providers/StripeProvider";
 import { colors } from "../colorScheme.json";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import { initMercadoPago } from "@mercadopago/sdk-react";
@@ -43,68 +42,66 @@ export default function RootLayout() {
     <SessionProvider>
       <GatewayProvider baseUrl={BACKEND_BASE_URL}>
         <PaperProvider theme={paperTheme}>
-          <StripeProvider>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="colmeia-reflections" />
-              <Stack.Screen
-                name="error"
-                options={{
-                  presentation: "transparentModal",
-                  animation: "fade",
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="success"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="cancel"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="politica-privacidade"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="termos-e-condicoes"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="sobre"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="login"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="(main)"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="next-events"
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack>
-          </StripeProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="colmeia-reflections" />
+            <Stack.Screen
+              name="error"
+              options={{
+                presentation: "transparentModal",
+                animation: "fade",
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="success"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="cancel"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="politica-privacidade"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="termos-e-condicoes"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="sobre"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="login"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="(main)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="next-events"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
         </PaperProvider>
       </GatewayProvider>
     </SessionProvider>

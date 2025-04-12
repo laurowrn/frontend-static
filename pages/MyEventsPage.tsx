@@ -1,15 +1,39 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
 import { useEffect, useState } from "react";
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import { Event } from "@/infrastructure/EventGateway";
 import EventCard from "@/components/event/EventCard";
 import { useGateway } from "@/context/GatewayContext";
 import { useRouter } from "expo-router";
 import { useAllEventsData } from "@/hooks/useAllEventsData";
+import { ActivityIndicator, useTheme } from "react-native-paper";
 
 export default function MyEventsPage() {
-  const { events, addresses, isLoading } = useAllEventsData();
+  const { events, addresses = [], isLoading, isError } = useAllEventsData();
+  const { colors } = useTheme();
+
   const router = useRouter();
+
+  if (isError) {
+    router.replace("/error?message=Falha em carregar informações do evento");
+    return;
+  }
+
+  if (isLoading || !events) {
+    return (
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
+          width: "100%",
+          backgroundColor: colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <DefaultContainer>

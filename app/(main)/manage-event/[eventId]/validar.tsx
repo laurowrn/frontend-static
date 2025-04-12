@@ -1,7 +1,7 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
 import FormButton from "@/components/form/FormButton";
 import { Fonts } from "@/constants/fonts";
-import { useTheme } from "react-native-paper";
+import { Button, Portal, useTheme } from "react-native-paper";
 import {
   fontSize,
   horizontalScale,
@@ -245,7 +245,28 @@ export default function Validar() {
   return (
     <View style={styles.container}>
       {isCameraVisible ? (
-        <View style={styles.container}>
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: colors.background,
+            },
+          ]}
+        >
+          <Portal>
+            <Snackbar
+              visible={isSuccessVisible}
+              onDismiss={onDismissSnackBar}
+              action={{
+                label: "Fechar",
+                onPress: () => {},
+                labelStyle: { color: "white" },
+              }}
+              style={{ backgroundColor: "green" }}
+            >
+              Ingresso validado com sucesso!
+            </Snackbar>
+          </Portal>
           <CameraView
             style={styles.camera}
             facing={"back"}
@@ -276,20 +297,6 @@ export default function Validar() {
               }
             }}
           >
-            <Ionicons
-              name="arrow-back"
-              size={fontSize(30)}
-              color={colors.onPrimary}
-              style={{
-                position: "absolute",
-                backgroundColor: colors.primary,
-                padding: moderateScale(8),
-                borderRadius: moderateScale(10),
-                top: verticalScale(40),
-                left: horizontalScale(40),
-              }}
-              onPress={() => setIsCameraVisible(false)}
-            />
             <View
               style={{
                 width: moderateScale(300),
@@ -300,18 +307,6 @@ export default function Validar() {
                 borderStyle: "dashed",
               }}
             />
-            <Snackbar
-              visible={isSuccessVisible}
-              onDismiss={onDismissSnackBar}
-              action={{
-                label: "Fechar",
-                onPress: () => {},
-                labelStyle: { color: "white" },
-              }}
-              style={{ backgroundColor: "green" }}
-            >
-              Ingresso validado com sucesso!
-            </Snackbar>
           </CameraView>
         </View>
       ) : (
@@ -363,27 +358,14 @@ export default function Validar() {
                 Confira os dados antes de confirmar a validação.
               </Text>
             </View>
-            <TouchableOpacity
-              style={{
-                backgroundColor: colors.primary,
-                padding: moderateScale(10),
-                borderRadius: moderateScale(10),
-              }}
+            <Button
+              mode="contained"
               onPress={() => {
                 setIsCameraVisible(true);
               }}
             >
-              <Text
-                style={{
-                  color: colors.onPrimary,
-                  fontFamily: Fonts.bold,
-                  fontSize: fontSize(20),
-                  textAlign: "center",
-                }}
-              >
-                Validar ingresso
-              </Text>
-            </TouchableOpacity>
+              Validar ingresso
+            </Button>
           </View>
         </DefaultContainer>
       )}

@@ -32,12 +32,6 @@ export default function MainLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
-        name="validar"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
         name="logout"
         options={{
           headerShown: false,

@@ -1,83 +1,36 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { useEffect, useState } from "react";
-import { FlatList } from "react-native";
-import { Event } from "@/infrastructure/EventGateway";
+import { FlatList, View } from "react-native";
 import EventCard from "@/components/event/EventCard";
-import { useGateway } from "@/context/GatewayContext";
 import { useRouter } from "expo-router";
+import { useAllEventsData } from "@/hooks/useAllEventsData";
+import { useTheme, ActivityIndicator } from "react-native-paper";
 
 export default function ExplorePage() {
-  const [events, setEvents] = useState<Event[] | null>([
-    {
-      id: "",
-      name: "",
-      description: "",
-      isPaid: false,
-      startDate: new Date(),
-      endDate: new Date(),
-      location: "",
-      isPrivate: false,
-      autoAccept: false,
-      addressName: "",
-      longitude: 0,
-      latitude: 0,
-      addressComplement: "",
-    },
-  ]);
-  const [addresses, setAddresses] = useState<string[]>([""]);
-  const { eventGateway } = useGateway();
+  const { events, addresses = [], isLoading, isError } = useAllEventsData();
+  const { colors } = useTheme();
+
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const collectedEvents = await eventGateway.getEvents();
-        setEvents(collectedEvents);
-      } catch (error: any) {
-        console.error("Error fetching event:", error);
-        router.navigate(`/error?message=${encodeURIComponent(error.message)}`);
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+  if (isError) {
+    router.replace("/error?message=Falha em carregar informações do evento");
+    return;
+  }
 
-  useEffect(() => {
-    if (!events || events.length === 0) {
-      return;
-    }
-
-    (async () => {
-      try {
-        const fetchedAddresses = await Promise.all(
-          events.map(async (event) => {
-            if (event.latitude && event.longitude) {
-              const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${event.latitude}&lon=${event.longitude}&zoom=18&addressdetails=1&accept-language=pt-BR`
-              );
-              const result = await response.json();
-              if (result?.address) {
-                return `${event.addressName}, ${result.address.city} - ${result.address.state}`;
-              } else {
-                console.warn(
-                  "No address found for coordinates:",
-                  event.latitude,
-                  event.longitude
-                );
-                return "Endereço não encontrado";
-              }
-            }
-            return "Coordenadas inválidas";
-          })
-        );
-        setAddresses(fetchedAddresses);
-      } catch (error) {
-        console.error("Error fetching addresses:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [events]);
+  if (isLoading || !events) {
+    return (
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
+          width: "100%",
+          backgroundColor: colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <DefaultContainer>
@@ -92,8 +45,8 @@ export default function ExplorePage() {
               startDate: item.startDate,
               imageSource: require("../assets/event_image.png"),
             }}
-            address={addresses[index]}
-            onPress={() => router.push(`/events/${item.id}`)}
+            address={addresses[index] || ""}
+            onPress={() => router.navigate(`/events/${item.id}`)}
           />
         )}
       />

@@ -7,33 +7,68 @@ import { Appbar, Button } from "react-native-paper";
 export default function EventManagingPage({ eventId }: { eventId: string }) {
   const router = useRouter();
   return (
-    <View style={{ flex: 1, width: "100%" }}>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={router.back} />
-        <Appbar.Content title="Gerenciar evento" />
-      </Appbar.Header>
-      <DefaultContainer>
-        <View
-          style={{
-            width: "100%",
-            alignItems: "center",
-            rowGap: verticalScale(20),
+    <DefaultContainer>
+      <View
+        style={{
+          width: "100%",
+          alignItems: "center",
+          rowGap: verticalScale(20),
+        }}
+      >
+        <Button
+          icon={"google-analytics"}
+          style={{ width: "100%" }}
+          mode="contained"
+          onPress={() => {
+            router.navigate(`./${eventId}/estatisticas`);
           }}
         >
-          <Button style={{ width: "100%" }} mode="contained">
-            Validar ingressos
-          </Button>
-          <Button style={{ width: "100%" }} mode="contained">
-            Aprovar solicitações
-          </Button>
-          <Button style={{ width: "100%" }} mode="contained">
-            Gerar cupom
-          </Button>
-          <Button style={{ width: "100%" }} mode="contained">
-            Editar evento
-          </Button>
-        </View>
-      </DefaultContainer>
-    </View>
+          Estatísticas
+        </Button>
+        <Button
+          icon={"check"}
+          style={{ width: "100%" }}
+          mode="contained"
+          onPress={() => {
+            router.navigate(`./${eventId}/aprovar`);
+          }}
+        >
+          Aprovar solicitações
+        </Button>
+        <Button
+          icon={"ticket-percent"}
+          style={{ width: "100%" }}
+          mode="contained"
+          onPress={() => {
+            router.navigate(`./${eventId}/gerar-cupom`);
+          }}
+        >
+          Gerar cupom
+        </Button>
+        <Button
+          icon={"qrcode-scan"}
+          style={{ width: "100%" }}
+          mode="contained"
+          onPress={() => {
+            router.navigate(`./${eventId}/validar`);
+          }}
+        >
+          Validar ingressos
+        </Button>
+        {/* <Button icon={"form-select"} style={{ width: "100%" }} mode="contained">
+          Editar evento
+        </Button> */}
+        <Button
+          icon={"format-list-bulleted"}
+          style={{ width: "100%" }}
+          mode="contained"
+          onPress={() => {
+            router.navigate(`./${eventId}/lista-convidados`);
+          }}
+        >
+          Ver lista de convidados
+        </Button>
+      </View>
+    </DefaultContainer>
   );
 }
