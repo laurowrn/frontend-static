@@ -81,6 +81,7 @@ export default function EventPage({ eventId }: EventPageProps) {
         />
         <TicketBuyingForm
           ticketTypes={[...event.ticketPricings].sort((a, b) => a.id - b.id)}
+          eventId={eventId}
         />
         <EventPageDescription description={event.event.description} />
         <EventMap

@@ -129,10 +129,12 @@ const TicketFormSchema = Yup.object().shape({
 });
 
 interface TicketBuyingFormProps {
+  eventId: string;
   ticketTypes: TicketPricing[];
 }
 
 export default function TicketBuyingForm({
+  eventId,
   ticketTypes,
 }: TicketBuyingFormProps) {
   const { colors } = useTheme();
@@ -147,7 +149,10 @@ export default function TicketBuyingForm({
   const hideConfirmationDialog = () => setIsConfirmationDialogVisible(false);
   const [isConfirmationChecked, setIsConfirmationChecked] = useState(false);
   const router = useRouter();
-  const { eventGateway } = useGateway();
+  const { couponGateway } = useGateway();
+  const [discountTicketPrice, setDiscountTicketPrice] = useState<number | null>(
+    null
+  );
 
   const ticketSelectorSelectedStyle: TicketSelectorStyle = {
     selector: {
@@ -262,9 +267,18 @@ export default function TicketBuyingForm({
                   }}
                   eventId={999}
                   ticketPricing={
-                    ticketTypes.find(
-                      (ticket) => ticket.id === Number(values.selectedTicket)
-                    ) || ({} as TicketPricing)
+                    discountTicketPrice !== null
+                      ? {
+                          ...(ticketTypes.find(
+                            (ticket) =>
+                              ticket.id === Number(values.selectedTicket)
+                          ) || ({} as TicketPricing)),
+                          price: discountTicketPrice,
+                        }
+                      : ticketTypes.find(
+                          (ticket) =>
+                            ticket.id === Number(values.selectedTicket)
+                        ) || ({} as TicketPricing)
                   }
                   coupon={values.coupon}
                   onDismiss={() => {
@@ -909,8 +923,23 @@ export default function TicketBuyingForm({
                 <Divider style={{ marginBottom: verticalScale(10) }} />
                 <Button
                   mode="contained"
-                  onPress={() => {
-                    showConfirmationDialog();
+                  onPress={async () => {
+                    if (hasCoupon) {
+                      try {
+                        const response =
+                          await couponGateway.calculateTicketPrice({
+                            coupon: values.coupon,
+                            eventId: eventId,
+                            ticketPricingId: values.selectedTicket,
+                          });
+                        setDiscountTicketPrice(response.finalPrice);
+                        showConfirmationDialog();
+                      } catch (error: any) {
+                        router.navigate(`/error?message=${error.message}`);
+                      }
+                    } else {
+                      showConfirmationDialog();
+                    }
                   }}
                   disabled={!isValid || isSubmitting}
                 >

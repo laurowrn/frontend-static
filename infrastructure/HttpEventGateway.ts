@@ -6,8 +6,6 @@ import {
   GetEventWithTicketPricingResponse,
   Payment,
 } from "./EventGateway";
-import { useMemo } from "react";
-import React, { createContext, useContext } from "react";
 
 export class HttpEventGateway implements EventGateway {
   private baseUrl: string;
