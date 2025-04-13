@@ -109,7 +109,7 @@ const TicketFormSchema = Yup.object().shape({
     })
     .oneOf([Yup.ref("mobileNumber")], "Os números de telefone devem ser iguais")
     .required("Este campo é obrigatório"),
-  instagramAccount: Yup.string().max(30).required("Este campo é obrigatório"),
+  instagramAccount: Yup.string().max(30),
   identificationNumber: Yup.string()
     .test("identification-number-validation", (value, context) => {
       const result = validateCpf(value?.replace(/[.-]/g, "") || "");

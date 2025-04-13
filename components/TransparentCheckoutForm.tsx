@@ -76,7 +76,7 @@ export default function TransparentCheckoutForm({
         </Text>
         <Payment
           initialization={{
-            amount: 10,
+            amount: 0,
           }}
           onSubmit={async (param) => {
             let registerAndJoinData;
@@ -141,7 +141,6 @@ export default function TransparentCheckoutForm({
             },
             paymentMethods: {
               creditCard: "all",
-              bankTransfer: "all",
               atm: "all",
               maxInstallments: 1,
             },

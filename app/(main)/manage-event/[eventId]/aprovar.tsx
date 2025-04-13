@@ -1,14 +1,7 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { Fonts } from "@/constants/fonts";
-import {
-  fontSize,
-  horizontalScale,
-  verticalScale,
-} from "@/helpers/responsiveScaling";
-import { Link } from "expo-router";
+import { verticalScale } from "@/helpers/responsiveScaling";
 import { View } from "react-native";
-import { Button, Card, IconButton, Text, useTheme } from "react-native-paper";
-import * as WebBrowser from "expo-web-browser";
+import { useTheme } from "react-native-paper";
 import RequestApprovalCard from "@/components/event/RequestApprovalCard";
 import { FlatList } from "react-native";
 import React, { useState } from "react";

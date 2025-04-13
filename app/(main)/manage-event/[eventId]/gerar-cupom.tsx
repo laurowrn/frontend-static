@@ -134,7 +134,11 @@ export default function Approvals() {
                       color: colors.onSurface,
                     }}
                   >
-                    {values.percentualCouponValue.toFixed(2)}%
+                    {values.percentualCouponValue.toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                    %
                   </Text>
                 </View>
                 <Slider
