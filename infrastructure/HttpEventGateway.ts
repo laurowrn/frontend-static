@@ -104,8 +104,8 @@ export class HttpEventGateway implements EventGateway {
         phone_number: user.mobileNumber,
         identification_number: user.identificationNumber,
       },
-      event_id: eventId.toString(),
-      ticket_pricing_id: ticketPricingId.toString(),
+      event_id: eventId,
+      ticket_pricing_id: ticketPricingId,
       coupom: coupon,
       payment: {
         token: payment.token,
