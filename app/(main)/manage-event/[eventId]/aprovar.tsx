@@ -1,79 +1,96 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
 import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
-import { View } from "react-native";
-import RequestApprovalCard from "@/components/event/RequestApprovalCard";
+import { View, TextInput as RNTextInput } from "react-native";
 import { FlatList } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useGateway } from "@/context/GatewayContext";
 import { useSession } from "@/context/AuthContext";
-import {
-  InvitedUserResponse,
-  InvitedUserStatus,
-} from "@/infrastructure/EventGateway";
+import { InvitedUserStatus } from "@/infrastructure/EventGateway";
 import useInvitedUsersData from "@/hooks/useInvitedUsersData";
-import { ActivityIndicator, useTheme, Text } from "react-native-paper";
+import {
+  ActivityIndicator,
+  useTheme,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import { Fonts } from "@/constants/fonts";
+import RequestApprovalCard from "@/components/event/RequestApprovalCard";
+import { useState, useEffect, useRef, memo } from "react";
+
+const SearchInput = memo(
+  ({
+    value,
+    onChangeText,
+    colors,
+  }: {
+    value: string;
+    onChangeText: (text: string) => void;
+    colors: any;
+  }) => {
+    const inputRef = useRef<RNTextInput>(null);
+
+    return (
+      <TextInput
+        ref={inputRef}
+        onChangeText={onChangeText}
+        value={value}
+        mode="outlined"
+        label={
+          <Text
+            style={{
+              color: colors.onSurfaceVariant,
+              fontFamily: Fonts.regular,
+              fontSize: fontSize(14),
+            }}
+          >
+            Pesquisa
+          </Text>
+        }
+        placeholder="Digite o nome ou email do convidado"
+        style={{
+          backgroundColor: colors.elevation.level0,
+          fontFamily: Fonts.regular,
+          width: "100%",
+        }}
+        contentStyle={{ fontFamily: Fonts.regular, fontSize: fontSize(14) }}
+        left={<TextInput.Icon icon="magnify" />}
+        right={
+          value ? (
+            <TextInput.Icon icon="close" onPress={() => onChangeText("")} />
+          ) : null
+        }
+        autoCapitalize="none"
+        autoComplete="off"
+        autoCorrect={false}
+        autoFocus={false}
+      />
+    );
+  }
+);
 
 export default function Approvals() {
   const { eventId } = useLocalSearchParams() as { eventId: string };
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
   const { invitedUsers, loading, error, reload } = useInvitedUsersData(
     eventId,
-    InvitedUserStatus.Pending
+    InvitedUserStatus.Pending,
+    debouncedSearch
   );
   const { inviteGateway } = useGateway();
   const { session } = useSession();
-  const router = useRouter();
   const { colors } = useTheme();
+  const router = useRouter();
 
-  if (error) {
-    router.replace(
-      "/error?message=Falha em carregar lista de usuários pendentes"
-    );
-    return;
-  }
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          flex: 1,
-          width: "100%",
-          backgroundColor: colors.background,
-        }}
-      >
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  if (invitedUsers?.length == 0) {
-    return (
-      <DefaultContainer>
-        <View
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-            width: "100%",
-          }}
-        >
-          <Text
-            style={{
-              fontFamily: Fonts.extraLight,
-              fontSize: fontSize(15),
-              textAlign: "center",
-              fontStyle: "italic",
-            }}
-          >
-            Todos os pedidos para entrar no evento já foram respondidos, aguarde
-            mais solicitações.
-          </Text>
-        </View>
-      </DefaultContainer>
-    );
-  }
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
 
   return (
     <DefaultContainer>
@@ -81,34 +98,105 @@ export default function Approvals() {
         style={{
           width: "100%",
           alignItems: "center",
+          flex: 1,
         }}
       >
-        <FlatList
-          data={invitedUsers}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <RequestApprovalCard
-              name={item.username}
-              email={item.email}
-              instagram={item.instagram}
-              onApprove={async () => {
-                try {
-                  const response = await inviteGateway.approveJoinRequest(
-                    { inviteId: item.inviteId, approved: true },
-                    session || ""
-                  );
-                  reload();
-                } catch (error: any) {}
+        <SearchInput value={search} onChangeText={setSearch} colors={colors} />
+        <View style={{ height: verticalScale(15) }} />
+
+        {error ? (
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              width: "100%",
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: Fonts.regular,
+                fontSize: fontSize(14),
+                textAlign: "center",
+                marginTop: verticalScale(10),
+                color: colors.error,
               }}
-              onReject={() => {}}
-            />
-          )}
-          contentContainerStyle={{ gap: verticalScale(10) }}
-          style={{
-            width: "100%",
-          }}
-          scrollEnabled={true}
-        />
+              onPress={reload}
+            >
+              Falha ao carregar lista de usuários pendentes
+            </Text>
+          </View>
+        ) : loading ? (
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              width: "100%",
+            }}
+          >
+            <ActivityIndicator size="large" color={colors.primary} />
+          </View>
+        ) : invitedUsers?.length === 0 ? (
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              width: "100%",
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: Fonts.extraLight,
+                fontSize: fontSize(15),
+                textAlign: "center",
+                fontStyle: "italic",
+              }}
+            >
+              {search
+                ? "Nenhum usuário pendente encontrado para a pesquisa."
+                : "Todos os pedidos para entrar no evento já foram respondidos, aguarde mais solicitações."}
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={invitedUsers}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <RequestApprovalCard
+                name={item.username}
+                email={item.email}
+                instagram={item.instagram}
+                onApprove={async () => {
+                  try {
+                    console.log(invitedUsers);
+                    await inviteGateway.approveJoinRequest(
+                      { inviteId: item.inviteId, approved: true },
+                      session || ""
+                    );
+                    reload();
+                  } catch (error: any) {}
+                }}
+                onReject={async () => {
+                  try {
+                    await inviteGateway.approveJoinRequest(
+                      { inviteId: item.inviteId, approved: false },
+                      session || ""
+                    );
+                    reload();
+                  } catch (error: any) {}
+                }}
+              />
+            )}
+            contentContainerStyle={{ gap: verticalScale(10) }}
+            style={{
+              width: "100%",
+              flex: 1,
+            }}
+            scrollEnabled={true}
+          />
+        )}
       </View>
     </DefaultContainer>
   );

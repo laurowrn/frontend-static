@@ -3,8 +3,6 @@ import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
 import { View, TextInput as RNTextInput } from "react-native";
 import { FlatList } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useGateway } from "@/context/GatewayContext";
-import { useSession } from "@/context/AuthContext";
 import { InvitedUserStatus } from "@/infrastructure/EventGateway";
 import useInvitedUsersData from "@/hooks/useInvitedUsersData";
 import {
@@ -17,7 +15,6 @@ import { Fonts } from "@/constants/fonts";
 import GuestDataCard from "@/components/event/GuestDataCard";
 import { useState, useEffect, useRef, memo } from "react";
 
-// Memoized Search Input to prevent re-renders
 const SearchInput = memo(
   ({
     value,
@@ -81,7 +78,6 @@ export default function JoinRequestList() {
   const { colors } = useTheme();
   const router = useRouter();
 
-  // Debounce effect
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);

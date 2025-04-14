@@ -54,6 +54,7 @@ export class HttpEventGateway implements EventGateway {
         instagram: invite["user"]["instagram_profile"],
         role: invite["user"]["role"],
         isFirstAccess: invite["user"]["is_first_access"],
+        inviteId: invite["invite_id"],
         ticketPricing: {
           id: invite["ticket_pricing"]["id"],
           eventId: invite["ticket_pricing"]["event_id"],

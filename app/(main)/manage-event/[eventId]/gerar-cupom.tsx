@@ -61,6 +61,7 @@ export default function Approvals() {
           couponType: "percentual",
           percentualCouponValue: 0,
           absoluteCouponValue: "",
+          maxUses: 1,
           couponCode: "",
         }}
         onSubmit={(values) => {
@@ -211,6 +212,50 @@ export default function Approvals() {
                 )}
               </View>
             )}
+            <View style={styles.sliderContainer}>
+              <View style={styles.sliderLabel}>
+                <Text
+                  style={{
+                    fontFamily: Fonts.semiBold,
+                    fontSize: fontSize(15),
+                    color: colors.onSurfaceVariant,
+                  }}
+                >
+                  Máximo de utilizações
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: Fonts.regular,
+                    fontSize: fontSize(15),
+                    color: colors.onSurface,
+                  }}
+                >
+                  {values.maxUses}
+                </Text>
+              </View>
+              <Slider
+                style={{ width: "100%", height: verticalScale(30) }}
+                minimumValue={1}
+                maximumValue={10}
+                step={1}
+                value={values.maxUses}
+                onValueChange={(value) => setFieldValue("maxUses", value)}
+                minimumTrackTintColor={colors.primary}
+                maximumTrackTintColor={colors.outline}
+                thumbTintColor={colors.primary}
+              />
+              {errors.maxUses && touched.maxUses && (
+                <HelperText
+                  type="error"
+                  style={{
+                    color: colors.error,
+                    padding: moderateScale(4),
+                  }}
+                >
+                  {errors.maxUses}
+                </HelperText>
+              )}
+            </View>
             <View style={{ rowGap: verticalScale(5), width: "100%" }}>
               <TextInput
                 onChangeText={(text) => {
