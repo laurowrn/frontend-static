@@ -5,11 +5,14 @@ import { HttpTicketGateway } from "@/infrastructure/HttpTicketGateway";
 import { createContext, useContext } from "react";
 import { CouponGateway } from "@/infrastructure/CouponGateway";
 import { HttpCouponGateway } from "@/infrastructure/HttpCouponGateway";
+import { InviteGateway } from "@/infrastructure/InviteGateway";
+import { HttpInviteGateway } from "@/infrastructure/HttpInviteGateway";
 
 interface GatewayContextValue {
   eventGateway: EventGateway;
   ticketGateway: TicketGateway;
   couponGateway: CouponGateway;
+  inviteGateway: InviteGateway;
 }
 
 const GatewayContext = createContext<GatewayContextValue | null>(null);
@@ -20,11 +23,13 @@ export const GatewayProvider: React.FC<
   const eventGateway: EventGateway = new HttpEventGateway(baseUrl);
   const ticketGateway: TicketGateway = new HttpTicketGateway(baseUrl);
   const couponGateway: CouponGateway = new HttpCouponGateway(baseUrl);
+  const inviteGateway: InviteGateway = new HttpInviteGateway(baseUrl);
 
   const value: GatewayContextValue = {
     eventGateway,
     ticketGateway,
     couponGateway,
+    inviteGateway,
   };
 
   return (

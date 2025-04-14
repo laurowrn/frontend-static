@@ -6,8 +6,8 @@ import {
 } from "@/helpers/responsiveScaling";
 import { TicketPricing, User } from "@/infrastructure/EventGateway";
 import { Payment } from "@mercadopago/sdk-react";
-import { ExternalPathString, useRouter } from "expo-router";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { View, ScrollView } from "react-native";
 import { useTheme, Text, Appbar } from "react-native-paper";
 import { Dimensions } from "react-native";
 import { Fonts } from "@/constants/fonts";
@@ -114,7 +114,10 @@ export default function TransparentCheckoutForm({
                 },
                 coupon
               );
-              if (registerAndJoinData.status === "approved") {
+              if (
+                registerAndJoinData.status === "approved" ||
+                registerAndJoinData.status === "authorized"
+              ) {
                 router.replace("/success");
               } else {
                 router.replace("/fail");

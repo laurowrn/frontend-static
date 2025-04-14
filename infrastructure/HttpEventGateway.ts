@@ -5,6 +5,8 @@ import {
   User,
   GetEventWithTicketPricingResponse,
   Payment,
+  InvitedUserResponse,
+  InvitedUserStatus,
 } from "./EventGateway";
 
 export class HttpEventGateway implements EventGateway {
@@ -12,6 +14,57 @@ export class HttpEventGateway implements EventGateway {
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
+  }
+
+  async getInvitedUsers(
+    eventId: number,
+    invitedUserStatus: InvitedUserStatus,
+    jwtToken: string,
+    search: string
+  ): Promise<InvitedUserResponse[]> {
+    const response = await fetch(
+      `${
+        this.baseUrl
+      }/private/invite/event/${eventId}?status=${invitedUserStatus}&search=${
+        search || ""
+      }`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Falha em pegar lista de convidados.");
+    }
+    const jsonResponse = await response.json();
+
+    if (!jsonResponse["invites"] || jsonResponse["invites"].length === 0) {
+      return [];
+    }
+
+    const users: InvitedUserResponse[] = jsonResponse["invites"].map(
+      (invite: any) => ({
+        id: invite["user"]["id"],
+        email: invite["user"]["email"],
+        username: invite["user"]["username"],
+        instagram: invite["user"]["instagram_profile"],
+        role: invite["user"]["role"],
+        isFirstAccess: invite["user"]["is_first_access"],
+        ticketPricing: {
+          id: invite["ticket_pricing"]["id"],
+          eventId: invite["ticket_pricing"]["event_id"],
+          ticket_type: invite["ticket_pricing"]["ticket_type"],
+          lot: invite["ticket_pricing"]["lot"],
+          price: invite["ticket_pricing"]["price"],
+        },
+      })
+    );
+
+    return users;
   }
 
   async getEvents(): Promise<Event[]> {

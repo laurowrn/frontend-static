@@ -1,33 +1,80 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { verticalScale } from "@/helpers/responsiveScaling";
+import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
 import { View } from "react-native";
-import { useTheme } from "react-native-paper";
 import RequestApprovalCard from "@/components/event/RequestApprovalCard";
 import { FlatList } from "react-native";
-import React, { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useGateway } from "@/context/GatewayContext";
+import { useSession } from "@/context/AuthContext";
+import {
+  InvitedUserResponse,
+  InvitedUserStatus,
+} from "@/infrastructure/EventGateway";
+import useInvitedUsersData from "@/hooks/useInvitedUsersData";
+import { ActivityIndicator, useTheme, Text } from "react-native-paper";
+import { Fonts } from "@/constants/fonts";
 
 export default function Approvals() {
+  const { eventId } = useLocalSearchParams() as { eventId: string };
+  const { invitedUsers, loading, error, reload } = useInvitedUsersData(
+    eventId,
+    InvitedUserStatus.Pending
+  );
+  const { inviteGateway } = useGateway();
+  const { session } = useSession();
+  const router = useRouter();
   const { colors } = useTheme();
-  const [requests, setRequests] = useState([
-    {
-      id: "1",
-      name: "John Doe",
-      email: "john.doe@example.com",
-      instagram: "johndoe",
-    },
-    {
-      id: "2",
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      instagram: "janesmith",
-    },
-    {
-      id: "3",
-      name: "Lauro Weingartner Neto",
-      email: "lauro.neto@example.com",
-      instagram: "laur0wn",
-    },
-  ]);
+
+  if (error) {
+    router.replace(
+      "/error?message=Falha em carregar lista de usuários pendentes"
+    );
+    return;
+  }
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
+          width: "100%",
+          backgroundColor: colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (invitedUsers?.length == 0) {
+    return (
+      <DefaultContainer>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            width: "100%",
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: Fonts.extraLight,
+              fontSize: fontSize(15),
+              textAlign: "center",
+              fontStyle: "italic",
+            }}
+          >
+            Todos os pedidos para entrar no evento já foram respondidos, aguarde
+            mais solicitações.
+          </Text>
+        </View>
+      </DefaultContainer>
+    );
+  }
+
   return (
     <DefaultContainer>
       <View
@@ -37,19 +84,23 @@ export default function Approvals() {
         }}
       >
         <FlatList
-          data={requests}
-          keyExtractor={(item) => item.id}
+          data={invitedUsers}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <RequestApprovalCard
-              name={item.name}
+              name={item.username}
               email={item.email}
               instagram={item.instagram}
-              onApprove={() => {
-                setRequests((prev) => prev.filter((req) => req.id !== item.id));
+              onApprove={async () => {
+                try {
+                  const response = await inviteGateway.approveJoinRequest(
+                    { inviteId: item.inviteId, approved: true },
+                    session || ""
+                  );
+                  reload();
+                } catch (error: any) {}
               }}
-              onReject={() => {
-                setRequests((prev) => prev.filter((req) => req.id !== item.id));
-              }}
+              onReject={() => {}}
             />
           )}
           contentContainerStyle={{ gap: verticalScale(10) }}

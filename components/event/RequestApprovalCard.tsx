@@ -54,7 +54,9 @@ export default function RequestApprovalCard({
               variant="bodySmall"
               style={{ fontFamily: Fonts.black, color: colors.primary }}
               onPress={() =>
-                WebBrowser.openBrowserAsync("https://instagram.com/laur0wn")
+                WebBrowser.openBrowserAsync(
+                  `https://instagram.com/${instagram}`
+                )
               }
             >
               @{instagram}

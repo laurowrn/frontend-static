@@ -1,15 +1,184 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { View } from "react-native";
+import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
+import { View, TextInput as RNTextInput } from "react-native";
+import { FlatList } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useGateway } from "@/context/GatewayContext";
+import { useSession } from "@/context/AuthContext";
+import { InvitedUserStatus } from "@/infrastructure/EventGateway";
+import useInvitedUsersData from "@/hooks/useInvitedUsersData";
+import {
+  ActivityIndicator,
+  useTheme,
+  Text,
+  TextInput,
+} from "react-native-paper";
+import { Fonts } from "@/constants/fonts";
+import GuestDataCard from "@/components/event/GuestDataCard";
+import { useState, useEffect, useRef, memo } from "react";
 
-export default function Approvals() {
+// Memoized Search Input to prevent re-renders
+const SearchInput = memo(
+  ({
+    value,
+    onChangeText,
+    colors,
+  }: {
+    value: string;
+    onChangeText: (text: string) => void;
+    colors: any;
+  }) => {
+    const inputRef = useRef<RNTextInput>(null);
+
+    return (
+      <TextInput
+        ref={inputRef}
+        onChangeText={onChangeText}
+        value={value}
+        mode="outlined"
+        label={
+          <Text
+            style={{
+              color: colors.onSurfaceVariant,
+              fontFamily: Fonts.regular,
+              fontSize: fontSize(14),
+            }}
+          >
+            Pesquisa
+          </Text>
+        }
+        placeholder="Digite o nome ou email do convidado"
+        style={{
+          backgroundColor: colors.elevation.level0,
+          fontFamily: Fonts.regular,
+          width: "100%",
+        }}
+        contentStyle={{ fontFamily: Fonts.regular, fontSize: fontSize(14) }}
+        left={<TextInput.Icon icon="magnify" />}
+        right={
+          value ? (
+            <TextInput.Icon icon="close" onPress={() => onChangeText("")} />
+          ) : null
+        }
+        autoCapitalize="none"
+        autoComplete="off"
+        autoCorrect={false}
+        autoFocus={false}
+      />
+    );
+  }
+);
+
+export default function JoinRequestList() {
+  const { eventId } = useLocalSearchParams() as { eventId: string };
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const { invitedUsers, loading, error, reload } = useInvitedUsersData(
+    eventId,
+    InvitedUserStatus.Accepted,
+    debouncedSearch
+  );
+  const { colors } = useTheme();
+  const router = useRouter();
+
+  // Debounce effect
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
+
   return (
     <DefaultContainer>
       <View
         style={{
           width: "100%",
           alignItems: "center",
+          flex: 1,
         }}
-      ></View>
+      >
+        <SearchInput value={search} onChangeText={setSearch} colors={colors} />
+        <View style={{ height: verticalScale(15) }} />
+
+        {error ? (
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              width: "100%",
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: Fonts.regular,
+                fontSize: fontSize(14),
+                textAlign: "center",
+                marginTop: verticalScale(10),
+                color: colors.error,
+              }}
+              onPress={reload}
+            >
+              Falha ao carregar lista de convidados
+            </Text>
+          </View>
+        ) : loading ? (
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              width: "100%",
+            }}
+          >
+            <ActivityIndicator size="large" color={colors.primary} />
+          </View>
+        ) : invitedUsers?.length === 0 ? (
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              width: "100%",
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: Fonts.extraLight,
+                fontSize: fontSize(15),
+                textAlign: "center",
+                fontStyle: "italic",
+              }}
+            >
+              {search
+                ? "Nenhum convidado encontrado para a pesquisa."
+                : "Ainda não há convidados aceitos no evento."}
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={invitedUsers}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <GuestDataCard
+                name={item.username}
+                email={item.email}
+                instagram={item.instagram}
+              />
+            )}
+            contentContainerStyle={{ gap: verticalScale(10) }}
+            style={{
+              width: "100%",
+              flex: 1,
+            }}
+            scrollEnabled={true}
+          />
+        )}
+      </View>
     </DefaultContainer>
   );
 }

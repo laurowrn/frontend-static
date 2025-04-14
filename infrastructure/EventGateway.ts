@@ -11,6 +11,12 @@ export interface EventGateway {
   getEventWithTicketPricing(
     eventId: number
   ): Promise<GetEventWithTicketPricingResponse>;
+  getInvitedUsers(
+    eventId: number,
+    invitedUserStatus: InvitedUserStatus,
+    jwtToken: string,
+    search?: string
+  ): Promise<InvitedUserResponse[]>;
 }
 
 export interface Event {
@@ -78,4 +84,22 @@ export interface Payment {
       number: string;
     };
   };
+}
+
+export interface InvitedUserResponse {
+  id: number;
+  email: string;
+  username: string;
+  instagram: string;
+  role: string;
+  inviteId: number;
+  isFirstAccess: boolean;
+  ticketPricing: TicketPricing;
+}
+
+export enum InvitedUserStatus {
+  Pending = "pending",
+  Accepted = "accepted",
+  Rejected = "rejected",
+  Cancelled = "cancelled",
 }
