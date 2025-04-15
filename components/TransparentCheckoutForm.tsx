@@ -96,7 +96,7 @@ export default function TransparentCheckoutForm({
                     ""
                   ),
                 },
-                1,
+                eventId,
                 ticketPricing.id,
                 {
                   token: param.formData.token,

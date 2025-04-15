@@ -5,7 +5,7 @@ export interface EventGateway {
     user: User,
     eventId: number,
     ticketPricingId: number,
-    payment: Payment,
+    payment?: Payment,
     coupon?: string
   ): Promise<RegisterAndJoinResponse>;
   getEventWithTicketPricing(

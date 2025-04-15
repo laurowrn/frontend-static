@@ -153,6 +153,8 @@ export default function TicketBuyingForm({
   const [discountTicketPrice, setDiscountTicketPrice] = useState<number | null>(
     null
   );
+  const [isCheckoutNeeded, setIsCheckoutNeeded] = useState(true);
+  const { eventGateway } = useGateway();
 
   const ticketSelectorSelectedStyle: TicketSelectorStyle = {
     selector: {
@@ -265,7 +267,7 @@ export default function TicketBuyingForm({
                     instagram: values.instagramAccount,
                     identificationNumber: values.identificationNumber,
                   }}
-                  eventId={999}
+                  eventId={Number(eventId)}
                   ticketPricing={
                     discountTicketPrice !== null
                       ? {
@@ -283,6 +285,7 @@ export default function TicketBuyingForm({
                   coupon={values.coupon}
                   onDismiss={() => {
                     setIsCheckoutVisible(false);
+                    setIsCheckoutNeeded(true);
                   }}
                 />
               </Portal>
@@ -408,7 +411,48 @@ export default function TicketBuyingForm({
                     onPress={async () => {
                       handleSubmit();
                       hideConfirmationDialog();
-                      setIsCheckoutVisible(true);
+                      if (isCheckoutNeeded) {
+                        setIsCheckoutVisible(true);
+                      } else {
+                        let registerAndJoinData;
+                        try {
+                          registerAndJoinData =
+                            await eventGateway.registerAndJoin(
+                              {
+                                email: values.email,
+                                username: values.name,
+                                gender: values.selectedTicket,
+                                birthday: new Date(
+                                  values.birthday.split("/").reverse().join("-")
+                                ).toISOString(),
+                                mobileNumber: values.mobileNumber.replace(
+                                  /[()\s-]/g,
+                                  ""
+                                ),
+                                instagram: values.instagramAccount,
+                                identificationNumber:
+                                  values.identificationNumber.replace(
+                                    /[.-]/g,
+                                    ""
+                                  ),
+                              },
+                              Number(eventId),
+                              Number(values.selectedTicket),
+                              undefined,
+                              values.coupon
+                            );
+                          if (
+                            registerAndJoinData.status === "approved" ||
+                            registerAndJoinData.status === "authorized"
+                          ) {
+                            router.replace("/success");
+                          } else {
+                            router.replace("/fail");
+                          }
+                        } catch (error: any) {
+                          router.navigate(`/error?message=${error.message}`);
+                        }
+                      }
                     }}
                     disabled={!isConfirmationChecked || isSubmitting}
                     loading={isSubmitting}
@@ -933,6 +977,9 @@ export default function TicketBuyingForm({
                             ticketPricingId: values.selectedTicket,
                           });
                         setDiscountTicketPrice(response.finalPrice);
+                        if (response.finalPrice == 0) {
+                          setIsCheckoutNeeded(false);
+                        }
                         showConfirmationDialog();
                       } catch (error: any) {
                         router.navigate(`/error?message=${error.message}`);

@@ -2,6 +2,8 @@ import {
   CalculateTicketPriceRequest,
   CalculateTicketPriceResponse,
   CouponGateway,
+  GenerateCouponRequest,
+  GenerateCouponResponse,
 } from "./CouponGateway";
 
 export class HttpCouponGateway implements CouponGateway {
@@ -10,6 +12,45 @@ export class HttpCouponGateway implements CouponGateway {
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
   }
+
+  async generateCoupon(
+    request: GenerateCouponRequest,
+    jwtToken: string
+  ): Promise<GenerateCouponResponse> {
+    const body = JSON.stringify({
+      event_id: request.eventId,
+      code: request.code,
+      discount_type: request.discountType,
+      discount_value: request.discountValue,
+      max_uses: request.maxUses,
+    });
+    const response = await fetch(`${this.baseUrl}/private/coupon`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: body,
+    });
+    if (!response.ok) {
+      throw new Error("Falha ao criar cupom");
+    }
+
+    const jsonResponse = await response.json();
+
+    return {
+      id: jsonResponse["id"],
+      eventId: jsonResponse["event_id"],
+      code: jsonResponse["code"],
+      discountType: jsonResponse["discount_type"],
+      discountValue: jsonResponse["discount_value"],
+      maxUses: jsonResponse["max_uses"],
+      usedCount: jsonResponse["used_count"],
+      createdAt: jsonResponse["created_at"],
+      active: jsonResponse["active"],
+    };
+  }
+
   async calculateTicketPrice(
     request: CalculateTicketPriceRequest
   ): Promise<CalculateTicketPriceResponse> {

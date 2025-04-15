@@ -18,11 +18,16 @@ import {
   RadioButton,
 } from "react-native-paper";
 import Slider from "@react-native-community/slider";
+import { useGateway } from "@/context/GatewayContext";
+import { useSession } from "@/context/AuthContext";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import ErrorDialog from "@/components/error/ErrorDialog";
 
 const CouponFormSchema = Yup.object().shape({
   couponType: Yup.string().required("Este campo é obrigatório"),
-  percentualCouponValue: Yup.number().when("couponType", {
-    is: "percentual",
+  percentageCouponValue: Yup.number().when("couponType", {
+    is: "percentage",
     then: () =>
       Yup.number()
         .required("Este campo é obrigatório")
@@ -30,14 +35,16 @@ const CouponFormSchema = Yup.object().shape({
         .max(100, "O valor máximo é 100%"),
     otherwise: () => Yup.number().notRequired(),
   }),
-  absoluteCouponValue: Yup.string().when("couponType", {
-    is: "absolute",
+  fixedCouponValue: Yup.string().when("couponType", {
+    is: "fixed",
     then: () =>
       Yup.string()
         .required("Este campo é obrigatório")
         .matches(/^\d+(,\d{2})?$/, "Formato inválido"),
   }),
-  couponCode: Yup.string().required("Este campo é obrigatório"),
+  couponCode: Yup.string()
+    .min(5, "Deve possuir no mínimo 5 caracteres")
+    .required("Este campo é obrigatório"),
 });
 
 const styles = StyleSheet.create({
@@ -53,70 +60,197 @@ const styles = StyleSheet.create({
 
 export default function Approvals() {
   const { colors } = useTheme();
+  const { couponGateway } = useGateway();
+  const { session } = useSession();
+  const { eventId } = useLocalSearchParams() as { eventId: string };
+  const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const router = useRouter();
 
   return (
     <DefaultContainer>
-      <Formik
-        initialValues={{
-          couponType: "percentual",
-          percentualCouponValue: 0,
-          absoluteCouponValue: "",
-          maxUses: 1,
-          couponCode: "",
-        }}
-        onSubmit={(values) => {
-          console.log(values);
-        }}
-        validationSchema={CouponFormSchema}
-      >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          setFieldValue,
-          isSubmitting,
-          isValid,
-        }) => (
-          <View style={{ rowGap: verticalScale(10), width: "100%" }}>
-            <Text style={{ fontSize: fontSize(20) }}>Tipo do cupom</Text>
-            <RadioButton.Group
-              onValueChange={(value) => {
-                setFieldValue("couponType", value);
-                if (value === "percentual") {
-                  setFieldValue("absoluteCouponValue", "");
-                  setFieldValue("percentualCouponValue", 0); // Always a number
-                } else {
-                  setFieldValue("percentualCouponValue", 0); // Reset to 0, not null
-                  setFieldValue("absoluteCouponValue", "");
-                }
-              }}
-              value={values.couponType}
-            >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <RadioButton value="percentual" />
-                <Text style={{ fontSize: fontSize(16) }}>Percentual</Text>
-              </View>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <RadioButton value="absolute" />
-                <Text style={{ fontSize: fontSize(16) }}>Valor fixo</Text>
-              </View>
-            </RadioButton.Group>
-            {errors.couponType && touched.couponType && (
-              <HelperText
-                type="error"
-                style={{
-                  color: colors.error,
-                  padding: moderateScale(4),
+      <View style={{ width: "100%" }}>
+        {error && (
+          <ErrorDialog
+            message={errorMessage}
+            onDismiss={function (): void {
+              setError(false);
+            }}
+          />
+        )}
+        <Formik
+          initialValues={{
+            couponType: "percentage",
+            percentageCouponValue: 0,
+            fixedCouponValue: "",
+            maxUses: 1,
+            couponCode: "",
+          }}
+          onSubmit={async (values) => {
+            try {
+              const response = await couponGateway.generateCoupon(
+                {
+                  eventId: Number(eventId),
+                  code: values.couponCode,
+                  discountType: values.couponType,
+                  discountValue:
+                    values.couponType === "percentage"
+                      ? values.percentageCouponValue
+                      : Number(values.fixedCouponValue),
+                  maxUses: values.maxUses,
+                },
+                session || ""
+              );
+            } catch (error: any) {
+              setError(true);
+              setErrorMessage(error.message);
+            }
+          }}
+          validationSchema={CouponFormSchema}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            setFieldValue,
+            isSubmitting,
+            isValid,
+          }) => (
+            <View style={{ rowGap: verticalScale(10), width: "100%" }}>
+              <Text style={{ fontSize: fontSize(20) }}>Tipo do cupom</Text>
+              <RadioButton.Group
+                onValueChange={(value) => {
+                  setFieldValue("couponType", value);
+                  if (value === "percentage") {
+                    setFieldValue("fixedCouponValue", "");
+                    setFieldValue("percentageCouponValue", 0); // Always a number
+                  } else {
+                    setFieldValue("percentageCouponValue", 0); // Reset to 0, not null
+                    setFieldValue("fixedCouponValue", "");
+                  }
                 }}
+                value={values.couponType}
               >
-                {errors.couponType}
-              </HelperText>
-            )}
-            <Divider />
-            {values.couponType === "percentual" ? (
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <RadioButton value="percentage" />
+                  <Text style={{ fontSize: fontSize(16) }}>percentage</Text>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <RadioButton value="fixed" />
+                  <Text style={{ fontSize: fontSize(16) }}>Valor fixo</Text>
+                </View>
+              </RadioButton.Group>
+              {errors.couponType && touched.couponType && (
+                <HelperText
+                  type="error"
+                  style={{
+                    color: colors.error,
+                    padding: moderateScale(4),
+                  }}
+                >
+                  {errors.couponType}
+                </HelperText>
+              )}
+              <Divider />
+              {values.couponType === "percentage" ? (
+                <View style={styles.sliderContainer}>
+                  <View style={styles.sliderLabel}>
+                    <Text
+                      style={{
+                        fontFamily: Fonts.semiBold,
+                        fontSize: fontSize(15),
+                        color: colors.onSurfaceVariant,
+                      }}
+                    >
+                      Valor do cupom
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily: Fonts.regular,
+                        fontSize: fontSize(15),
+                        color: colors.onSurface,
+                      }}
+                    >
+                      {values.percentageCouponValue.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                      %
+                    </Text>
+                  </View>
+                  <Slider
+                    style={{ width: "100%", height: verticalScale(30) }}
+                    minimumValue={0}
+                    maximumValue={100}
+                    step={5}
+                    value={values.percentageCouponValue}
+                    onValueChange={(value) =>
+                      setFieldValue("percentageCouponValue", value)
+                    }
+                    minimumTrackTintColor={colors.primary}
+                    maximumTrackTintColor={colors.outline}
+                    thumbTintColor={colors.primary}
+                  />
+                  {errors.percentageCouponValue &&
+                    touched.percentageCouponValue && (
+                      <HelperText
+                        type="error"
+                        style={{
+                          color: colors.error,
+                          padding: moderateScale(4),
+                        }}
+                      >
+                        {errors.percentageCouponValue}
+                      </HelperText>
+                    )}
+                </View>
+              ) : (
+                <View>
+                  <TextInput
+                    onChangeText={handleChange("fixedCouponValue")}
+                    onBlur={handleBlur("fixedCouponValue")}
+                    value={values.fixedCouponValue}
+                    mode="outlined"
+                    label={
+                      <Text
+                        style={{
+                          color: colors.onSurfaceVariant,
+                          fontFamily: Fonts.regular,
+                          fontSize: fontSize(15),
+                        }}
+                      >
+                        Valor do cupom
+                      </Text>
+                    }
+                    placeholder="Digite o valor do cupom"
+                    style={{
+                      backgroundColor: colors.elevation.level0,
+                      fontFamily: Fonts.regular,
+                    }}
+                    contentStyle={{ fontFamily: Fonts.regular }}
+                    left={<TextInput.Icon icon="currency-brl" />}
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect={false}
+                    autoFocus={true}
+                    keyboardType="numeric"
+                  />
+                  {errors.fixedCouponValue && touched.fixedCouponValue && (
+                    <HelperText
+                      type="error"
+                      style={{
+                        color: colors.error,
+                        padding: moderateScale(4),
+                      }}
+                    >
+                      {errors.fixedCouponValue}
+                    </HelperText>
+                  )}
+                </View>
+              )}
               <View style={styles.sliderContainer}>
                 <View style={styles.sliderLabel}>
                   <Text
@@ -126,7 +260,7 @@ export default function Approvals() {
                       color: colors.onSurfaceVariant,
                     }}
                   >
-                    Valor do cupom
+                    Máximo de utilizações
                   </Text>
                   <Text
                     style={{
@@ -135,45 +269,42 @@ export default function Approvals() {
                       color: colors.onSurface,
                     }}
                   >
-                    {values.percentualCouponValue.toLocaleString("pt-BR", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                    %
+                    {values.maxUses}
                   </Text>
                 </View>
                 <Slider
                   style={{ width: "100%", height: verticalScale(30) }}
-                  minimumValue={0}
-                  maximumValue={100}
-                  step={5}
-                  value={values.percentualCouponValue}
-                  onValueChange={(value) =>
-                    setFieldValue("percentualCouponValue", value)
-                  }
+                  minimumValue={1}
+                  maximumValue={10}
+                  step={1}
+                  value={values.maxUses}
+                  onValueChange={(value) => setFieldValue("maxUses", value)}
                   minimumTrackTintColor={colors.primary}
                   maximumTrackTintColor={colors.outline}
                   thumbTintColor={colors.primary}
                 />
-                {errors.percentualCouponValue &&
-                  touched.percentualCouponValue && (
-                    <HelperText
-                      type="error"
-                      style={{
-                        color: colors.error,
-                        padding: moderateScale(4),
-                      }}
-                    >
-                      {errors.percentualCouponValue}
-                    </HelperText>
-                  )}
+                {errors.maxUses && touched.maxUses && (
+                  <HelperText
+                    type="error"
+                    style={{
+                      color: colors.error,
+                      padding: moderateScale(4),
+                    }}
+                  >
+                    {errors.maxUses}
+                  </HelperText>
+                )}
               </View>
-            ) : (
-              <View>
+              <View style={{ rowGap: verticalScale(5), width: "100%" }}>
                 <TextInput
-                  onChangeText={handleChange("absoluteCouponValue")}
-                  onBlur={handleBlur("absoluteCouponValue")}
-                  value={values.absoluteCouponValue}
+                  onChangeText={(text) => {
+                    const cleanedText = text
+                      .toUpperCase()
+                      .replace(/[^A-Z0-9]/g, "");
+                    setFieldValue("couponCode", cleanedText);
+                  }}
+                  onBlur={handleBlur("couponCode")}
+                  value={values.couponCode}
                   mode="outlined"
                   label={
                     <Text
@@ -183,23 +314,22 @@ export default function Approvals() {
                         fontSize: fontSize(15),
                       }}
                     >
-                      Valor do cupom
+                      Código do cupom
                     </Text>
                   }
-                  placeholder="Digite o valor do cupom"
+                  placeholder="Digite o código do cupom"
                   style={{
                     backgroundColor: colors.elevation.level0,
                     fontFamily: Fonts.regular,
                   }}
                   contentStyle={{ fontFamily: Fonts.regular }}
-                  left={<TextInput.Icon icon="currency-brl" />}
+                  left={<TextInput.Icon icon="card-text" />}
                   autoCapitalize="none"
                   autoComplete="off"
                   autoCorrect={false}
-                  autoFocus={true}
-                  keyboardType="numeric"
+                  autoFocus={false}
                 />
-                {errors.absoluteCouponValue && touched.absoluteCouponValue && (
+                {errors.couponCode && touched.couponCode && (
                   <HelperText
                     type="error"
                     style={{
@@ -207,113 +337,23 @@ export default function Approvals() {
                       padding: moderateScale(4),
                     }}
                   >
-                    {errors.absoluteCouponValue}
+                    {errors.couponCode}
                   </HelperText>
                 )}
-              </View>
-            )}
-            <View style={styles.sliderContainer}>
-              <View style={styles.sliderLabel}>
-                <Text
-                  style={{
-                    fontFamily: Fonts.semiBold,
-                    fontSize: fontSize(15),
-                    color: colors.onSurfaceVariant,
-                  }}
-                >
-                  Máximo de utilizações
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: Fonts.regular,
-                    fontSize: fontSize(15),
-                    color: colors.onSurface,
-                  }}
-                >
-                  {values.maxUses}
-                </Text>
-              </View>
-              <Slider
-                style={{ width: "100%", height: verticalScale(30) }}
-                minimumValue={1}
-                maximumValue={10}
-                step={1}
-                value={values.maxUses}
-                onValueChange={(value) => setFieldValue("maxUses", value)}
-                minimumTrackTintColor={colors.primary}
-                maximumTrackTintColor={colors.outline}
-                thumbTintColor={colors.primary}
-              />
-              {errors.maxUses && touched.maxUses && (
-                <HelperText
-                  type="error"
-                  style={{
-                    color: colors.error,
-                    padding: moderateScale(4),
-                  }}
-                >
-                  {errors.maxUses}
-                </HelperText>
-              )}
-            </View>
-            <View style={{ rowGap: verticalScale(5), width: "100%" }}>
-              <TextInput
-                onChangeText={(text) => {
-                  const cleanedText = text
-                    .toUpperCase()
-                    .replace(/[^A-Z0-9]/g, "");
-                  setFieldValue("couponCode", cleanedText);
-                }}
-                onBlur={handleBlur("couponCode")}
-                value={values.couponCode}
-                mode="outlined"
-                label={
-                  <Text
-                    style={{
-                      color: colors.onSurfaceVariant,
-                      fontFamily: Fonts.regular,
-                      fontSize: fontSize(15),
-                    }}
-                  >
-                    Código do cupom
-                  </Text>
-                }
-                placeholder="Digite o código do cupom"
-                style={{
-                  backgroundColor: colors.elevation.level0,
-                  fontFamily: Fonts.regular,
-                }}
-                contentStyle={{ fontFamily: Fonts.regular }}
-                left={<TextInput.Icon icon="card-text" />}
-                autoCapitalize="none"
-                autoComplete="off"
-                autoCorrect={false}
-                autoFocus={false}
-              />
-              {errors.couponCode && touched.couponCode && (
-                <HelperText
-                  type="error"
-                  style={{
-                    color: colors.error,
-                    padding: moderateScale(4),
-                  }}
-                >
-                  {errors.couponCode}
-                </HelperText>
-              )}
 
-              <Divider style={{ marginVertical: verticalScale(10) }} />
-              <Button
-                mode="contained"
-                onPress={() => handleSubmit()}
-                disabled={!isValid || isSubmitting}
-              >
-                Gerar cupom
-              </Button>
+                <Divider style={{ marginVertical: verticalScale(10) }} />
+                <Button
+                  mode="contained"
+                  onPress={() => handleSubmit()}
+                  disabled={!isValid || isSubmitting}
+                >
+                  Gerar cupom
+                </Button>
+              </View>
             </View>
-          </View>
-        )}
-      </Formik>
+          )}
+        </Formik>
+      </View>
     </DefaultContainer>
   );
 }

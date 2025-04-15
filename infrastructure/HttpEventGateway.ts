@@ -143,8 +143,8 @@ export class HttpEventGateway implements EventGateway {
     user: User,
     eventId: number,
     ticketPricingId: number,
-    payment: Payment,
-    coupon: string
+    payment?: Payment,
+    coupon?: string
   ): Promise<RegisterAndJoinResponse> {
     const body = JSON.stringify({
       user: {
@@ -161,21 +161,24 @@ export class HttpEventGateway implements EventGateway {
       event_id: eventId,
       ticket_pricing_id: ticketPricingId,
       coupom: coupon,
-      payment: {
-        token: payment.token,
-        description: "Descricao do pagamento",
-        installments: Number(payment.installments),
-        payment_method_id: payment.paymentMethodId,
-        issuer_id: payment.issuerId,
-        payer: {
-          email: payment.payer.email,
-          identification: {
-            type: payment.payer.identification.type,
-            number: payment.payer.identification.number,
-          },
-        },
-      },
+      payment: payment
+        ? {
+            token: payment.token,
+            description: "Descricao do pagamento",
+            installments: Number(payment.installments),
+            payment_method_id: payment.paymentMethodId,
+            issuer_id: payment.issuerId,
+            payer: {
+              email: payment.payer.email,
+              identification: {
+                type: payment.payer.identification.type,
+                number: payment.payer.identification.number,
+              },
+            },
+          }
+        : undefined,
     });
+
     const response = await fetch(
       `${this.baseUrl}/public/user/register-and-join-event`,
       {
