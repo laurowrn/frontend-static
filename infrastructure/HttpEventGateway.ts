@@ -58,7 +58,7 @@ export class HttpEventGateway implements EventGateway {
         ticketPricing: {
           id: invite["ticket_pricing"]["id"],
           eventId: invite["ticket_pricing"]["event_id"],
-          ticket_type: invite["ticket_pricing"]["ticket_type"],
+          ticketType: invite["ticket_pricing"]["ticket_type"],
           lot: invite["ticket_pricing"]["lot"],
           price: invite["ticket_pricing"]["price"],
         },

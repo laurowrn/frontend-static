@@ -80,7 +80,6 @@ export default function Approvals() {
   const { inviteGateway } = useGateway();
   const { session } = useSession();
   const { colors } = useTheme();
-  const router = useRouter();
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -162,12 +161,13 @@ export default function Approvals() {
         ) : (
           <FlatList
             data={invitedUsers}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.inviteId.toString()}
             renderItem={({ item }) => (
               <RequestApprovalCard
                 name={item.username}
                 email={item.email}
                 instagram={item.instagram}
+                ticketType={item.ticketPricing}
                 onApprove={async () => {
                   try {
                     console.log(invitedUsers);

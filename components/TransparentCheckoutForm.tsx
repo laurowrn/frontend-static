@@ -144,7 +144,6 @@ export default function TransparentCheckoutForm({
             },
             paymentMethods: {
               creditCard: "all",
-              atm: "all",
               maxInstallments: 1,
             },
           }}

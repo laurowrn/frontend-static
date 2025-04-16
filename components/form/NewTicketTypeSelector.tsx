@@ -90,7 +90,7 @@ export default function NewTicketTypeSelector({
               style={{
                 fontFamily: Fonts.bold,
                 flexShrink: 1,
-                fontSize: fontSize(14),
+                fontSize: fontSize(18),
               }}
             >
               {title}

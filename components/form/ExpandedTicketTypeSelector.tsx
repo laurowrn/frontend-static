@@ -148,7 +148,7 @@ export default function ExpandedTicketTypeSelector({
                 style={{
                   fontFamily: Fonts.bold,
                   flexShrink: 1,
-                  fontSize: fontSize(14),
+                  fontSize: fontSize(18),
                 }}
               >
                 {title}
@@ -181,7 +181,7 @@ export default function ExpandedTicketTypeSelector({
               <Text
                 style={{
                   fontFamily: Fonts.bold,
-                  fontSize: fontSize(14),
+                  fontSize: fontSize(16),
                 }}
               >
                 {price}

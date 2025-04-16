@@ -92,7 +92,7 @@ export default function EventPageHeader({
           <Text
             style={{
               fontFamily: Fonts.regular,
-              fontSize: fontSize(14),
+              fontSize: fontSize(15),
             }}
           >
             {`${startDate.toLocaleTimeString("pt-BR", {
@@ -128,7 +128,7 @@ export default function EventPageHeader({
           <Text
             style={{
               fontFamily: Fonts.regular,
-              fontSize: fontSize(14),
+              fontSize: fontSize(15),
             }}
           >
             {eventAddress}

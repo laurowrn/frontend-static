@@ -3,22 +3,27 @@ import { horizontalScale, verticalScale } from "@/helpers/responsiveScaling";
 import { View } from "react-native";
 import { Card, IconButton, Text, useTheme } from "react-native-paper";
 import * as WebBrowser from "expo-web-browser";
+import { TicketPricing } from "@/infrastructure/EventGateway";
 
 interface RequestApprovalCardProps {
   name: string;
   email: string;
   instagram: string;
+  ticketType: TicketPricing;
   onApprove: () => void;
   onReject: () => void;
 }
+
 export default function RequestApprovalCard({
   name,
   email,
   instagram,
+  ticketType,
   onApprove,
   onReject,
 }: RequestApprovalCardProps) {
   const { colors } = useTheme();
+
   return (
     <Card
       style={{
@@ -62,6 +67,9 @@ export default function RequestApprovalCard({
               @{instagram}
             </Text>
           </View>
+          <Text variant="bodySmall" style={{ fontFamily: Fonts.regular }}>
+            Tipo de ingresso: {ticketType.ticketType}
+          </Text>
         </Card.Content>
         <Card.Actions
           style={{

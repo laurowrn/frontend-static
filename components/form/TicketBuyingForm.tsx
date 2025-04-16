@@ -86,10 +86,10 @@ const TicketFormSchema = Yup.object().shape({
   name: Yup.string()
     .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, "Por favor, insira um nome válido")
     .required("Este campo é obrigatório"),
-  confirmEmail: Yup.string()
-    .oneOf([Yup.ref("email")], "Os emails devem ser iguais")
-    .matches(/@/, "Por favor, insira um email válido")
-    .required("Este campo é obrigatório"),
+  // confirmEmail: Yup.string()
+  //   .oneOf([Yup.ref("email")], "Os emails devem ser iguais")
+  //   .matches(/@/, "Por favor, insira um email válido")
+  //   .required("Este campo é obrigatório"),
   mobileNumber: Yup.string()
     .test("mobile-number-validation", (value, context) => {
       const cleanValue = value?.replace(/[()\s-]/g, "") || "";
@@ -109,15 +109,17 @@ const TicketFormSchema = Yup.object().shape({
     })
     .oneOf([Yup.ref("mobileNumber")], "Os números de telefone devem ser iguais")
     .required("Este campo é obrigatório"),
-  instagramAccount: Yup.string().max(30),
-  identificationNumber: Yup.string()
-    .test("identification-number-validation", (value, context) => {
-      const result = validateCpf(value?.replace(/[.-]/g, "") || "");
-      return result.isValid
-        ? true
-        : context.createError({ message: result.errorMessage });
-    })
-    .required("Este campo é obrigatório"),
+  instagramAccount: Yup.string()
+    .max(30)
+    .matches(/^[^@]+$/, "Não é necessário incluir o '@'"),
+  // identificationNumber: Yup.string()
+  //   .test("identification-number-validation", (value, context) => {
+  //     const result = validateCpf(value?.replace(/[.-]/g, "") || "");
+  //     return result.isValid
+  //       ? true
+  //       : context.createError({ message: result.errorMessage });
+  //   })
+  //   .required("Este campo é obrigatório"),
   birthday: Yup.string()
     .test("birthday-validation", (value, context) => {
       const result = validateBirthday(value || "");
@@ -196,7 +198,7 @@ export default function TicketBuyingForm({
           }
           title={item.ticketType}
           price={`${formatMoney(item.price)}`}
-          hasBadge={item.requiresApproval}
+          hasBadge={true}
           badgeText={"Requer aprovação"}
           sublist={[
             item.maleCapacity?.toString() || "",
@@ -219,7 +221,7 @@ export default function TicketBuyingForm({
         }
         title={item.ticketType}
         price={`${formatMoney(item.price)}`}
-        hasBadge={item.requiresApproval}
+        hasBadge={true}
         badgeText={"Requer aprovação"}
       />
     );
@@ -232,11 +234,11 @@ export default function TicketBuyingForm({
           selectedTicket: "1",
           name: "",
           email: "",
-          confirmEmail: "",
+          // confirmEmail: "",
           mobileNumber: "+55",
           confirmMobileNumber: "+55",
           birthday: "",
-          identificationNumber: "",
+          // identificationNumber: "",
           instagramAccount: "",
           coupon: "",
         }}
@@ -266,7 +268,8 @@ export default function TicketBuyingForm({
                     birthday: values.birthday,
                     mobileNumber: values.mobileNumber,
                     instagram: values.instagramAccount,
-                    identificationNumber: values.identificationNumber,
+                    // identificationNumber: values.identificationNumber,
+                    identificationNumber: "",
                   }}
                   eventId={Number(eventId)}
                   ticketPricing={
@@ -431,11 +434,12 @@ export default function TicketBuyingForm({
                                   ""
                                 ),
                                 instagram: values.instagramAccount,
-                                identificationNumber:
-                                  values.identificationNumber.replace(
-                                    /[.-]/g,
-                                    ""
-                                  ),
+                                // identificationNumber:
+                                //   values.identificationNumber.replace(
+                                //     /[.-]/g,
+                                //     ""
+                                //   ),
+                                identificationNumber: "",
                               },
                               Number(eventId),
                               Number(values.selectedTicket),
@@ -573,7 +577,7 @@ export default function TicketBuyingForm({
                     </HelperText>
                   )}
                 </View>
-                <View>
+                {/* <View>
                   <TextInput
                     onChangeText={handleChange("confirmEmail")}
                     onBlur={handleBlur("confirmEmail")}
@@ -614,7 +618,7 @@ export default function TicketBuyingForm({
                       {errors.confirmEmail}
                     </HelperText>
                   )}
-                </View>
+                </View> */}
                 <View>
                   <TextInput
                     mode="outlined"
@@ -789,7 +793,7 @@ export default function TicketBuyingForm({
                     </HelperText>
                   )}
                 </View>
-                <View>
+                {/* <View>
                   <TextInput
                     mode="outlined"
                     label={
@@ -843,7 +847,7 @@ export default function TicketBuyingForm({
                         {errors.identificationNumber}
                       </HelperText>
                     )}
-                </View>
+                </View> */}
                 <View>
                   <TextInput
                     onChangeText={handleChange("instagramAccount")}

@@ -1,6 +1,6 @@
 import { GatewayProvider } from "@/context/GatewayContext";
 import { TikkoIcons, useDefaultFonts } from "@/hooks/useDefaultFonts";
-import { router, Stack, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { SessionProvider } from "@/context/AuthContext";
@@ -15,15 +15,15 @@ import {
   PaperProvider,
 } from "react-native-paper";
 import { initMercadoPago } from "@mercadopago/sdk-react";
-import { Fonts } from "@/constants/fonts";
 import { fontSize, horizontalScale } from "@/helpers/responsiveScaling";
+import getLanguageTag from "@/helpers/getLanguageTag";
 
 export const unstable_settings = {
   initialRouteName: "index",
 };
 
 initMercadoPago(process.env.EXPO_PUBLIC_MERCADO_PAGO_PUBLIC_KEY || "", {
-  locale: "pt-BR",
+  locale: getLanguageTag(),
 });
 
 export default function RootLayout() {
