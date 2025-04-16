@@ -179,7 +179,8 @@ export default function TicketBuyingForm({
     setFieldValue: (field: string, value: any) => void;
   }) => {
     const isSelected = selectedTicketId === item.id;
-    if (item.femaleCapacity! > 0 || item.maleCapacity! > 0) {
+
+    if (item.femaleCapacity! > 0 && item.maleCapacity! > 0) {
       return (
         <ExpandedTicketTypeSelector
           isSelected={isSelected}

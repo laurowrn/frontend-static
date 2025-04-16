@@ -15,6 +15,7 @@ import PublicEventPageAppBar from "@/components/structure/EventPageAppBar";
 import { moderateScale, fontSize } from "@/helpers/responsiveScaling";
 import { TikkoIcons } from "@/hooks/useDefaultFonts";
 import { useEventData } from "@/hooks/useEventData";
+import { Appbar } from "react-native-paper";
 
 interface EventPageProps {
   eventId: string;
@@ -63,18 +64,10 @@ export default function EventPage({ eventId }: EventPageProps) {
             <PublicEventPageAppBar
               eventId={eventId}
               left={
-                <TouchableRipple
-                  style={{ borderRadius: moderateScale(10) }}
-                  onPress={() => {
-                    router.replace("/");
-                  }}
-                >
-                  <TikkoIcons
-                    name="logo1"
-                    size={fontSize(40)}
-                    color={colors.primary}
-                  />
-                </TouchableRipple>
+                <Appbar.BackAction
+                  onPress={() => router.back()}
+                  iconColor={colors.primary}
+                />
               }
             />
           }

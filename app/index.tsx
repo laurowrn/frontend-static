@@ -37,26 +37,7 @@ export default function Index() {
 
   return (
     <DefaultContainer>
-      <View
-        style={{
-          flexDirection: "row",
-          flex: 1,
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <TikkoIcons name="mark1" size={fontSize(60)} color={colors.primary} />
-        <Button
-          mode="contained"
-          onPress={() => {
-            router.navigate("/login");
-          }}
-        >
-          Login
-        </Button>
-      </View>
-      <View style={{ height: verticalScale(100) }} />
+      <View style={{ height: verticalScale(50) }} />
       <TikkoIcons name="logo1" size={fontSize(100)} color={colors.primary} />
       <View
         style={{

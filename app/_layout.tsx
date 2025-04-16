@@ -1,14 +1,22 @@
 import { GatewayProvider } from "@/context/GatewayContext";
-import { useDefaultFonts } from "@/hooks/useDefaultFonts";
-import { Stack, useRouter } from "expo-router";
+import { TikkoIcons, useDefaultFonts } from "@/hooks/useDefaultFonts";
+import { router, Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { SessionProvider } from "@/context/AuthContext";
 import { BACKEND_BASE_URL } from "@/helpers/applicationUrl";
 import { useColorScheme } from "react-native";
 import { colors } from "../colorScheme.json";
-import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
+import {
+  Appbar,
+  Button,
+  MD3DarkTheme,
+  MD3LightTheme,
+  PaperProvider,
+} from "react-native-paper";
 import { initMercadoPago } from "@mercadopago/sdk-react";
+import { Fonts } from "@/constants/fonts";
+import { fontSize, horizontalScale } from "@/helpers/responsiveScaling";
 
 export const unstable_settings = {
   initialRouteName: "index",
@@ -20,6 +28,7 @@ initMercadoPago(process.env.EXPO_PUBLIC_MERCADO_PAGO_PUBLIC_KEY || "", {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
 
   const paperTheme =
     colorScheme === "dark"
@@ -43,7 +52,32 @@ export default function RootLayout() {
       <GatewayProvider baseUrl={BACKEND_BASE_URL}>
         <PaperProvider theme={paperTheme}>
           <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
+            <Stack.Screen
+              name="index"
+              options={{
+                headerShown: true,
+                header: ({ navigation, options }) => (
+                  <Appbar.Header
+                    style={{ paddingHorizontal: horizontalScale(20) }}
+                  >
+                    <TikkoIcons
+                      name="mark1"
+                      size={fontSize(60)}
+                      color={paperTheme.colors.primary}
+                    />
+                    <Appbar.Content title="" />
+                    <Button
+                      mode="contained"
+                      onPress={() => {
+                        router.navigate("/login");
+                      }}
+                    >
+                      Login
+                    </Button>
+                  </Appbar.Header>
+                ),
+              }}
+            />
             <Stack.Screen name="colmeia-reflections" />
             <Stack.Screen
               name="error"
