@@ -33,7 +33,11 @@ export const useAllEventsData = () => {
                 );
                 const result = await response.json();
                 if (result?.address) {
-                  return `${event.addressName}, ${result.address.city} - ${result.address.state}`;
+                  return `${event.addressName}, ${
+                    result.address.city
+                      ? result.address.city
+                      : result.address.town
+                  } - ${result.address.state}`;
                 } else {
                   return "Endereço não encontrado";
                 }
