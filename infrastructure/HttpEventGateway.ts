@@ -160,7 +160,7 @@ export class HttpEventGateway implements EventGateway {
       },
       event_id: eventId,
       ticket_pricing_id: ticketPricingId,
-      coupom: coupon,
+      coupon: coupon,
       payment: payment
         ? {
             token: payment.token,

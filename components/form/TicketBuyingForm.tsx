@@ -84,8 +84,13 @@ const TicketFormSchema = Yup.object().shape({
     .matches(/@/, "Por favor, insira um email válido")
     .required("Este campo é obrigatório"),
   name: Yup.string()
+    .required("Este campo é obrigatório")
     .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, "Por favor, insira um nome válido")
-    .required("Este campo é obrigatório"),
+    .test("at-least-two-words", "Digite seu nome e sobrenome", (value) => {
+      if (!value) return false;
+      const words = value.trim().split(/\s+/);
+      return words.length >= 2;
+    }),
   // confirmEmail: Yup.string()
   //   .oneOf([Yup.ref("email")], "Os emails devem ser iguais")
   //   .matches(/@/, "Por favor, insira um email válido")
@@ -511,7 +516,7 @@ export default function TicketBuyingForm({
                         Nome
                       </Text>
                     }
-                    placeholder="Digite seu nome"
+                    placeholder="Digite seu nome completo"
                     style={{
                       backgroundColor: colors.elevation.level0,
                       fontFamily: Fonts.regular,
