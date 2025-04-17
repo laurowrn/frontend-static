@@ -20,7 +20,8 @@ export default function EventPageContainer({
 
   useEffect(() => {
     const fetchColors = async () => {
-      const image = "https://i.ibb.co/PGM4GCwW/event-image.jpg";
+      const image =
+        "https://i.ibb.co/fz0f55Jy/3000x3000-Colmeia-Maram-Rosa-Save-The-Date.png";
       const response = await getColors(image, {
         fallback: "#000000",
       });
