@@ -52,6 +52,10 @@ export default function RootLayout() {
     <HelmetProvider>
       <Helmet>
         <meta
+          property="og:image"
+          content="https://i.postimg.cc/K86YbZ64/3000x3000-Colmeia-Maram-Rosa-Save-The-Date.png"
+        />
+        <meta
           property="og:image:secure_url"
           content="https://i.postimg.cc/K86YbZ64/3000x3000-Colmeia-Maram-Rosa-Save-The-Date.png"
         />
