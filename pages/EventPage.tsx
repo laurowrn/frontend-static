@@ -16,6 +16,7 @@ import { moderateScale, fontSize } from "@/helpers/responsiveScaling";
 import { TikkoIcons } from "@/hooks/useDefaultFonts";
 import { useEventData } from "@/hooks/useEventData";
 import { Appbar } from "react-native-paper";
+import getEventImageUrl from "@/helpers/getEventImageUrl";
 
 interface EventPageProps {
   eventId: string;
@@ -53,7 +54,7 @@ export default function EventPage({ eventId }: EventPageProps) {
       <View style={{ alignItems: "center", rowGap: verticalScale(15) }}>
         <EventPageHeader
           eventTitle={event.event.name}
-          eventImageUrl={require("../assets/event_image.png")}
+          eventImageUrl={getEventImageUrl(Number(eventId))}
           startDate={event.event.startDate}
           endDate={event.event.endDate}
           eventLocationName={event.event.addressName}

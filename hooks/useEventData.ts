@@ -38,7 +38,9 @@ export function useEventData(eventId: string) {
           if (!isMounted) return;
           if (result?.address) {
             setAddress(
-              `${result.address.road}, ${result.address.suburb}, ${result.address.city} - ${result.address.state}`
+              `${result.address.road}, ${result.address.suburb}, ${
+                result.address.city ? result.address.city : result.address.town
+              } - ${result.address.state}`
             );
           }
         } catch (error) {

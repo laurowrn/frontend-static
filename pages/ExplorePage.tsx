@@ -4,6 +4,7 @@ import EventCard from "@/components/event/EventCard";
 import { useRouter } from "expo-router";
 import { useAllEventsData } from "@/hooks/useAllEventsData";
 import { useTheme, ActivityIndicator } from "react-native-paper";
+import getEventImageUrl from "@/helpers/getEventImageUrl";
 
 export default function ExplorePage() {
   const { events, addresses = [], isLoading, isError } = useAllEventsData();
@@ -43,7 +44,7 @@ export default function ExplorePage() {
             event={{
               name: item.name,
               startDate: item.startDate,
-              imageSource: require("../assets/event_image.png"),
+              imageSource: getEventImageUrl(Number(item.id)),
             }}
             address={addresses[index] || ""}
             onPress={() => router.navigate(`/events/${item.id}`)}

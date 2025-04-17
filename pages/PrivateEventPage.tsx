@@ -18,6 +18,7 @@ import EventMap from "@/components/structure/EventMap.web";
 import PublicEventPageAppBar from "@/components/structure/EventPageAppBar";
 import { useEventData } from "@/hooks/useEventData";
 import { useState } from "react";
+import getEventImageUrl from "@/helpers/getEventImageUrl";
 
 interface PrivateEventPageProps {
   eventId: string;
@@ -72,7 +73,7 @@ export default function PrivateEventPage({ eventId }: PrivateEventPageProps) {
       <View style={{ alignItems: "center", rowGap: verticalScale(15) }}>
         <EventPageHeader
           eventTitle={event.event.name}
-          eventImageUrl={require("../assets/event_image.png")}
+          eventImageUrl={getEventImageUrl(Number(eventId))}
           startDate={event.event.startDate}
           endDate={event.event.endDate}
           eventLocationName={event.event.addressName}

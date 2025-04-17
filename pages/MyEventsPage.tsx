@@ -7,6 +7,7 @@ import { useGateway } from "@/context/GatewayContext";
 import { useRouter } from "expo-router";
 import { useAllEventsData } from "@/hooks/useAllEventsData";
 import { ActivityIndicator, useTheme } from "react-native-paper";
+import getEventImageUrl from "@/helpers/getEventImageUrl";
 
 export default function MyEventsPage() {
   const { events, addresses = [], isLoading, isError } = useAllEventsData();
@@ -46,7 +47,7 @@ export default function MyEventsPage() {
             event={{
               name: item.name,
               startDate: item.startDate,
-              imageSource: require("../assets/event_image.png"),
+              imageSource: getEventImageUrl(Number(item.id)),
             }}
             address={addresses && addresses[index] ? addresses[index] : ""}
             onPress={() => router.push(`/manage-event/${item.id}`)}

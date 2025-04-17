@@ -8,6 +8,7 @@ import EventCard from "@/components/event/EventCard";
 import { TikkoIcons } from "@/hooks/useDefaultFonts";
 import { Fonts } from "@/constants/fonts";
 import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
+import getEventImageUrl from "@/helpers/getEventImageUrl";
 
 export default function Index() {
   const { colors } = useTheme();
@@ -77,7 +78,7 @@ export default function Index() {
             event={{
               name: item.name,
               startDate: item.startDate,
-              imageSource: require("../assets/event_image.png"),
+              imageSource: getEventImageUrl(Number(item.id)),
             }}
             address={addresses && addresses[index] ? addresses[index] : ""}
             onPress={() => router.push(`/next-events/${item.id}`)}
