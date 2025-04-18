@@ -195,7 +195,7 @@ export default function GenerateCoupon() {
                     },
                   }}
                 >
-                  Link copiado com sucesso!
+                  Cupom copiado com sucesso!
                 </Snackbar>
               </Portal>
               <Text style={{ fontSize: fontSize(20) }}>Tipo do cupom</Text>
