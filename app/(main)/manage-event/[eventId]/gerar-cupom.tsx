@@ -16,6 +16,10 @@ import {
   Divider,
   Button,
   RadioButton,
+  Portal,
+  Dialog,
+  IconButton,
+  Snackbar,
 } from "react-native-paper";
 import Slider from "@react-native-community/slider";
 import { useGateway } from "@/context/GatewayContext";
@@ -23,6 +27,7 @@ import { useSession } from "@/context/AuthContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import ErrorDialog from "@/components/error/ErrorDialog";
+import * as Clipboard from "expo-clipboard";
 
 const CouponFormSchema = Yup.object().shape({
   couponType: Yup.string().required("Este campo é obrigatório"),
@@ -44,6 +49,7 @@ const CouponFormSchema = Yup.object().shape({
   }),
   couponCode: Yup.string()
     .min(5, "Deve possuir no mínimo 5 caracteres")
+    .max(10, "Deve possuir no máximo 10 caracteres")
     .required("Este campo é obrigatório"),
 });
 
@@ -58,14 +64,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Approvals() {
+export default function GenerateCoupon() {
   const { colors } = useTheme();
   const { couponGateway } = useGateway();
   const { session } = useSession();
   const { eventId } = useLocalSearchParams() as { eventId: string };
   const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const router = useRouter();
+  const [isSuccessDialogVisible, setIsSuccessDialogVisible] = useState(false);
+  const [isCopySnackbarVisible, setIsCopySnackbarVisible] = useState(false);
 
   return (
     <DefaultContainer>
@@ -78,6 +85,7 @@ export default function Approvals() {
             }}
           />
         )}
+
         <Formik
           initialValues={{
             couponType: "percentage",
@@ -88,7 +96,7 @@ export default function Approvals() {
           }}
           onSubmit={async (values) => {
             try {
-              const response = await couponGateway.generateCoupon(
+              await couponGateway.generateCoupon(
                 {
                   eventId: Number(eventId),
                   code: values.couponCode,
@@ -101,6 +109,7 @@ export default function Approvals() {
                 },
                 session || ""
               );
+              setIsSuccessDialogVisible(true);
             } catch (error: any) {
               setError(true);
               setErrorMessage(error.message);
@@ -120,6 +129,75 @@ export default function Approvals() {
             isValid,
           }) => (
             <View style={{ rowGap: verticalScale(10), width: "100%" }}>
+              {isSuccessDialogVisible && (
+                <Portal>
+                  <Dialog
+                    visible={true}
+                    onDismiss={() => {
+                      setIsSuccessDialogVisible(false);
+                    }}
+                  >
+                    <Dialog.Title>Cupom gerado com sucesso!</Dialog.Title>
+                    <Dialog.Content style={{ alignItems: "center" }}>
+                      <View
+                        style={{
+                          width: "70%",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexDirection: "row",
+                          backgroundColor: colors.elevation.level1,
+                          borderRadius: moderateScale(15),
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontFamily: Fonts.regular,
+                            fontSize: fontSize(22),
+                            paddingVertical: verticalScale(3),
+                            paddingHorizontal: moderateScale(10),
+                            borderBottomWidth: 2,
+                            borderColor: colors.onBackground,
+                            borderStyle: "dotted",
+                          }}
+                        >
+                          {values.couponCode}
+                        </Text>
+                        <IconButton
+                          icon={"content-copy"}
+                          onPress={() => {
+                            Clipboard.setStringAsync(values.couponCode);
+                          }}
+                        />
+                      </View>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                      <Button
+                        onPress={() => {
+                          setIsSuccessDialogVisible(false);
+                        }}
+                      >
+                        Fechar
+                      </Button>
+                    </Dialog.Actions>
+                  </Dialog>
+                </Portal>
+              )}
+              <Portal>
+                <Snackbar
+                  visible={isCopySnackbarVisible}
+                  onDismiss={() => {
+                    setIsCopySnackbarVisible(false);
+                  }}
+                  action={{
+                    label: "Fechar",
+                    onPress: () => {
+                      setIsCopySnackbarVisible(false);
+                    },
+                  }}
+                >
+                  Link copiado com sucesso!
+                </Snackbar>
+              </Portal>
               <Text style={{ fontSize: fontSize(20) }}>Tipo do cupom</Text>
               <RadioButton.Group
                 onValueChange={(value) => {
@@ -136,7 +214,7 @@ export default function Approvals() {
               >
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <RadioButton value="percentage" />
-                  <Text style={{ fontSize: fontSize(16) }}>percentage</Text>
+                  <Text style={{ fontSize: fontSize(16) }}>Percentual</Text>
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <RadioButton value="fixed" />
