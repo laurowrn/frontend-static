@@ -165,6 +165,7 @@ export default function GenerateCoupon() {
                         <IconButton
                           icon={"content-copy"}
                           onPress={() => {
+                            setIsCopySnackbarVisible(true);
                             Clipboard.setStringAsync(values.couponCode);
                           }}
                         />
