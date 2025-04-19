@@ -12,6 +12,9 @@ import {
   useTheme,
   Text,
   TextInput,
+  Portal,
+  Dialog,
+  Button,
 } from "react-native-paper";
 import { Fonts } from "@/constants/fonts";
 import RequestApprovalCard from "@/components/event/RequestApprovalCard";
@@ -170,7 +173,6 @@ export default function Approvals() {
                 ticketType={item.ticketPricing}
                 onApprove={async () => {
                   try {
-                    console.log(invitedUsers);
                     await inviteGateway.approveJoinRequest(
                       { inviteId: item.inviteId, approved: true },
                       session || ""

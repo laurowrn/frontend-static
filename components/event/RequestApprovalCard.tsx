@@ -1,17 +1,31 @@
 import { Fonts } from "@/constants/fonts";
-import { horizontalScale, verticalScale } from "@/helpers/responsiveScaling";
+import {
+  fontSize,
+  horizontalScale,
+  verticalScale,
+} from "@/helpers/responsiveScaling";
 import { View } from "react-native";
-import { Card, IconButton, Text, useTheme } from "react-native-paper";
+import {
+  Card,
+  Dialog,
+  IconButton,
+  Portal,
+  Text,
+  useTheme,
+  Button,
+  Snackbar,
+} from "react-native-paper";
 import * as WebBrowser from "expo-web-browser";
 import { TicketPricing } from "@/infrastructure/EventGateway";
+import { useState } from "react";
 
 interface RequestApprovalCardProps {
   name: string;
   email: string;
   instagram: string;
   ticketType: TicketPricing;
-  onApprove: () => void;
-  onReject: () => void;
+  onApprove: () => Promise<void>;
+  onReject: () => Promise<void>;
 }
 
 export default function RequestApprovalCard({
@@ -23,6 +37,24 @@ export default function RequestApprovalCard({
   onReject,
 }: RequestApprovalCardProps) {
   const { colors } = useTheme();
+
+  const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] =
+    useState(false);
+  const [isApproval, setIsApproval] = useState<boolean | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleConfirm = async () => {
+    setIsConfirmationDialogVisible(false);
+    try {
+      if (isApproval) {
+        await onApprove();
+      } else {
+        await onReject();
+      }
+    } catch (error: any) {
+      setErrorMessage("Falha ao processar a ação. Tente novamente.");
+    }
+  };
 
   return (
     <Card
@@ -39,6 +71,65 @@ export default function RequestApprovalCard({
           padding: 0,
         }}
       >
+        {isConfirmationDialogVisible && (
+          <Portal>
+            <Dialog
+              visible={isConfirmationDialogVisible}
+              onDismiss={() => setIsConfirmationDialogVisible(false)}
+            >
+              <Dialog.Title>Confirmação</Dialog.Title>
+              <Dialog.Content>
+                <Text
+                  style={{
+                    fontFamily: Fonts.regular,
+                    fontSize: fontSize(16),
+                    paddingBottom: verticalScale(5),
+                  }}
+                >
+                  {`Deseja realmente ${
+                    isApproval ? "aprovar" : "recusar"
+                  } este convidado?`}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: Fonts.regular,
+                    fontSize: fontSize(15),
+                  }}
+                >
+                  Nome: {name}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: Fonts.regular,
+                    fontSize: fontSize(15),
+                  }}
+                >
+                  Tipo de ingresso: {ticketType.ticketType}
+                </Text>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button
+                  onPress={() => setIsConfirmationDialogVisible(false)}
+                  mode="outlined"
+                  style={{
+                    borderColor: colors.error,
+                    marginRight: horizontalScale(10),
+                  }}
+                  textColor={colors.error}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onPress={handleConfirm}
+                  mode="contained"
+                  style={{ backgroundColor: colors.primary }}
+                >
+                  Confirmar
+                </Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+        )}
         <Card.Content style={{ padding: 0, flex: 3, rowGap: verticalScale(5) }}>
           <Text variant="titleMedium" style={{ fontFamily: Fonts.bold }}>
             {name}
@@ -80,21 +171,37 @@ export default function RequestApprovalCard({
           }}
         >
           <IconButton
-            icon={"close-circle"}
+            icon="close-circle"
             containerColor={colors.errorContainer}
             iconColor={colors.onErrorContainer}
             mode="contained"
-            onPress={onReject}
+            onPress={() => {
+              setIsApproval(false);
+              setIsConfirmationDialogVisible(true);
+            }}
+            accessibilityLabel="Recusar convidado"
           />
           <IconButton
-            icon={"check"}
+            icon="check"
             containerColor={colors.primaryContainer}
             iconColor={colors.onPrimaryContainer}
             mode="contained"
-            onPress={onApprove}
+            onPress={() => {
+              setIsApproval(true);
+              setIsConfirmationDialogVisible(true);
+            }}
+            accessibilityLabel="Aprovar convidado"
           />
         </Card.Actions>
       </View>
+      <Snackbar
+        visible={!!errorMessage}
+        onDismiss={() => setErrorMessage(null)}
+        duration={3000}
+        style={{ backgroundColor: colors.errorContainer }}
+      >
+        <Text style={{ color: colors.onErrorContainer }}>{errorMessage}</Text>
+      </Snackbar>
     </Card>
   );
 }

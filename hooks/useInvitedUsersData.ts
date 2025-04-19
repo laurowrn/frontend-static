@@ -16,9 +16,10 @@ export default function useInvitedUsersData(
   const { session } = useSession();
   const router = useRouter();
 
-  const [invitedUsers, setInvitedUsers] = useState<InvitedUserResponse[]>();
+  const [invitedUsers, setInvitedUsers] = useState<InvitedUserResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reloadTrigger, setReloadTrigger] = useState(0);
 
   const fetchInvitedUsers = useCallback(async () => {
     setLoading(true);
@@ -36,11 +37,15 @@ export default function useInvitedUsersData(
     } finally {
       setLoading(false);
     }
-  }, [eventId, status, session, eventGateway, router, search]);
+  }, [eventId, status, session, eventGateway, router, search, reloadTrigger]);
 
   useEffect(() => {
     fetchInvitedUsers();
   }, [fetchInvitedUsers]);
 
-  return { invitedUsers, loading, error, reload: fetchInvitedUsers };
+  const reload = () => {
+    setReloadTrigger((prev) => prev + 1);
+  };
+
+  return { invitedUsers, loading, error, reload };
 }

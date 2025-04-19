@@ -76,7 +76,6 @@ export default function JoinRequestList() {
     debouncedSearch
   );
   const { colors } = useTheme();
-  const router = useRouter();
 
   useEffect(() => {
     const handler = setTimeout(() => {
