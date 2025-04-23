@@ -17,6 +17,7 @@ export interface EventGateway {
     jwtToken: string,
     search?: string
   ): Promise<InvitedUserResponse[]>;
+  getEventStats(eventID: number, jwtToken: string): Promise<EventStats>;
 }
 
 export interface Event {
@@ -108,4 +109,26 @@ export enum InvitedUserStatus {
   Accepted = "accepted",
   Rejected = "rejected",
   Cancelled = "cancelled",
+}
+
+export interface EventStats {
+  totalTicketsSold: number;
+  totalInvites: number;
+  totalPendingInvites: number;
+  totalRejectedInvites: number;
+  totalApprovedInvites: number;
+  ticketsSoldByPricing: {
+    ticketPricingId: number;
+    ticketType: string;
+    lot: number;
+    price: number;
+    ticketsSold: number;
+  }[];
+  totalRevenue: number;
+  totalValidatedTickets: number;
+  roleDistribution: {
+    roleId: number;
+    roleName: string;
+    userCount: number;
+  }[];
 }

@@ -7,6 +7,7 @@ import {
   Payment,
   InvitedUserResponse,
   InvitedUserStatus,
+  EventStats,
 } from "./EventGateway";
 
 export class HttpEventGateway implements EventGateway {
@@ -14,6 +15,50 @@ export class HttpEventGateway implements EventGateway {
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
+  }
+
+  async getEventStats(eventID: number, jwtToken: string): Promise<EventStats> {
+    const response = await fetch(
+      `${this.baseUrl}/private/event/${eventID}/stats`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Falha em pegar estatísticas do evento.");
+    }
+    const jsonResponse = await response.json();
+
+    const eventStats: EventStats = {
+      totalTicketsSold: jsonResponse["total_tickets_sold"],
+      totalInvites: jsonResponse["total_invites"],
+      totalPendingInvites: jsonResponse["total_pending_invites"],
+      totalRejectedInvites: jsonResponse["total_rejected_invites"],
+      totalApprovedInvites: jsonResponse["total_approved_invites"],
+      ticketsSoldByPricing: jsonResponse["tickets_sold_by_pricing"].map(
+        (pricing: any) => ({
+          ticketPricingId: pricing["ticket_pricing_id"],
+          ticketType: pricing["ticket_type"],
+          lot: pricing["lot"],
+          price: pricing["price"],
+          ticketsSold: pricing["tickets_sold"],
+        })
+      ),
+      totalRevenue: jsonResponse["total_revenue"],
+      totalValidatedTickets: jsonResponse["total_validated_tickets"],
+      roleDistribution: jsonResponse["role_distribution"].map((role: any) => ({
+        roleId: role["role_id"],
+        roleName: role["role_name"],
+        userCount: role["user_count"],
+      })),
+    };
+
+    return eventStats;
   }
 
   async getInvitedUsers(
