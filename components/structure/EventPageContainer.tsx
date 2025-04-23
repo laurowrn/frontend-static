@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     minHeight: "100%",
+    height: verticalScale(1900),
     width: "100%",
     alignItems: "center",
     justifyContent: "center",

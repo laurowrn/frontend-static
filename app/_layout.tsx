@@ -152,7 +152,7 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
-                name="next-events"
+                name="[slug]"
                 options={{
                   headerShown: false,
                 }}

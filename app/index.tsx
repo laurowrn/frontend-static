@@ -9,6 +9,7 @@ import { TikkoIcons } from "@/hooks/useDefaultFonts";
 import { Fonts } from "@/constants/fonts";
 import { fontSize, verticalScale } from "@/helpers/responsiveScaling";
 import getEventImageUrl from "@/helpers/getEventImageUrl";
+import generateSlug from "@/helpers/generateSlug";
 
 export default function Index() {
   const { colors } = useTheme();
@@ -81,7 +82,9 @@ export default function Index() {
               imageSource: getEventImageUrl(Number(item.id)),
             }}
             address={addresses && addresses[index] ? addresses[index] : ""}
-            onPress={() => router.push(`/next-events/${item.id}`)}
+            onPress={() =>
+              router.navigate(`/${generateSlug(item.name, item.id)}`)
+            }
           />
         )}
       />
