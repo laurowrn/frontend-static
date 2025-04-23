@@ -39,7 +39,7 @@ export class HttpEventGateway implements EventGateway {
       totalInvites: jsonResponse["total_invites"],
       totalPendingInvites: jsonResponse["total_pending_invites"],
       totalRejectedInvites: jsonResponse["total_rejected_invites"],
-      totalApprovedInvites: jsonResponse["total_approved_invites"],
+      totalAcceptedInvites: jsonResponse["total_accepted_invites"],
       ticketsSoldByPricing: jsonResponse["tickets_sold_by_pricing"].map(
         (pricing: any) => ({
           ticketPricingId: pricing["ticket_pricing_id"],

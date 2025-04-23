@@ -116,7 +116,7 @@ export interface EventStats {
   totalInvites: number;
   totalPendingInvites: number;
   totalRejectedInvites: number;
-  totalApprovedInvites: number;
+  totalAcceptedInvites: number;
   ticketsSoldByPricing: {
     ticketPricingId: number;
     ticketType: string;

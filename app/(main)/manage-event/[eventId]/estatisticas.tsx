@@ -192,7 +192,7 @@ export default function Approvals() {
                   {` (${(
                     ((eventStats?.totalPendingInvites ?? 0) /
                       ((eventStats?.totalPendingInvites ?? 0) +
-                        (eventStats?.totalApprovedInvites ?? 0) +
+                        (eventStats?.totalAcceptedInvites ?? 0) +
                         (eventStats?.totalRejectedInvites ?? 0))) *
                     100
                   ).toLocaleString("pt-BR", {
@@ -217,13 +217,13 @@ export default function Approvals() {
               </Text>
               <Text>
                 <Text variant="titleLarge" style={{ fontFamily: Fonts.bold }}>
-                  {eventStats?.totalApprovedInvites ?? 0}
+                  {eventStats?.totalAcceptedInvites ?? 0}
                 </Text>
                 <Text variant="titleLarge" style={{ fontFamily: Fonts.medium }}>
                   {` (${(
-                    ((eventStats?.totalApprovedInvites ?? 0) /
+                    ((eventStats?.totalAcceptedInvites ?? 0) /
                       ((eventStats?.totalPendingInvites ?? 0) +
-                        (eventStats?.totalApprovedInvites ?? 0) +
+                        (eventStats?.totalAcceptedInvites ?? 0) +
                         (eventStats?.totalRejectedInvites ?? 0))) *
                     100
                   ).toLocaleString("pt-BR", {
@@ -254,7 +254,7 @@ export default function Approvals() {
                   {` (${(
                     ((eventStats?.totalRejectedInvites ?? 0) /
                       ((eventStats?.totalPendingInvites ?? 0) +
-                        (eventStats?.totalApprovedInvites ?? 0) +
+                        (eventStats?.totalAcceptedInvites ?? 0) +
                         (eventStats?.totalRejectedInvites ?? 0))) *
                     100
                   ).toLocaleString("pt-BR", {
