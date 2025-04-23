@@ -86,6 +86,11 @@ export interface Payment {
   };
 }
 
+export interface PaymentDetails {
+  authorizedAmount: number;
+  coupon: string;
+}
+
 export interface InvitedUserResponse {
   id: number;
   email: string;
@@ -95,6 +100,7 @@ export interface InvitedUserResponse {
   inviteId: number;
   isFirstAccess: boolean;
   ticketPricing: TicketPricing;
+  paymentDetails: PaymentDetails;
 }
 
 export enum InvitedUserStatus {

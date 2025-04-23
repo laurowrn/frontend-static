@@ -189,6 +189,8 @@ export default function Approvals() {
                     reload();
                   } catch (error: any) {}
                 }}
+                authorizedAmount={item.paymentDetails.authorizedAmount}
+                coupon={item.paymentDetails.coupon}
               />
             )}
             contentContainerStyle={{ gap: verticalScale(10) }}

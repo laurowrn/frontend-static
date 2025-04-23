@@ -62,6 +62,10 @@ export class HttpEventGateway implements EventGateway {
           lot: invite["ticket_pricing"]["lot"],
           price: invite["ticket_pricing"]["price"],
         },
+        paymentDetails: {
+          authorizedAmount: invite["payment_details"]["authorized_amount"],
+          coupon: invite["payment_details"]["coupon"],
+        },
       })
     );
 

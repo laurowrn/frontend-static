@@ -18,12 +18,15 @@ import {
 import * as WebBrowser from "expo-web-browser";
 import { TicketPricing } from "@/infrastructure/EventGateway";
 import { useState } from "react";
+import formatMoney from "@/helpers/formatMoney";
 
 interface RequestApprovalCardProps {
   name: string;
   email: string;
   instagram: string;
   ticketType: TicketPricing;
+  authorizedAmount: number;
+  coupon?: string;
   onApprove: () => Promise<void>;
   onReject: () => Promise<void>;
 }
@@ -33,6 +36,8 @@ export default function RequestApprovalCard({
   email,
   instagram,
   ticketType,
+  authorizedAmount,
+  coupon,
   onApprove,
   onReject,
 }: RequestApprovalCardProps) {
@@ -130,7 +135,9 @@ export default function RequestApprovalCard({
             </Dialog>
           </Portal>
         )}
-        <Card.Content style={{ padding: 0, flex: 3, rowGap: verticalScale(5) }}>
+        <Card.Content
+          style={{ padding: 0, flex: 3.6, rowGap: verticalScale(5) }}
+        >
           <Text variant="titleMedium" style={{ fontFamily: Fonts.bold }}>
             {name}
           </Text>
@@ -159,8 +166,34 @@ export default function RequestApprovalCard({
             </Text>
           </View>
           <Text variant="bodySmall" style={{ fontFamily: Fonts.regular }}>
-            Tipo de ingresso: {ticketType.ticketType}
+            Tipo de ingresso: {ticketType.ticketType} - Lote {ticketType.lot}
           </Text>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={{ flexShrink: 1 }}>
+              <Text variant="bodySmall" style={{ fontFamily: Fonts.regular }}>
+                Valor pago: {formatMoney(authorizedAmount)}
+              </Text>
+              {coupon && (
+                <Text
+                  variant="bodySmall"
+                  style={{
+                    fontFamily: Fonts.regular,
+                  }}
+                >
+                  {" - com cupom "}
+                </Text>
+              )}
+              <Text
+                variant="bodySmall"
+                style={{
+                  fontFamily: Fonts.semiBold,
+                  color: colors.primary,
+                }}
+              >
+                {coupon}
+              </Text>
+            </Text>
+          </View>
         </Card.Content>
         <Card.Actions
           style={{
