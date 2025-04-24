@@ -17,7 +17,7 @@ import {
 import { initMercadoPago } from "@mercadopago/sdk-react";
 import { fontSize, horizontalScale } from "@/helpers/responsiveScaling";
 import getLanguageTag from "@/helpers/getLanguageTag";
-import { Helmet, HelmetProvider } from "react-native-helmet-async";
+import Head from "expo-router/head"
 
 export const unstable_settings = {
   initialRouteName: "index",
@@ -49,8 +49,8 @@ export default function RootLayout() {
   }
 
   return (
-    <HelmetProvider>
-      <Helmet>
+    <>
+      <Head>
         <meta name="description" content="" />
         <meta property="og:url" content="https://www.tikko.com.br/" />
         <meta property="og:type" content="website" />
@@ -69,7 +69,7 @@ export default function RootLayout() {
           name="twitter:image"
           content="https://opengraph.b-cdn.net/production/images/52928b8c-e7c8-4970-a088-f4795fb7b667.png?token=K0zAmRySFekNHyJBz4VWgYpYlTCS401VL-ZTU6er7XQ&height=1200&width=1200&expires=33280923923"
         />
-      </Helmet>
+      </Head>
       <SessionProvider>
         <GatewayProvider baseUrl={BACKEND_BASE_URL}>
           <PaperProvider theme={paperTheme}>
@@ -161,6 +161,6 @@ export default function RootLayout() {
           </PaperProvider>
         </GatewayProvider>
       </SessionProvider>
-    </HelmetProvider>
+    </>
   );
 }
