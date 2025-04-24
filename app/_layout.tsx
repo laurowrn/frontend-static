@@ -49,118 +49,96 @@ export default function RootLayout() {
   }
 
   return (
-    <>
-      <Head>
-        <meta name="description" content="" />
-        <meta property="og:url" content="https://www.tikko.com.br/" />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="Colmeia" />
-        <meta property="og:description" content="" />
-        <meta
-          property="og:image"
-          content="https://opengraph.b-cdn.net/production/images/52928b8c-e7c8-4970-a088-f4795fb7b667.png?token=K0zAmRySFekNHyJBz4VWgYpYlTCS401VL-ZTU6er7XQ&height=1200&width=1200&expires=33280923923"
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content="tikko.com.br" />
-        <meta property="twitter:url" content="https://www.tikko.com.br/" />
-        <meta name="twitter:title" content="Colmeia" />
-        <meta name="twitter:description" content="" />
-        <meta
-          name="twitter:image"
-          content="https://opengraph.b-cdn.net/production/images/52928b8c-e7c8-4970-a088-f4795fb7b667.png?token=K0zAmRySFekNHyJBz4VWgYpYlTCS401VL-ZTU6er7XQ&height=1200&width=1200&expires=33280923923"
-        />
-      </Head>
-      <SessionProvider>
-        <GatewayProvider baseUrl={BACKEND_BASE_URL}>
-          <PaperProvider theme={paperTheme}>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen
-                name="index"
-                options={{
-                  headerShown: true,
-                  header: ({ navigation, options }) => (
-                    <Appbar.Header
-                      style={{ paddingHorizontal: horizontalScale(20) }}
+    <SessionProvider>
+      <GatewayProvider baseUrl={BACKEND_BASE_URL}>
+        <PaperProvider theme={paperTheme}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+              name="index"
+              options={{
+                headerShown: true,
+                header: ({ navigation, options }) => (
+                  <Appbar.Header
+                    style={{ paddingHorizontal: horizontalScale(20) }}
+                  >
+                    <TikkoIcons
+                      name="mark1"
+                      size={fontSize(60)}
+                      color={paperTheme.colors.primary}
+                    />
+                    <Appbar.Content title="" />
+                    <Button
+                      mode="contained"
+                      onPress={() => {
+                        router.navigate("/login");
+                      }}
                     >
-                      <TikkoIcons
-                        name="mark1"
-                        size={fontSize(60)}
-                        color={paperTheme.colors.primary}
-                      />
-                      <Appbar.Content title="" />
-                      <Button
-                        mode="contained"
-                        onPress={() => {
-                          router.navigate("/login");
-                        }}
-                      >
-                        Login
-                      </Button>
-                    </Appbar.Header>
-                  ),
-                }}
-              />
-              <Stack.Screen name="colmeia-reflections" />
-              <Stack.Screen
-                name="error"
-                options={{
-                  presentation: "transparentModal",
-                  animation: "fade",
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="success"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="cancel"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="politica-privacidade"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="termos-e-condicoes"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="sobre"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="login"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="(main)"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="[slug]"
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack>
-          </PaperProvider>
-        </GatewayProvider>
-      </SessionProvider>
-    </>
+                      Login
+                    </Button>
+                  </Appbar.Header>
+                ),
+              }}
+            />
+            <Stack.Screen name="colmeia-reflections" />
+            <Stack.Screen
+              name="error"
+              options={{
+                presentation: "transparentModal",
+                animation: "fade",
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="success"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="cancel"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="politica-privacidade"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="termos-e-condicoes"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="sobre"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="login"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="(main)"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="[slug]"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
+        </PaperProvider>
+      </GatewayProvider>
+    </SessionProvider>
   );
 }
