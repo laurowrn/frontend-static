@@ -1,13 +1,16 @@
+import { EventProvider } from "@/context/EventContext";
 import { Stack } from "expo-router";
 
 export default function MainLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="[eventId]" />
-    </Stack>
+    <EventProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="[eventId]" />
+      </Stack>
+    </EventProvider>
   );
 }

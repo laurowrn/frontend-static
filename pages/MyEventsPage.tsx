@@ -1,9 +1,6 @@
 import DefaultContainer from "@/components/containers/DefaultContainer";
-import { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
-import { Event } from "@/infrastructure/EventGateway";
 import EventCard from "@/components/event/EventCard";
-import { useGateway } from "@/context/GatewayContext";
 import { useRouter } from "expo-router";
 import { useAllEventsData } from "@/hooks/useAllEventsData";
 import { ActivityIndicator, useTheme } from "react-native-paper";
@@ -12,12 +9,11 @@ import getEventImageUrl from "@/helpers/getEventImageUrl";
 export default function MyEventsPage() {
   const { events, addresses = [], isLoading, isError } = useAllEventsData();
   const { colors } = useTheme();
-
   const router = useRouter();
 
   if (isError) {
     router.replace("/error?message=Falha em carregar informações do evento");
-    return;
+    return null;
   }
 
   if (isLoading || !events) {
@@ -47,7 +43,7 @@ export default function MyEventsPage() {
             event={{
               name: item.name,
               startDate: item.startDate,
-              imageSource: getEventImageUrl(Number(item.id)),
+              imageSource: getEventImageUrl(Number(item.id)).local,
             }}
             address={addresses && addresses[index] ? addresses[index] : ""}
             onPress={() => router.push(`/manage-event/${item.id}`)}

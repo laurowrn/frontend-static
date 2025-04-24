@@ -267,29 +267,35 @@ export default function Approvals() {
           </Card>
         </View>
 
-        {/* <Text style={{ fontSize: fontSize(24), fontFamily: Fonts.bold }}>
-          Tipos de ingressos
-        </Text>
-        <Divider />
-        <Card
-          style={{
-            width: "100%",
-          }}
-        >
-          <Card.Content>
-            <Text variant="titleMedium" style={{ fontFamily: Fonts.semiBold }}>
-              Lotes
-            </Text>
-          </Card.Content>
-          <Card.Actions>
-            <IconButton
-              icon={isExpanded ? "chevron-up" : "chevron-down"}
-              iconColor={colors.onBackground}
-              mode="contained"
-              onPress={() => setIsExpanded(!isExpanded)}
-            />
-          </Card.Actions>
-        </Card> */}
+        <View style={{ width: "100%", rowGap: verticalScale(5) }}>
+          <Text style={{ fontSize: fontSize(24), fontFamily: Fonts.bold }}>
+            Vendas por lote
+          </Text>
+          <Divider />
+          <Card
+            style={{
+              width: "100%",
+            }}
+          >
+            <Card.Content>
+              <Text
+                variant="titleMedium"
+                style={{ fontFamily: Fonts.semiBold }}
+              >
+                Lote {eventStats?.ticketsSoldByPricing[0].lot} -{" "}
+                {eventStats?.ticketsSoldByPricing[0].ticketType} -{" "}
+              </Text>
+            </Card.Content>
+            <Card.Actions>
+              <IconButton
+                icon={isExpanded ? "chevron-up" : "chevron-down"}
+                iconColor={colors.onBackground}
+                mode="contained"
+                onPress={() => setIsExpanded(!isExpanded)}
+              />
+            </Card.Actions>
+          </Card>
+        </View>
       </View>
     </DefaultContainer>
   );

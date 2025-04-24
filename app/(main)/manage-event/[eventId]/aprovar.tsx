@@ -178,7 +178,9 @@ export default function Approvals() {
                       session || ""
                     );
                     reload();
-                  } catch (error: any) {}
+                  } catch (error: any) {
+                    console.error("Approval failed:", error.message);
+                  }
                 }}
                 onReject={async () => {
                   try {
@@ -187,7 +189,9 @@ export default function Approvals() {
                       session || ""
                     );
                     reload();
-                  } catch (error: any) {}
+                  } catch (error: any) {
+                    console.error("Rejection failed:", error.message);
+                  }
                 }}
                 authorizedAmount={item.paymentDetails.authorizedAmount}
                 coupon={item.paymentDetails.coupon}

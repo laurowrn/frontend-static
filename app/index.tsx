@@ -79,7 +79,7 @@ export default function Index() {
             event={{
               name: item.name,
               startDate: item.startDate,
-              imageSource: getEventImageUrl(Number(item.id)),
+              imageSource: getEventImageUrl(Number(item.id)).local,
             }}
             address={addresses && addresses[index] ? addresses[index] : ""}
             onPress={() =>

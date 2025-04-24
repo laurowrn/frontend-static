@@ -1,4 +1,5 @@
 import { Fonts } from "@/constants/fonts";
+import { EventProvider } from "@/context/EventContext";
 import { Stack } from "expo-router";
 import { Appbar } from "react-native-paper";
 

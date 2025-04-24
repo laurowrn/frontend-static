@@ -44,7 +44,7 @@ export default function ExplorePage() {
             event={{
               name: item.name,
               startDate: item.startDate,
-              imageSource: getEventImageUrl(Number(item.id)),
+              imageSource: getEventImageUrl(Number(item.id)).local,
             }}
             address={addresses[index] || ""}
             onPress={() => router.navigate(`/events/${item.id}`)}

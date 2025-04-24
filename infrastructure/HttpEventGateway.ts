@@ -124,7 +124,7 @@ export class HttpEventGateway implements EventGateway {
     }
     const jsonResponse = await response.json();
     return jsonResponse.map((event: any) => ({
-      id: event["id"],
+      id: event["id"].toString(),
       name: event["name"],
       description: event["description"],
       isPaid: event["is_paid"],

@@ -32,7 +32,7 @@ export default function PrivateEventPage({ eventId }: PrivateEventPageProps) {
 
   if (isLoading || !event) {
     return (
-      <EventPageContainer backgroundColor={colors.background}>
+      <EventPageContainer backgroundColor={colors.background} eventId={eventId}>
         <View
           style={{
             alignItems: "center",
@@ -69,11 +69,11 @@ export default function PrivateEventPage({ eventId }: PrivateEventPageProps) {
   }
 
   return (
-    <EventPageContainer backgroundColor={colors.background}>
+    <EventPageContainer backgroundColor={colors.background} eventId={eventId}>
       <View style={{ alignItems: "center", rowGap: verticalScale(15) }}>
         <EventPageHeader
           eventTitle={event.event.name}
-          eventImageUrl={getEventImageUrl(Number(eventId))}
+          eventImageUrl={getEventImageUrl(Number(eventId)).local}
           startDate={event.event.startDate}
           endDate={event.event.endDate}
           eventLocationName={event.event.addressName}

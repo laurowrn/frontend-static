@@ -34,7 +34,7 @@ export default function EventPage({ eventId }: EventPageProps) {
 
   if (isLoading || !event) {
     return (
-      <EventPageContainer backgroundColor={colors.background}>
+      <EventPageContainer backgroundColor={colors.background} eventId={eventId}>
         <View
           style={{
             alignItems: "center",
@@ -50,11 +50,11 @@ export default function EventPage({ eventId }: EventPageProps) {
   }
 
   return (
-    <EventPageContainer backgroundColor={colors.background}>
+    <EventPageContainer backgroundColor={colors.background} eventId={eventId}>
       <View style={{ alignItems: "center", rowGap: verticalScale(15) }}>
         <EventPageHeader
           eventTitle={event.event.name}
-          eventImageUrl={getEventImageUrl(Number(eventId))}
+          eventImageUrl={getEventImageUrl(Number(eventId)).local}
           startDate={event.event.startDate}
           endDate={event.event.endDate}
           eventLocationName={event.event.addressName}
@@ -66,7 +66,7 @@ export default function EventPage({ eventId }: EventPageProps) {
               eventId={eventId}
               left={
                 <Appbar.BackAction
-                  onPress={() => router.back()}
+                  onPress={() => router.navigate("../")}
                   iconColor={colors.primary}
                 />
               }

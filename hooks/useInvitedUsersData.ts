@@ -37,11 +37,11 @@ export default function useInvitedUsersData(
     } finally {
       setLoading(false);
     }
-  }, [eventId, status, session, eventGateway, router, search, reloadTrigger]);
+  }, [eventId, status, session, eventGateway, router, search]);
 
   useEffect(() => {
     fetchInvitedUsers();
-  }, [fetchInvitedUsers]);
+  }, [fetchInvitedUsers, reloadTrigger]);
 
   const reload = () => {
     setReloadTrigger((prev) => prev + 1);

@@ -6,22 +6,23 @@ import { LinearGradient } from "expo-linear-gradient";
 import { getColors } from "react-native-image-colors";
 import { WebImageColors } from "react-native-image-colors/build/types";
 import { useEffect, useState } from "react";
+import getEventImageUrl from "@/helpers/getEventImageUrl";
 
 export default function EventPageContainer({
   children,
   backgroundColor,
+  eventId,
 }: {
   children: React.ReactNode;
+  eventId: string;
   backgroundColor?: string;
 }) {
   const { colors } = useTheme();
   const [colorList, setColorList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     const fetchColors = async () => {
-      const image =
-        "https://i.ibb.co/fz0f55Jy/3000x3000-Colmeia-Maram-Rosa-Save-The-Date.png";
+      const image = getEventImageUrl(Number(eventId)).remote;
       const response = await getColors(image, {
         fallback: "#000000",
       });
