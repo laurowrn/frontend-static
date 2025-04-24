@@ -1,10 +1,10 @@
-import { useEventContext } from "@/context/EventContext";
+import { useUserEventsContext } from "@/context/UserEventsContext";
 import EventManagingPage from "@/pages/EventManagingPage";
 import { Redirect, useLocalSearchParams } from "expo-router";
 
 export default function EventManaging() {
   const { eventId } = useLocalSearchParams() as { eventId: string };
-  const { getEventById } = useEventContext();
+  const { getEventById } = useUserEventsContext();
   const event = getEventById(eventId);
 
   if (eventId === "") {

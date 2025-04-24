@@ -8,6 +8,7 @@ import {
   InvitedUserResponse,
   InvitedUserStatus,
   EventStats,
+  GetEventsByUserResponse,
 } from "./EventGateway";
 
 export class HttpEventGateway implements EventGateway {
@@ -15,6 +16,40 @@ export class HttpEventGateway implements EventGateway {
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
+  }
+
+  async getEventsByUser(jwtToken: string): Promise<GetEventsByUserResponse[]> {
+    const response = await fetch(`${this.baseUrl}/private/event/user`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Falha em pegar eventos do usuário.");
+    }
+    const jsonResponse = await response.json();
+
+    return jsonResponse["events"].map((event: any) => ({
+      event: {
+        id: event["event"]["id"].toString(),
+        name: event["event"]["name"],
+        description: event["event"]["description"],
+        isPaid: event["event"]["is_paid"],
+        startDate: new Date(event["event"]["start_date"]),
+        endDate: new Date(event["event"]["end_date"]),
+        location: event["event"]["location"],
+        isPrivate: event["event"]["is_private"],
+        autoAccept: event["event"]["auto_accept"],
+        addressName: event["event"]["address_name"],
+        longitude: event["event"]["longitude"],
+        latitude: event["event"]["latitude"],
+        addressComplement: event["event"]["address_complement"],
+      },
+      role: event["role"],
+    }));
   }
 
   async getEventStats(eventID: number, jwtToken: string): Promise<EventStats> {

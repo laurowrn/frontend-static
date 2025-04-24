@@ -18,6 +18,7 @@ export interface EventGateway {
     search?: string
   ): Promise<InvitedUserResponse[]>;
   getEventStats(eventID: number, jwtToken: string): Promise<EventStats>;
+  getEventsByUser(jwtToken: string): Promise<GetEventsByUserResponse[]>;
 }
 
 export interface Event {
@@ -85,6 +86,11 @@ export interface Payment {
       number: string;
     };
   };
+}
+
+export interface GetEventsByUserResponse {
+  event: Event;
+  role: string;
 }
 
 export interface PaymentDetails {

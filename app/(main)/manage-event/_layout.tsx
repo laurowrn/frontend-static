@@ -1,9 +1,9 @@
-import { EventProvider } from "@/context/EventContext";
+import { UserEventsProvider } from "@/context/UserEventsContext";
 import { Stack } from "expo-router";
 
 export default function MainLayout() {
   return (
-    <EventProvider>
+    <UserEventsProvider>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -11,6 +11,6 @@ export default function MainLayout() {
       >
         <Stack.Screen name="[eventId]" />
       </Stack>
-    </EventProvider>
+    </UserEventsProvider>
   );
 }
